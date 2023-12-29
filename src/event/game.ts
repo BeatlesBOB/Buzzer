@@ -11,7 +11,6 @@ import {
 interface data {
   id: string;
   name: string;
-  dza;
 }
 
 export const createRoom = (socket: Socket) => {
