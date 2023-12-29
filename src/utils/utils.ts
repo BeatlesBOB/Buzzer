@@ -21,7 +21,7 @@ export const getTeamByName = (room: Room, name: string): Team | undefined => {
     return room.team.name === name;
   });
 
-  return filtered[0].team;
+  return filtered[0]?.team;
 };
 
 export const removeTeam = (room: Room, team: Team) => {
@@ -40,6 +40,14 @@ export const deleteRoom = (room: Room) => {
   Rooms.delete(room.id);
 };
 
-export const createRoom = (id: string) => {
-  Rooms.set(id, { id, teams: new Map<string, Team>() });
+export const initRoom = (id: string) => {
+  const room = { id, teams: new Map<string, Team>() };
+  Rooms.set(id, room);
+  return room;
+};
+
+export const mapToString = (map: any) => {
+  return JSON.stringify(map, (key, value) =>
+    value instanceof Map ? [...value] : value
+  );
 };

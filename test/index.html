@@ -11,11 +11,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
         const socket = io('http://localhost:3000');
-        socket.emit('game:create')
-        socket.on('game:create', (payload) => {
-            const { id } = payload
-            socket.emit('game:join', { id, name: "super team" })
+
+        socket.emit('room:create')
+        socket.on('room:create', (payload) => {
+            const { room } = payload
+            console.log("Etape 1")
+            console.log(room)
+
+            socket.emit("room:join", { id: room.id, name: "super team" })
+            socket.on("room:team", (payload) => {
+                console.log("Etape 2")
+                console.log(payload)
+                console.log(JSON.parse(payload.team))
+            })
+            socket.on("room:join", (payload) => {
+                console.log("Etape 3")
+                console.log(payload)
+                console.log(JSON.parse(payload.room))
+            })
         })
+
+
     </script>
 </body>
 
