@@ -1,6 +1,7 @@
 export interface Room {
   id: string;
   teams: Map<string, Team>;
+  hasStarted: boolean;
 }
 
 export interface Team {
@@ -13,4 +14,5 @@ export interface Team {
 export interface Data {
   id: string;
   name: string;
+  point?: number;
 }

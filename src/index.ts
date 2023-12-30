@@ -1,6 +1,7 @@
 import { Socket } from "socket.io";
 import { Room } from "./utils/interface";
-import { createTeam, initRoom } from "./utils/utils";
+import { createRoom, joinRoom, leaveRoom, startGame } from "./event/room";
+import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
 
 const express = require("express");
 const { createServer } = require("http");
@@ -14,13 +15,11 @@ export const io = new Server(httpServer, {
 
 export const Rooms = new Map<string, Room>();
 
-import { createRoom, joinRoom, leaveRoom } from "./event/room";
-import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
-
 const onConnection = (socket: Socket) => {
   socket.on("room:create", (payload) => createRoom(socket));
   socket.on("room:join", (payload) => joinRoom(socket, payload));
   socket.on("room:leave", (payload) => leaveRoom(socket, payload));
+  socket.on("room:start", (payload) => startGame(socket, payload));
   socket.on("game:answer", (payload) => answer(socket, payload));
   socket.on("game:answer:reset", (payload) => resetAllAnswer(socket, payload));
   socket.on("game:answer:reset:team", (payload) =>

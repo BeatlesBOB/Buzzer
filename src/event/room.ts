@@ -42,3 +42,11 @@ export const joinRoom = (socket: Socket, { id, name }: Data) => {
     io.to(room.id).emit("room:join", { room: mapToString(room) });
   }
 };
+
+export const startGame = (socket: Socket, { id }: { id: string }) => {
+  const room = Rooms.get(id);
+  if (room) {
+    room.hasStarted = true;
+    io.to(room.id).emit("room:start", { room: mapToString(room) });
+  }
+};

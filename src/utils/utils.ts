@@ -36,7 +36,7 @@ export const deleteRoom = (room: Room) => {
 };
 
 export const initRoom = (id: string) => {
-  const room = { id, teams: new Map<string, Team>() };
+  const room = { id, teams: new Map<string, Team>(), hasStarted: false };
   Rooms.set(id, room);
   return room;
 };

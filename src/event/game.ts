@@ -5,7 +5,7 @@ import { getTeamByName, mapToString } from "../utils/utils";
 
 export const answer = (socket: Socket, { id, name }: Data) => {
   const room = Rooms.get(id);
-  if (room) {
+  if (room && room.hasStarted) {
     const team = getTeamByName(room, name);
     if (team && !team.hasBuzzed) {
       team.hasBuzzed = true;

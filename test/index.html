@@ -29,6 +29,24 @@
                 console.log(payload)
                 console.log(JSON.parse(payload.room))
             })
+
+            socket.emit("room:start", { id: room.id })
+            socket.on('room:start', (payload) => {
+                console.log("Etape 4")
+                console.log(payload)
+                console.log(JSON.parse(payload.room))
+            })
+
+            socket.emit("game:answer", { id: room.id, name: "super team" })
+            socket.on('game:answer', (payload) => {
+                console.log("Etape 5")
+                console.log(payload)
+                console.log(JSON.parse(payload.room))
+            })
+
+
+            //console.log("Etape 5")
+            //socket.emit("room:leave", { id: room.id, name: "super team" })
         })
 
 
