@@ -9,3 +9,8 @@ export interface Team {
   point: number;
   hasBuzzed: boolean;
 }
+
+export interface Data {
+  id: string;
+  name: string;
+}

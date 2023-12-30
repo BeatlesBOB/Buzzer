@@ -1,50 +1,40 @@
-import { v4 as uuidv4 } from "uuid";
 import { Socket } from "socket.io";
+import { Data } from "../utils/interface";
 import { Rooms, io } from "..";
-import {
-  createTeam,
-  deleteRoom,
-  getTeamByName,
-  initRoom,
-  mapToString,
-  removeTeam,
-} from "../utils/utils";
-import { Room, Team } from "../utils/interface";
+import { getTeamByName, mapToString } from "../utils/utils";
 
-export const createRoom = (socket: Socket) => {
-  const id = uuidv4();
-  socket.join(id);
-  socket.emit("room:create", { room: initRoom(id) });
-};
-
-export const leaveRoom = (
-  socket: Socket,
-  { id, team }: { id: string; team: Team }
-) => {
+export const answer = (socket: Socket, { id, name }: Data) => {
   const room = Rooms.get(id);
   if (room) {
-    removeTeam(room, team);
-    if (room.teams.size === 0) {
-      deleteRoom(room);
+    const team = getTeamByName(room, name);
+    if (team && !team.hasBuzzed) {
+      team.hasBuzzed = true;
+      io.to(id).emit("game:answer", { room: mapToString(room) });
+      setTimeout(() => {
+        team.hasBuzzed = false;
+        io.to(id).emit("game:answer", { room: mapToString(room) });
+      }, 15000);
     }
-    io.to(room.id).emit({ room });
-    socket.leave(room.id);
   }
 };
 
-export const joinRoom = (
-  socket: Socket,
-  { id, name }: { id: string; name: string }
-) => {
+export const resetAllAnswer = (socket: Socket, { id }: { id: string }) => {
   const room = Rooms.get(id);
-  if (room && name) {
-    let team = getTeamByName(room, name);
-    if (!team) {
-      const id = uuidv4();
-      team = createTeam(id, name);
-      room.teams.set(id, team);
+  if (room) {
+    room.teams.forEach((team) => {
+      team.hasBuzzed = false;
+    });
+    io.to(id).emit("game:answer", { room: mapToString(room) });
+  }
+};
+
+export const resetTeamAnswer = (socket: Socket, { id, name }: Data) => {
+  const room = Rooms.get(id);
+  if (room) {
+    const team = getTeamByName(room, name);
+    if (team) {
+      team.hasBuzzed = false;
+      io.to(id).emit("game:answer", { room: mapToString(room) });
     }
-    socket.emit("room:team", { team: mapToString(team) });
-    io.to(room.id).emit("room:join", { room: mapToString(room) });
   }
 };

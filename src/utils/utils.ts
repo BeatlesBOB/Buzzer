@@ -24,11 +24,6 @@ export const getTeamByName = (room: Room, name: string): Team | undefined => {
   return filtered[0]?.team;
 };
 
-export const removeTeam = (room: Room, team: Team) => {
-  room.teams.delete(team.id);
-  return Rooms;
-};
-
 export const removeTeamByName = (room: Room, name: string) => {
   const team = getTeamByName(room, name);
   if (team) {
