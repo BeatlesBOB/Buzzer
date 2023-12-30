@@ -43,7 +43,14 @@
                 console.log(payload)
                 console.log(JSON.parse(payload.room))
             })
+            console.log(room)
 
+            socket.emit("game:point", { id: room.id, name: "super team", point: 30 })
+            socket.on("game:status", (payload) => {
+                console.log("Etape 6")
+                console.log(payload)
+                console.log(JSON.parse(payload.room))
+            })
 
             //console.log("Etape 5")
             //socket.emit("room:leave", { id: room.id, name: "super team" })

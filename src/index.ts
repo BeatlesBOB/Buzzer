@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { Room } from "./utils/interface";
 import { createRoom, joinRoom, leaveRoom, startGame } from "./event/room";
 import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
+import { setPoint } from "./event/point";
 
 const express = require("express");
 const { createServer } = require("http");
@@ -25,7 +26,7 @@ const onConnection = (socket: Socket) => {
   socket.on("game:answer:reset:team", (payload) =>
     resetTeamAnswer(socket, payload)
   );
-  socket.on("game:point", () => {});
+  socket.on("game:point", (payload) => setPoint(socket, payload));
 };
 
 io.on("connection", onConnection);
