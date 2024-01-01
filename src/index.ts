@@ -28,7 +28,7 @@ instrument(io, {
     ? {
         type: "basic",
         username: "admin",
-        password: process.env.PASSWORD, // "changeit" encrypted with bcrypt
+        password: process.env.PASSWORD
       }
     : false,
   mode: "development",
