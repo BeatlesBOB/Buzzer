@@ -15,7 +15,9 @@ export const createRoom = (socket: Socket) => {
   const id = uuidv4();
   socket.data.isAdmin = true;
   socket.join(id);
-  socket.emit("room:create", { room: initRoom(id) });
+  const room = initRoom(id);
+  io.emit("room:create", { room });
+  socket.emit("room:create", { room });
 };
 
 export const leaveRoom = (socket: Socket, { id, name }: Data) => {
