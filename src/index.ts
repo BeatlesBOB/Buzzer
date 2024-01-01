@@ -1,17 +1,31 @@
+import dotenv from "dotenv";
 import { Socket } from "socket.io";
 import { Room } from "./utils/interface";
 import { createRoom, joinRoom, leaveRoom, startGame } from "./event/room";
 import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
 import { setPoint } from "./event/point";
+import { instrument } from "@socket.io/admin-ui";
+dotenv.config();
 
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
+app.use(express.static("./node_modules/@socket.io/admin-ui/ui/dist"));
+app.listen(process.env.ADMIN_PORT);
+
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
-  cors: "*",
+  cors: {
+    origin: "*",
+    credential: true,
+  },
+});
+
+instrument(io, {
+  auth: false,
+  mode: "development",
 });
 
 export const Rooms = new Map<string, Room>();
@@ -31,4 +45,6 @@ const onConnection = (socket: Socket) => {
 
 io.on("connection", onConnection);
 
-httpServer.listen(3000, () => console.log("started"));
+httpServer.listen(process.env.APP_PORT, () =>
+  console.log(`http://localhost:${process.env.APP_PORT}`)
+);

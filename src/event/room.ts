@@ -13,6 +13,7 @@ import { Data } from "../utils/interface";
 
 export const createRoom = (socket: Socket) => {
   const id = uuidv4();
+  socket.data.isAdmin = true;
   socket.join(id);
   socket.emit("room:create", { room: initRoom(id) });
 };
@@ -39,7 +40,10 @@ export const joinRoom = (socket: Socket, { id, name }: Data) => {
       room.teams.set(id, team);
     }
     socket.emit("room:team", { team: mapToString(team) });
-    io.to(room.id).emit("room:join", { room: mapToString(room) });
+    io.to(room.id).emit("room:join", {
+      room: mapToString(room),
+      player: socket.data,
+    });
   }
 };
 

@@ -13,14 +13,14 @@ export const answer = (socket: Socket, { id, name }: Data) => {
       setTimeout(() => {
         team.hasBuzzed = false;
         io.to(id).emit("game:answer", { room: mapToString(room) });
-      }, 15000);
+      }, parseInt(process.env.TIMEOUT_ANSWER!));
     }
   }
 };
 
 export const resetAllAnswer = (socket: Socket, { id }: { id: string }) => {
   const room = Rooms.get(id);
-  if (room) {
+  if (room && socket.data.isAdmin) {
     room.teams.forEach((team) => {
       team.hasBuzzed = false;
     });
