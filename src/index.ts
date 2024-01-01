@@ -24,13 +24,14 @@ export const io = new Server(httpServer, {
 });
 
 instrument(io, {
-  auth: process.env.PASSWORD
-    ? {
-        type: "basic",
-        username: "admin",
-        password: process.env.PASSWORD
-      }
-    : false,
+  auth:
+    process.env.PASSWORD && process.env.USERNAME
+      ? {
+          type: "basic",
+          username: process.env.USERNAME,
+          password: process.env.PASSWORD,
+        }
+      : false,
   mode: "development",
 });
 
