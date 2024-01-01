@@ -24,7 +24,13 @@ export const io = new Server(httpServer, {
 });
 
 instrument(io, {
-  auth: false,
+  auth: process.env.PASSWORD
+    ? {
+        type: "basic",
+        username: "admin",
+        password: process.env.PASSWORD, // "changeit" encrypted with bcrypt
+      }
+    : false,
   mode: "development",
 });
 
