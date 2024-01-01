@@ -18,8 +18,8 @@ app.listen(process.env.ADMIN_PORT);
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    credential: true,
+    origin: ["http://localhost:3030", "http://localhost:5500"],
+    credentials: true,
   },
 });
 
