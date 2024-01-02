@@ -16,7 +16,7 @@ export const createRoom = (socket: Socket) => {
   socket.data.isAdmin = true;
   socket.join(id);
   const room = initRoom(id);
-  io.emit("room:create", { room });
+  socket.emit("room:create", { room: mapToString(room), isAdmin: true });
 };
 
 export const leaveRoom = (socket: Socket, { id, name }: Data) => {
@@ -26,7 +26,7 @@ export const leaveRoom = (socket: Socket, { id, name }: Data) => {
     if (room.teams.size === 0) {
       deleteRoom(room);
     }
-    io.to(room.id).emit({ room });
+    io.to(room.id).emit("room:leave", { room });
     socket.leave(room.id);
   }
 };
