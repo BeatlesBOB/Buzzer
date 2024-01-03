@@ -3,8 +3,9 @@ import { Socket } from "socket.io";
 import { Room } from "./utils/interface";
 import { createRoom, joinRoom, leaveRoom, startGame } from "./event/room";
 import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
-import { setPoint } from "./event/point";
+import { resetAllPoint, setPoint } from "./event/point";
 import { instrument } from "@socket.io/admin-ui";
+import { createTeam, initRoom, mapToString } from "./utils/utils";
 dotenv.config();
 
 const express = require("express");
@@ -46,11 +47,13 @@ const onConnection = (socket: Socket) => {
   socket.on("room:join", (payload) => joinRoom(socket, payload));
   socket.on("room:leave", (payload) => leaveRoom(socket, payload));
   socket.on("room:start", (payload) => startGame(socket, payload));
-  socket.on("game:answer", (payload) => answer(socket, payload));
-  socket.on("game:answer:reset", (payload) => resetAllAnswer(socket, payload));
-  socket.on("game:answer:reset:team", (payload) =>
+  socket.on("game:buzzer", (payload) => answer(socket, payload));
+  socket.on("game:buzzer:reset", (payload) => resetAllAnswer(socket, payload));
+  socket.on("game:buzzer:reset:team", (payload) =>
     resetTeamAnswer(socket, payload)
   );
+  socket.on("game:point:reset", (payload) => resetAllPoint(socket, payload));
+
   socket.on("game:point", (payload) => setPoint(socket, payload));
 };
 

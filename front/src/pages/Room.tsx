@@ -13,7 +13,10 @@ export default function Room() {
 
   useEffect(() => {
     socket.on("room:join", (payload) => {
-      console.log(payload);
+      setTeams(JSON.parse(payload.room).teams);
+    });
+
+    socket.on("game:status", (payload) => {
       setTeams(JSON.parse(payload.room).teams);
     });
 
@@ -26,6 +29,18 @@ export default function Room() {
     socket.emit("game:status", { id: room?.id, name: team.name, point });
   };
 
+  const resetBuzzer = () => {
+    socket.emit("game:buzzer:reset", { id: room?.id });
+  };
+
+  const resetTeamBuzzer = (team: Team) => {
+    socket.emit("game:buzzer:reset:team", { id: room?.id, name: team.name });
+  };
+
+  const resetPoint = () => {
+    socket.emit("game:point:reset", { id: room?.id });
+  };
+
   return (
     <div className="grid grid-cols-2  min-h-dvh">
       <ul className="flex flex-col gap-4 py-4 overflow-y-auto h-dvh">
@@ -35,14 +50,21 @@ export default function Room() {
             return (
               <li className="p-5 shadow-lg flex font-primary" key={team[0]}>
                 <p className="capitalize  text-lg">{team[1].name}</p>
-                <div className="fle ml-auto">
+                <div className="flex ml-auto">
                   <input
+                    min={0}
                     type="number"
                     value={team[1].point}
                     onChange={(e) => {
                       updateTeamPoint(team[1], parseInt(e.target.value));
                     }}
                   />
+                  <button
+                    onClick={() => resetTeamBuzzer(team[1])}
+                    className="font-primary font-regular underline"
+                  >
+                    Reset buzzer
+                  </button>
                 </div>
               </li>
             );
@@ -54,6 +76,19 @@ export default function Room() {
           Buzzer
         </h1>
         <QRCode value={id || ""} />
+        <button
+          onClick={resetBuzzer}
+          className="font-primary font-regular underline"
+        >
+          Reset tout les buzzer
+        </button>
+
+        <button
+          onClick={resetPoint}
+          className="font-primary font-regular underline"
+        >
+          Reset tout les points
+        </button>
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ export const resetAllAnswer = (socket: Socket, { id }: { id: string }) => {
     room.teams.forEach((team) => {
       team.hasBuzzed = false;
     });
-    io.to(id).emit("game:answer", { room: mapToString(room) });
+    io.to(id).emit("c", { room: mapToString(room) });
   }
 };
 

@@ -10,7 +10,6 @@ export const createTeam = (id: string, name: string): Team => {
   };
 };
 
-
 export const getTeamByName = (room: Room, name: string): Team | undefined => {
   const filtered = Array.from(
     room.teams,
