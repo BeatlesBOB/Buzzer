@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../contexts/SocketProvider";
-import { Team } from "../utils/interfaces";
 
 export default function Room() {
   const { id } = useParams();
@@ -11,6 +10,7 @@ export default function Room() {
 
   useEffect(() => {
     socket.on("room:join", (payload) => {
+      console.log(payload);
       setTeams(JSON.parse(payload.room).teams);
     });
 
@@ -21,10 +21,20 @@ export default function Room() {
 
   return (
     <div className="grid grid-cols-2  min-h-dvh">
-      <ul>
-        {teams.map((team: Team) => {
-          return <li key={team.id}>{team.name}</li>;
-        })}
+      <ul className="flex flex-col gap-4 py-4 overflow-y-auto h-dvh">
+        {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          teams.map((team: any) => {
+            return (
+              <li className="p-5 shadow-lg flex font-primary" key={team[0]}>
+                <p className="capitalize  text-lg">{team[1].name}</p>
+                <div className="fle ml-auto">
+                  <input type="number" value={team[1].point} />
+                </div>
+              </li>
+            );
+          })
+        }
       </ul>
       <div className="flex flex-col items-center justify-center gap-6">
         <h1 className="pointer-events-none font-primary font-black text-shadow text-9xl drop-shadow-3xl text-center text-white">

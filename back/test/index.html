@@ -11,50 +11,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
         const socket = io('http://localhost:3000');
+        socket.emit("room:join", { id: '90479ab0-55fc-4eae-863c-c45d6be0f5c2', name: "super team" })
 
-        socket.emit('room:create')
-        socket.on('room:create', (payload) => {
-            const { room } = payload
-            console.log("Etape 1")
-            console.log(room)
+        // socket.emit('room:create')
+        // socket.on('room:create', (payload) => {
+        //     const { room } = payload
+        //     console.log("Etape 1")
+        //     console.log(room)
 
-            socket.emit("room:join", { id: room.id, name: "super team" })
-            socket.on("room:team", (payload) => {
-                console.log("Etape 2")
-                console.log(payload)
-                console.log(JSON.parse(payload.team))
-            })
-            socket.on("room:join", (payload) => {
-                console.log("Etape 3")
-                console.log(payload)
-                console.log(JSON.parse(payload.room))
-            })
+        //     socket.emit("room:join", { id: room.id, name: "super team" })
+        //     socket.on("room:team", (payload) => {
+        //         console.log("Etape 2")
+        //         console.log(payload)
+        //         console.log(JSON.parse(payload.team))
+        //     })
+        //     socket.on("room:join", (payload) => {
+        //         console.log("Etape 3")
+        //         console.log(payload)
+        //         console.log(JSON.parse(payload.room))
+        //     })
 
-            socket.emit("room:start", { id: room.id })
-            socket.on('room:start', (payload) => {
-                console.log("Etape 4")
-                console.log(payload)
-                console.log(JSON.parse(payload.room))
-            })
+        //     socket.emit("room:start", { id: room.id })
+        //     socket.on('room:start', (payload) => {
+        //         console.log("Etape 4")
+        //         console.log(payload)
+        //         console.log(JSON.parse(payload.room))
+        //     })
 
-            socket.emit("game:answer", { id: room.id, name: "super team" })
-            socket.on('game:answer', (payload) => {
-                console.log("Etape 5")
-                console.log(payload)
-                console.log(JSON.parse(payload.room))
-            })
-            console.log(room)
+        //     socket.emit("game:answer", { id: room.id, name: "super team" })
+        //     socket.on('game:answer', (payload) => {
+        //         console.log("Etape 5")
+        //         console.log(payload)
+        //         console.log(JSON.parse(payload.room))
+        //     })
+        //     console.log(room)
 
-            socket.emit("game:point", { id: room.id, name: "super team", point: 30 })
-            socket.on("game:status", (payload) => {
-                console.log("Etape 6")
-                console.log(payload)
-                console.log(JSON.parse(payload.room))
-            })
+        //     socket.emit("game:point", { id: room.id, name: "super team", point: 30 })
+        //     socket.on("game:status", (payload) => {
+        //         console.log("Etape 6")
+        //         console.log(payload)
+        //         console.log(JSON.parse(payload.room))
+        //     })
 
-            //console.log("Etape 5")
-            //socket.emit("room:leave", { id: room.id, name: "super team" })
-        })
+        //     //console.log("Etape 5")
+        //     //socket.emit("room:leave", { id: room.id, name: "super team" })
+        // })
 
 
     </script>
