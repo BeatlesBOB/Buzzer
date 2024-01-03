@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const socket = useContext(SocketContext);
-  const { setRoom, setIsAdmin } = useContext(GameContext);
+  const { setRoom, setIsAdmin } = useContext(GameContext) || {};
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function Home() {
     return () => {
       socket.off("room:create");
     };
-  }, []);
+  }, [socket, navigate, setIsAdmin, setRoom]);
 
   const createGame = () => {
     socket.emit("room:create");

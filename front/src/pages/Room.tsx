@@ -13,13 +13,17 @@ export default function Room() {
     socket.on("room:join", (payload) => {
       setTeams(JSON.parse(payload.room).teams);
     });
-  }, []);
+
+    return () => {
+      socket.off("room:join");
+    };
+  }, [socket]);
 
   return (
     <div className="grid grid-cols-2  min-h-dvh">
       <ul>
         {teams.map((team: Team) => {
-          return <li>{team.name}</li>;
+          return <li key={team.id}>{team.name}</li>;
         })}
       </ul>
       <div className="flex flex-col items-center justify-center gap-6">
