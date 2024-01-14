@@ -25,7 +25,7 @@ export default function Admin() {
   }, [socket]);
 
   const updateTeamPoint = (team: Team, point: number) => {
-    socket.emit("game:status", { id: room?.id, name: team.name, point });
+    socket.emit("game:status", { id: room?.id, teamId: team.id, point });
   };
 
   const resetBuzzer = () => {
@@ -33,7 +33,7 @@ export default function Admin() {
   };
 
   const resetTeamBuzzer = (team: Team) => {
-    socket.emit("game:buzzer:reset:team", { id: room?.id, name: team.name });
+    socket.emit("game:buzzer:reset:team", { id: room?.id, teamId: team.id });
   };
 
   const resetPoint = () => {

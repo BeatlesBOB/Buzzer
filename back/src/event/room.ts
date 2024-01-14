@@ -4,10 +4,10 @@ import { Rooms, io } from "..";
 import {
   createTeam,
   deleteRoom,
-  getTeamByName,
+  getTeamById,
   initRoom,
   mapToString,
-  removeTeamByName,
+  removeTeamById,
 } from "../utils/utils";
 import { Data } from "../utils/interface";
 
@@ -19,10 +19,10 @@ export const createRoom = (socket: Socket) => {
   socket.emit("room:create", { room: mapToString(room), isAdmin: true });
 };
 
-export const leaveRoom = (socket: Socket, { id, name }: Data) => {
+export const leaveRoom = (socket: Socket, { id, teamId }: Data) => {
   const room = Rooms.get(id);
   if (room) {
-    removeTeamByName(room, name);
+    removeTeamById(room, teamId);
     if (room.teams.size === 0) {
       deleteRoom(room);
     }
@@ -31,11 +31,11 @@ export const leaveRoom = (socket: Socket, { id, name }: Data) => {
   }
 };
 
-export const joinRoom = (socket: Socket, { id, name }: Data) => {
+export const joinRoom = (socket: Socket, { id, teamId, name }: Data) => {
   const room = Rooms.get(id);
-  if (room && name) {
-    let team = getTeamByName(room, name);
-    if (!team) {
+  if (room && teamId) {
+    let team = getTeamById(room, teamId);
+    if (!team && name) {
       const id = uuidv4();
       team = createTeam(id, name);
       room.teams.set(id, team);

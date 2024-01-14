@@ -10,7 +10,7 @@ export const createTeam = (id: string, name: string): Team => {
   };
 };
 
-export const getTeamByName = (room: Room, name: string): Team | undefined => {
+export const getTeamById = (room: Room, id: string): Team | undefined => {
   const filtered = Array.from(
     room.teams,
     ([id, team]: [id: string, team: Team]) => ({
@@ -18,14 +18,14 @@ export const getTeamByName = (room: Room, name: string): Team | undefined => {
       team,
     })
   ).filter((room) => {
-    return room.team.name === name;
+    return room.team.id === id;
   });
 
   return filtered[0]?.team;
 };
 
-export const removeTeamByName = (room: Room, name: string) => {
-  const team = getTeamByName(room, name);
+export const removeTeamById = (room: Room, id: string) => {
+  const team = getTeamById(room, id);
   if (team) {
     room.teams.delete(team?.id);
   }

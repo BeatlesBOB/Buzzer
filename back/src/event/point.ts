@@ -1,12 +1,12 @@
 import { Socket } from "socket.io";
 import { Data } from "../utils/interface";
 import { Rooms, io } from "..";
-import { getTeamByName, mapToString } from "../utils/utils";
+import { getTeamById, mapToString } from "../utils/utils";
 
-export const setPoint = (socket: Socket, { id, name, point }: Data) => {
+export const setPoint = (socket: Socket, { id, teamId, point }: Data) => {
   const room = Rooms.get(id);
   if (room && socket.data.isAdmin) {
-    const team = getTeamByName(room, name);
+    const team = getTeamById(room, teamId);
     if (team) {
       team.point = point || 0;
       io.emit("game:status", { room: mapToString(room) });
@@ -14,7 +14,7 @@ export const setPoint = (socket: Socket, { id, name, point }: Data) => {
   }
 };
 
-export const resetAllPoint = (socket: Socket, { id, name }: Data) => {
+export const resetAllPoint = (socket: Socket, { id }: Data) => {
   const room = Rooms.get(id);
   if (room && socket.data.isAdmin) {
     room.teams.forEach((team) => {

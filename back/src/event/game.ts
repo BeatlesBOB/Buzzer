@@ -1,12 +1,12 @@
 import { Socket } from "socket.io";
 import { Data } from "../utils/interface";
 import { Rooms, io } from "..";
-import { getTeamByName, mapToString } from "../utils/utils";
+import { getTeamById, mapToString } from "../utils/utils";
 
-export const answer = (socket: Socket, { id, name }: Data) => {
+export const answer = (socket: Socket, { id, teamId }: Data) => {
   const room = Rooms.get(id);
   if (room && room.hasStarted) {
-    const team = getTeamByName(room, name);
+    const team = getTeamById(room, teamId);
     if (team && !team.hasBuzzed) {
       team.hasBuzzed = true;
       io.to(id).emit("game:answer", { room: mapToString(room) });
@@ -24,14 +24,14 @@ export const resetAllAnswer = (socket: Socket, { id }: { id: string }) => {
     room.teams.forEach((team) => {
       team.hasBuzzed = false;
     });
-    io.to(id).emit("c", { room: mapToString(room) });
+    io.to(id).emit("game:answer", { room: mapToString(room) });
   }
 };
 
-export const resetTeamAnswer = (socket: Socket, { id, name }: Data) => {
+export const resetTeamAnswer = (socket: Socket, { id, teamId }: Data) => {
   const room = Rooms.get(id);
   if (room) {
-    const team = getTeamByName(room, name);
+    const team = getTeamById(room, teamId);
     if (team) {
       team.hasBuzzed = false;
       io.to(id).emit("game:answer", { room: mapToString(room) });

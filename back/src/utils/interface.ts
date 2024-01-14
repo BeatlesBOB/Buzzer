@@ -13,6 +13,7 @@ export interface Team {
 
 export interface Data {
   id: string;
-  name: string;
+  teamId: string;
   point?: number;
+  name?: string;
 }
