@@ -3,10 +3,11 @@ import QRCode from "react-qr-code";
 import { SocketContext } from "../contexts/SocketProvider";
 import { GameContext } from "../contexts/GameProvider";
 import { Team } from "../utils/interfaces";
+import Users from "./Users";
 
 export default function Admin() {
   const socket = useContext(SocketContext);
-  const { room } = useContext(GameContext) || {};
+  const { room, isAdmin } = useContext(GameContext) || {};
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
@@ -41,34 +42,12 @@ export default function Admin() {
   };
   return (
     <div className="grid grid-cols-2  min-h-dvh">
-      <ul className="flex flex-col gap-4 py-4 overflow-y-auto h-dvh">
-        {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          teams.map((team: any) => {
-            return (
-              <li className="p-5 shadow-lg flex font-primary" key={team[0]}>
-                <p className="capitalize  text-lg">{team[1].name}</p>
-                <div className="flex ml-auto">
-                  <input
-                    min={0}
-                    type="number"
-                    value={team[1].point}
-                    onChange={(e) => {
-                      updateTeamPoint(team[1], parseInt(e.target.value));
-                    }}
-                  />
-                  <button
-                    onClick={() => resetTeamBuzzer(team[1])}
-                    className="font-primary font-regular underline"
-                  >
-                    Reset buzzer
-                  </button>
-                </div>
-              </li>
-            );
-          })
-        }
-      </ul>
+      <Users
+        teams={teams}
+        resetTeamBuzzer={resetTeamBuzzer}
+        updateTeamPoint={updateTeamPoint}
+        isAdmin={isAdmin}
+      />
       <div className="flex flex-col items-center justify-center gap-6">
         <h1 className="pointer-events-none font-primary font-black text-shadow text-9xl drop-shadow-3xl text-center text-white">
           Buzzer
@@ -77,15 +56,13 @@ export default function Admin() {
         <div className="flex gap-2 wrap">
           <button
             onClick={resetBuzzer}
-            className="font-primary font-regular underline"
-          >
+            className="font-primary font-regular underline">
             Reset tout les buzzer
           </button>
 
           <button
             onClick={resetPoint}
-            className="font-primary font-regular underline"
-          >
+            className="font-primary font-regular underline">
             Reset tout les points
           </button>
         </div>
