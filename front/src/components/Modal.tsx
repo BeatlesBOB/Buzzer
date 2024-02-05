@@ -49,7 +49,7 @@ export default function Modal({
             <div className="border-t px-4 py-2 flex justify-end">
               <button
                 onClick={() => setIsOpen(false)}
-                className="px-3 py-1 bg-indigo-500 text-white  rounded-md w-full sm:w-auto"
+                className="px-3 py-1 underline text-black rounded-md w-full sm:w-auto"
               >
                 Accept
               </button>
