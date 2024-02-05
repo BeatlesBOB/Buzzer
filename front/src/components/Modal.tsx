@@ -34,8 +34,10 @@ export default function Modal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 px-2 z-10 overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 px-2 z-10 overflow-hidden flex items-center justify-center w-screen h-screen bg-gray-500 bg-opacity-75 transition-opacity"
+        >
           <motion.div
             initial="initial"
             variants={dropIn}
