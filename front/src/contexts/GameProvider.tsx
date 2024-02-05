@@ -7,7 +7,7 @@ export interface GameContext {
   isAdmin: boolean;
   setIsAdmin: (isAdmin: boolean) => void;
   teams?: Array<Team>;
-  setTeams: (teams: Array<Team>) => void;
+  setTeams: (teams: Array<Team> ) => void;
 }
 export const GameContext = createContext<GameContext | null>(null);
 

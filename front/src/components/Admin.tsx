@@ -11,11 +11,11 @@ export default function Admin() {
 
   useEffect(() => {
     socket.on("room:join", (payload) => {
-      setTeams?.(JSON.parse(payload.room).teams);
+      setTeams?.(parseTeams(JSON.parse(payload.room).teams) ?? []);
     });
 
     socket.on("game:status", (payload) => {
-      setTeams?.(JSON.parse(payload.room).teams);
+      setTeams?.(parseTeams(JSON.parse(payload.room).teams) ?? []);
     });
 
     return () => {
@@ -23,6 +23,12 @@ export default function Admin() {
       socket.off("game:status");
     };
   }, [setTeams, socket]);
+
+  const parseTeams = (data: [[id: string, team: Team]]): Team[] => {
+    return data.map((teamMap) => {
+      return teamMap[1];
+    });
+  };
 
   const updateTeamPoint = (team: Team, point: number) => {
     socket.emit("game:status", { id: room?.id, teamId: team.id, point });
