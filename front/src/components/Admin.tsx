@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import QRCode from "react-qr-code";
 import { SocketContext } from "../contexts/SocketProvider";
 import { GameContext } from "../contexts/GameProvider";
@@ -7,23 +7,22 @@ import Users from "./Users";
 
 export default function Admin() {
   const socket = useContext(SocketContext);
-  const { room, isAdmin } = useContext(GameContext) || {};
-  const [teams, setTeams] = useState([]);
+  const { room, isAdmin, setTeams, teams } = useContext(GameContext) || {};
 
   useEffect(() => {
     socket.on("room:join", (payload) => {
-      setTeams(JSON.parse(payload.room).teams);
+      setTeams?.(JSON.parse(payload.room).teams);
     });
 
     socket.on("game:status", (payload) => {
-      setTeams(JSON.parse(payload.room).teams);
+      setTeams?.(JSON.parse(payload.room).teams);
     });
 
     return () => {
       socket.off("room:join");
       socket.off("game:status");
     };
-  }, [socket]);
+  }, [setTeams, socket]);
 
   const updateTeamPoint = (team: Team, point: number) => {
     socket.emit("game:status", { id: room?.id, teamId: team.id, point });
@@ -40,6 +39,7 @@ export default function Admin() {
   const resetPoint = () => {
     socket.emit("game:point:reset", { id: room?.id });
   };
+
   return (
     <div className="grid grid-cols-2  min-h-dvh">
       <Users
@@ -56,13 +56,15 @@ export default function Admin() {
         <div className="flex gap-2 wrap">
           <button
             onClick={resetBuzzer}
-            className="font-primary font-regular underline">
+            className="font-primary font-regular underline"
+          >
             Reset tout les buzzer
           </button>
 
           <button
             onClick={resetPoint}
-            className="font-primary font-regular underline">
+            className="font-primary font-regular underline"
+          >
             Reset tout les points
           </button>
         </div>

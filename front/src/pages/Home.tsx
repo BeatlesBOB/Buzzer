@@ -33,7 +33,7 @@ export default function Home() {
     return () => {
       socket.off("room:create");
     };
-  }, [socket, joinGame, setIsAdmin, setRoom]);
+  }, [socket, joinGame, setIsAdmin, setRoom, navigate]);
 
   return (
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
