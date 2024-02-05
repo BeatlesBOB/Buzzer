@@ -13,7 +13,7 @@ export const answer = (socket: Socket, { id, teamId }: Data) => {
       setTimeout(() => {
         team.hasBuzzed = false;
         io.to(id).emit("game:answer", { room: mapToString(room) });
-      }, parseInt(process.env.TIMEOUT_ANSWER!));
+      }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
     }
   }
 };
