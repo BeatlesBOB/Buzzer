@@ -33,7 +33,7 @@ export const leaveRoom = (socket: Socket, { id, teamId }: Data) => {
 
 export const joinRoom = (socket: Socket, { id, teamId, name }: Data) => {
   const room = Rooms.get(id);
-  if (room && teamId) {
+  if (room && (teamId || name)) {
     let team = getTeamById(room, teamId);
     if (!team && name) {
       const id = uuidv4();
