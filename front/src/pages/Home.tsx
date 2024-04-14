@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState, useCallback } from "react";
 import { SocketContext } from "../contexts/SocketProvider";
-import { GameContext } from "../contexts/GameProvider";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { QrScanner } from "@yudiel/react-qr-scanner";
+import useGa
 
 export default function Home() {
   const socket = useContext(SocketContext);
-  const { setRoom, setIsAdmin } = useContext(GameContext) || {};
+  const { setRoom, setIsAdmin } = useGam(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -26,6 +26,7 @@ export default function Home() {
     socket.on("room:create", (payload) => {
       const room = JSON.parse(payload.room);
       setRoom?.(room);
+      console.log(payload.isAdmin);
       setIsAdmin?.(payload.isAdmin);
       navigate(`room/${room.id}`);
     });
@@ -39,14 +40,14 @@ export default function Home() {
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
       <div className="row-start-2 col-start-2 col-end-3">
         <h1 className="pointer-events-none font-primary font-black text-shadow text-9xl drop-shadow-3xl text-center text-white">
-          Buzzer
+          ENVIE DE BUZZER
         </h1>
         <div className="flex mt-1.5 gap-10 justify-center">
           <button
             onClick={createGame}
             className="font-primary font-regular underline"
           >
-            Crée une partie
+            Créer une partie
           </button>
           <button
             onClick={() => setIsOpen(true)}

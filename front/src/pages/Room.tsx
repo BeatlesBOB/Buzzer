@@ -6,5 +6,10 @@ import { useContext } from "react";
 export default function Room() {
   const { isAdmin } = useContext(GameContext) || {};
 
-  return isAdmin ? <Admin /> : <Buzzer />;
+  return (
+    <>
+      <h1>{isAdmin}</h1>
+      {isAdmin ? <Admin /> : <Buzzer />}
+    </>
+  );
 }

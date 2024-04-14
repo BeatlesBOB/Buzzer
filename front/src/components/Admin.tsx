@@ -62,16 +62,14 @@ export default function Admin() {
         <div className="flex gap-2 wrap">
           <button
             onClick={resetBuzzer}
-            className="font-primary font-regular underline"
-          >
-            Reset tout les buzzer
+            className="font-primary font-regular underline">
+            Reset tous les buzzer
           </button>
 
           <button
             onClick={resetPoint}
-            className="font-primary font-regular underline"
-          >
-            Reset tout les points
+            className="font-primary font-regular underline">
+            Reset tous les points
           </button>
         </div>
       </div>
