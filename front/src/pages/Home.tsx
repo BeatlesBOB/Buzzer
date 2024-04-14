@@ -3,11 +3,11 @@ import { SocketContext } from "../contexts/SocketProvider";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { QrScanner } from "@yudiel/react-qr-scanner";
-import useGa
+import { GameContext } from "../contexts/GameContextProvider";
 
 export default function Home() {
   const socket = useContext(SocketContext);
-  const { setRoom, setIsAdmin } = useGam(GameContext);
+  const { setRoom, setIsAdmin } = useContext(GameContext) ;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -25,9 +25,8 @@ export default function Home() {
   useEffect(() => {
     socket.on("room:create", (payload) => {
       const room = JSON.parse(payload.room);
-      setRoom?.(room);
-      console.log(payload.isAdmin);
-      setIsAdmin?.(payload.isAdmin);
+      setRoom(room);
+      setIsAdmin(payload.isAdmin);
       navigate(`room/${room.id}`);
     });
 

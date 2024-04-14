@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useState } from "react";
 import { Room, Team } from "../utils/interfaces";
 
-export interface GameContext {
+export interface IGameContext {
   room?: Room;
   setRoom: (room: Room) => void;
   isAdmin: boolean;
@@ -9,13 +9,15 @@ export interface GameContext {
   teams?: Array<Team>;
   setTeams: (teams: Array<Team> ) => void;
 }
-export const GameContext = createContext<GameContext | null>(null);
+export const GameContext = createContext<IGameContext>(
+  {} as IGameContext
+);
 
-export interface GameProvider {
+export interface IGameContextProvider {
   children: ReactNode;
 }
 
-export default function SocketProvider({ children }: GameProvider) {
+export default function GameContextProvider({ children }: IGameContextProvider) {
   const [room, setRoom] = useState<Room | undefined>(undefined);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [teams, setTeams] = useState<Array<Team>>([]);

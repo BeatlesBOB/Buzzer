@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { SocketContext } from "../contexts/SocketProvider";
-import { GameContext } from "../contexts/GameProvider";
+import { GameContext } from "../contexts/GameContextProvider";
 import { useParams } from "react-router-dom";
 import Users from "./Users";
 import { Team } from "../utils/interfaces";
