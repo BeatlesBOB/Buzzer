@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { SocketContext } from "../contexts/SocketProvider";
+import { SocketContext } from "../contexts/SocketContextProvider";
 import { GameContext } from "../contexts/GameContextProvider";
 import { useParams } from "react-router-dom";
 import Users from "./Users";

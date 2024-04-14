@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useCallback } from "react";
-import { SocketContext } from "../contexts/SocketProvider";
+import { SocketContext } from "../contexts/SocketContextProvider";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { QrScanner } from "@yudiel/react-qr-scanner";

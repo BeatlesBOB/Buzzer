@@ -8,7 +8,7 @@ export interface SocketProvider {
   children: ReactNode;
 }
 
-export default function SocketProvider({ children }: SocketProvider) {
+export default function SocketContextProvider({ children }: SocketProvider) {
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );

@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import QRCode from "react-qr-code";
-import { SocketContext } from "../contexts/SocketProvider";
+import { SocketContext } from "../contexts/SocketContextProvider";
 import { GameContext } from "../contexts/GameContextProvider";
 import { Team } from "../utils/interfaces";
 import Users from "./Users";
