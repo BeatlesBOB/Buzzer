@@ -42,8 +42,7 @@ export default function Users({
             {!isAdmin && (
               <button
                 onClick={() => joinTeam?.(team)}
-                className="font-primary font-regular underline"
-              >
+                className="font-primary font-regular underline">
                 Join team
               </button>
             )}

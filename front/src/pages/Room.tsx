@@ -7,6 +7,6 @@ export default function Room() {
   const { isAdmin } = useContext(GameContext) || {};
 
   return (
-    isAdmin ? <Admin /> : <Buzzer />
+    !isAdmin ? <Admin /> : <Buzzer />
   );
 }

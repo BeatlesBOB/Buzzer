@@ -15,12 +15,9 @@ export default function Home() {
     socket.emit("room:create");
   };
 
-  const joinGame = useCallback(
-    (gameId: string) => {
+  const joinGame = useCallback((gameId: string) => {
       navigate(`room/${gameId}`);
-    },
-    [navigate]
-  );
+  }, [navigate]);
 
   useEffect(() => {
     socket.on("room:create", (payload) => {
@@ -33,7 +30,7 @@ export default function Home() {
     return () => {
       socket.off("room:create");
     };
-  }, [socket, joinGame, setIsAdmin, setRoom, navigate]);
+  }, [socket, setIsAdmin, setRoom, navigate]);
 
   return (
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
@@ -44,14 +41,12 @@ export default function Home() {
         <div className="flex mt-1.5 gap-10 justify-center">
           <button
             onClick={createGame}
-            className="font-primary font-regular underline"
-          >
+            className="font-primary font-regular underline">
             Créer une partie
           </button>
           <button
             onClick={() => setIsOpen(true)}
-            className="font-primary font-regular underline"
-          >
+            className="font-primary font-regular underline">
             Rejoindre une partie
           </button>
         </div>
