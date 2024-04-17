@@ -35,6 +35,9 @@ export default function Admin() {
     socket.emit("game:status", { id: room?.id, teamId: team.id, point });
   };
 
+  const startGame = () => {
+    socket.emit("room: start", { id: room?.id });
+  };
   const resetBuzzer = () => {
     socket.emit("game:buzzer:reset", { id: room?.id });
   };
@@ -48,14 +51,14 @@ export default function Admin() {
   };
 
   return (
-    <div className="grid grid-cols-2  min-h-dvh">
+    <div className="grid grid-cols-2 h-dvh">
       <Users
         teams={teams}
         resetTeamBuzzer={resetTeamBuzzer}
         updateTeamPoint={updateTeamPoint}
         isAdmin={isAdmin}
       />
-      <div className="flex flex-col items-center justify-center gap-6">
+      <div className="flex flex-col items-center justify-center gap-6 h-full">
         <h1 className="pointer-events-none font-primary font-black text-shadow text-9xl drop-shadow-3xl text-center text-white">
           Buzzer
         </h1>
@@ -63,6 +66,7 @@ export default function Admin() {
         <div className="flex gap-2 wrap">
           <Button label="Reset tous les buzzer" handleClick={resetBuzzer} />
           <Button label="Reset tous les points" handleClick={resetPoint} />
+          <Button label="Start" handleClick={startGame} />
         </div>
       </div>
     </div>

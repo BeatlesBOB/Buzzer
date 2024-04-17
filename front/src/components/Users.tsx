@@ -7,6 +7,7 @@ export interface Users {
   updateTeamPoint?: (team: Team, point: number) => void;
   resetTeamBuzzer?: (team: Team) => void;
   joinTeam?: (team?: Team, name?: string) => void;
+  leave: (team: Team) => void;
 }
 
 export default function Users({
@@ -15,13 +16,15 @@ export default function Users({
   updateTeamPoint,
   resetTeamBuzzer,
   joinTeam,
+  leave,
 }: Users) {
   return (
-    <ul className="flex flex-col gap-4 py-4 overflow-y-auto h-dvh">
+    <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
       {teams?.map((team: Team) => {
         return (
           <li className="p-5 shadow-lg flex font-primary" key={team.id}>
             <p className="capitalize  text-lg">{team.name}</p>
+            <Button label="Leave" handleClick={() => leave?.(team)} />
             {isAdmin && (
               <div className="flex ml-auto">
                 <input
