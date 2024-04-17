@@ -1,4 +1,5 @@
 import { Team } from "../utils/interfaces";
+import Button from "./Button";
 
 export interface Users {
   teams?: Array<Team>;
@@ -31,20 +32,14 @@ export default function Users({
                     updateTeamPoint?.(team, parseInt(e.target.value));
                   }}
                 />
-                <button
-                  onClick={() => resetTeamBuzzer?.(team)}
-                  className="font-primary font-regular underline"
-                >
-                  Reset buzzer
-                </button>
+                <Button
+                  label="Reset buzzer"
+                  handleClick={() => resetTeamBuzzer?.(team)}
+                />
               </div>
             )}
             {!isAdmin && (
-              <button
-                onClick={() => joinTeam?.(team)}
-                className="font-primary font-regular underline">
-                Join team
-              </button>
+              <Button label="Join team" handleClick={() => joinTeam?.(team)} />
             )}
           </li>
         );

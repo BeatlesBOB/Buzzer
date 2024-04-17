@@ -3,7 +3,8 @@ import QRCode from "react-qr-code";
 import { SocketContext } from "../contexts/SocketContextProvider";
 import { GameContext } from "../contexts/GameContextProvider";
 import { Team } from "../utils/interfaces";
-import Users from "./Users";
+import Users from "../components/Users";
+import Button from "../components/Button";
 
 export default function Admin() {
   const socket = useContext(SocketContext);
@@ -60,17 +61,8 @@ export default function Admin() {
         </h1>
         <QRCode value={room?.id || ""} />
         <div className="flex gap-2 wrap">
-          <button
-            onClick={resetBuzzer}
-            className="font-primary font-regular underline">
-            Reset tous les buzzer
-          </button>
-
-          <button
-            onClick={resetPoint}
-            className="font-primary font-regular underline">
-            Reset tous les points
-          </button>
+          <Button label="Reset tous les buzzer" handleClick={resetBuzzer} />
+          <Button label="Reset tous les points" handleClick={resetPoint} />
         </div>
       </div>
     </div>

@@ -1,12 +1,13 @@
-import { FormEvent, SyntheticEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { SocketContext } from "../contexts/SocketContextProvider";
 import { GameContext } from "../contexts/GameContextProvider";
 import { useParams } from "react-router-dom";
-import Users from "./Users";
+import Users from "../components/Users";
 import Modal from "../components/Modal";
 import { Team } from "../utils/interfaces";
+import Button from "../components/Button";
 
-export default function Buzzer() {
+export default function Lobby() {
   const socket = useContext(SocketContext);
   const { isAdmin, teams } = useContext(GameContext) || {};
   const { id } = useParams();
@@ -20,29 +21,31 @@ export default function Buzzer() {
   };
 
   const handleTeamCreation = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    joinOrCreateATeam(null, formData.get("teamName")?.toString())
-  }
+    joinOrCreateATeam(null, formData.get("teamName")?.toString());
+  };
 
   return (
-    <div className="grid grid-cols-[1fr_max-content_1fr]">
-      <div className="h-dvh flex flex--col">
+    <div className="grid grid-cols-2   h-dvh p-5">
+      <div className="flex flex-col">
         <Users teams={teams} isAdmin={isAdmin} joinTeam={joinOrCreateATeam} />
         <div>
-            <button
-              onClick={() => setIsOpen(true)}
-              className="font-primary font-regular underline">
-              Create A team
-            </button>
+          <Button handleClick={() => setIsOpen(true)} label="Create A team" />
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <form onSubmit={handleTeamCreation} className="flex flex-col gap-y-5 p-5">
-          <input type="text" name="teamName" className="border-b-2" placeholder="Team Name"/>
-          <button className="font-primary font-regular underline">
-              Create
-          </button>
+        <form
+          onSubmit={handleTeamCreation}
+          className="flex flex-col gap-y-5 p-5"
+        >
+          <input
+            type="text"
+            name="teamName"
+            className="border-b-2"
+            placeholder="Team Name"
+          />
+          <Button label="Create" />
         </form>
       </Modal>
     </div>
