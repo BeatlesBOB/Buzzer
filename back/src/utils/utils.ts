@@ -7,6 +7,7 @@ export const createTeam = (id: string, name: string): Team => {
     name,
     point: 0,
     hasBuzzed: false,
+    users:[]
   };
 };
 
