@@ -42,7 +42,6 @@ export default function Home() {
         <h1 className="pointer-events-none font-primary font-black text-shadow text-6xl 2xl:text-9xl drop-shadow-2xl 2xl:drop-shadow-3xl text-center text-white">
           ENVIE DE BUZZER
         </h1>
-
         <div className="flex mt-1.5 gap-10 justify-center">
           <Button handleClick={createGame} label="Créer une partie" />
           <Button

@@ -1,30 +1,30 @@
-import { Team } from "../utils/interfaces";
+import { useContext } from "react";
+import { Team } from "../types/interfaces";
 import Button from "./Button";
+import { GameContext } from "../contexts/GameContextProvider";
 
-export interface Users {
+export interface IUsers {
   teams?: Array<Team>;
   isAdmin?: boolean;
-  updateTeamPoint?: (team: Team, point: number) => void;
-  resetTeamBuzzer?: (team: Team) => void;
-  joinTeam?: (team?: Team, name?: string) => void;
-  leave: (team: Team) => void;
+  leaveTeam?: (team: Team) => void;
+  updateTeamPoint: (team: Team, point: number) => void;
+  resetTeamBuzzer: (team: Team) => void;
 }
 
 export default function Users({
+  isAdmin,
   teams,
-  isAdmin = false,
+  leaveTeam,
   updateTeamPoint,
   resetTeamBuzzer,
-  joinTeam,
-  leave,
-}: Users) {
+}: IUsers) {
   return (
     <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
       {teams?.map((team: Team) => {
         return (
           <li className="p-5 shadow-lg flex font-primary" key={team.id}>
             <p className="capitalize  text-lg">{team.name}</p>
-            <Button label="Leave" handleClick={() => leave?.(team)} />
+            <Button label="Leave" handleClick={() => leaveTeam?.(team)} />
             {isAdmin && (
               <div className="flex ml-auto">
                 <input

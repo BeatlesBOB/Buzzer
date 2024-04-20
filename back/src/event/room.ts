@@ -22,12 +22,21 @@ export const createRoom = (socket: Socket) => {
 export const leaveRoom = (socket: Socket, { id, teamId }: Data) => {
   const room = Rooms.get(id);
   if (room) {
-    removeTeamById(room, teamId);
-    if (room.teams.size === 0) {
-      deleteRoom(room);
+    const team = getTeamById(room, teamId);
+    if (team) {
+      team.users = team.users.filter((user) => {
+        return user !== socket.id;
+      });
+
+      if (team.users.length === 0) {
+        removeTeamById(room, teamId);
+        if (room.teams.size === 0) {
+          deleteRoom(room);
+        }
+        io.to(room.id).emit("room:leave", { room });
+        socket.leave(room.id);
+      }
     }
-    io.to(room.id).emit("room:leave", { room });
-    socket.leave(room.id);
   }
 };
 
@@ -40,6 +49,7 @@ export const joinRoom = (socket: Socket, { id, teamId, name }: Data) => {
       team = createTeam(id, name);
       room.teams.set(id, team);
     }
+    team?.users.push(socket.id);
     socket.emit("room:team", { team: mapToString(team) });
     io.to(room.id).emit("room:join", {
       room: mapToString(room),

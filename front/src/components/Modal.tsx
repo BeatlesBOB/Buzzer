@@ -34,18 +34,19 @@ export default function Modal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div onClick={() => setIsOpen(false)}
+        <div
+          onClick={() => setIsOpen(false)}
           className="fixed inset-0 px-2 z-10 overflow-hidden flex items-center justify-center w-screen h-screen bg-gray-500 bg-opacity-75 transition-opacity"
         >
           <motion.div
-           onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             initial="initial"
             variants={dropIn}
             animate="visible"
             exit="exit"
-            className="bg-white rounded-md shadow-xl overflow-hidden max-w-md w-full sm:w-96 md:w-1/2 lg:w-2/3 xl:w-1/3 z-50">
+            className="bg-white rounded-md shadow-xl overflow-hidden max-w-md w-full sm:w-96 md:w-1/2 lg:w-2/3 xl:w-1/3 z-50"
+          >
             {children}
-            
           </motion.div>
         </div>
       )}
