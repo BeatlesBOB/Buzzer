@@ -19,43 +19,55 @@ export const createRoom = (socket: Socket) => {
   socket.emit("room:create", { room: mapToString(room), isAdmin: true });
 };
 
-export const leaveRoom = (socket: Socket, { id, teamId }: Data) => {
-  const room = Rooms.get(id);
+export const leaveRoom = (socket: Socket) => {
+  const { roomId, teamId, userId } = socket.data;
+  const room = Rooms.get(roomId);
   if (room) {
     const team = getTeamById(room, teamId);
     if (team) {
-      team.users = team.users.filter((user) => {
-        return user.id !== socket.id;
-      });
-
-      if (team.users.length === 0) {
-        removeTeamById(room, teamId);
-        if (room.teams.size === 0) {
-          deleteRoom(room);
+      if (userId) {
+        team.users = team.users.filter((user) => {
+          return user.id !== userId;
+        });
+        if (team.users.length === 0) {
+          removeTeamById(room, teamId);
         }
-        io.to(room.id).emit("room:leave", { room });
-        socket.leave(room.id);
+      } else {
+        removeTeamById(room, teamId);
       }
+
+      if (room.teams.size === 0) {
+        deleteRoom(room);
+      }
+
+      io.to(room.id).emit("room:leave", { room });
+      socket.leave(room.id);
     }
   }
 };
 
-export const joinRoom = (
-  socket: Socket,
-  { id, teamId, teamName, userName }: Data
-) => {
-  const room = Rooms.get(id);
-  if (room && (teamId || teamName)) {
+export const joinRoom = (socket: Socket) => {
+  const { roomId, teamId, teamName, userName } = socket.data;
+  const room = Rooms.get(roomId);
+  if (room) {
     let team = getTeamById(room, teamId);
-    if (!team && teamName) {
+    if (team) {
+      team?.users.push({
+        id: socket.id,
+        name: userName ?? `envie_de_buzzer_${socket.id}`,
+      });
+    } else if (teamName) {
       const id = uuidv4();
       team = createTeam(id, teamName);
       room.teams.set(id, team);
+    } else {
+      return io.to(room.id).emit("room:error", {
+        msg: "Provide atleast a team Name",
+      });
     }
-    team?.users.push({
-      id: socket.id,
-      name: userName ?? `envie_de_buzzer_${socket.id}`,
-    });
+
+    socket.data.teamId = team.id;
+    socket.data.teamName = teamName;
 
     io.to(room.id).emit("room:join", {
       room: mapToString(room),
@@ -64,8 +76,9 @@ export const joinRoom = (
   }
 };
 
-export const startGame = (socket: Socket, { id }: { id: string }) => {
-  const room = Rooms.get(id);
+export const startGame = (socket: Socket) => {
+  const { roomId } = socket.data;
+  const room = Rooms.get(roomId);
   if (room) {
     room.hasStarted = true;
     io.to(room.id).emit("room:start", { room: mapToString(room) });

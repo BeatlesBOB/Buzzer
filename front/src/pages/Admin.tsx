@@ -5,7 +5,7 @@ import Users from "../components/Users";
 import Button from "../components/Button";
 import { parseTeams } from "../utils/utils";
 import Modal from "../components/Modal";
-import { Team } from "../types/interfaces";
+import { Team, User } from "../types/interfaces";
 
 export default function Admin() {
   const {
@@ -44,7 +44,7 @@ export default function Admin() {
     <>
       <div className="grid grid-cols-2 h-dvh">
         <Users
-          leaveTeam={}
+          leaveTeam={(team) => setSelectedTeam(team)}
           isAdmin={isAdmin}
           teams={teams}
           updateTeamPoint={updateTeamPoint}
@@ -69,10 +69,11 @@ export default function Admin() {
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <ul>
-          {selectedTeam?.users.map((user:User) => {
-            return <li></li>;
+          {selectedTeam?.users.map((user: User) => {
+            return <li onClick={() => l}>{user.name}</li>;
           })}
         </ul>
+        <Button label="Delete team" />
       </Modal>
     </>
   );

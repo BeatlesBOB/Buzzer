@@ -18,6 +18,7 @@ export interface Data {
   point?: number;
   teamName?: string;
   userName?: string;
+  userId?: string;
 }
 
 export interface User {

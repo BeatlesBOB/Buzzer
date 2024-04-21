@@ -9,7 +9,7 @@ export interface Team {
   name: string;
   point: number;
   hasBuzzed: boolean;
-  users: Array<string>;
+  users: Array<User>;
 }
 
 export interface Data {
@@ -17,4 +17,9 @@ export interface Data {
   teamName: string;
   point?: number;
   userName?: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
 }
