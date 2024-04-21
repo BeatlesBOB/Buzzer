@@ -50,7 +50,6 @@ export default function Home() {
           />
         </div>
       </div>
-
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <QrScanner
           onDecode={joinGame}

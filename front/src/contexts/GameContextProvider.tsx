@@ -11,7 +11,7 @@ export interface IGameContext {
   setTeams: (teams: Array<Team>) => void;
   resetTeamBuzzer: (team: Team) => void;
   updateTeamPoint: (team: Team, point: number) => void;
-  joinOrCreateATeam: (team: Team | null) => void;
+  joinOrCreateATeam: (team: Team | null | undefined) => void;
   startGame: () => void;
   resetAllBuzzer: () => void;
   resetAllPoints: () => void;
@@ -44,7 +44,7 @@ export default function GameContextProvider({
     });
   };
 
-  const joinOrCreateATeam = (team: Team | null = null) => {
+  const joinOrCreateATeam = (team: Team | null | undefined = null) => {
     dispatch({
       type: "room:join",
       payload: { id: room?.id, teamId: team?.id },

@@ -25,7 +25,7 @@ export const leaveRoom = (socket: Socket, { id, teamId }: Data) => {
     const team = getTeamById(room, teamId);
     if (team) {
       team.users = team.users.filter((user) => {
-        return user !== socket.id;
+        return user.id !== socket.id;
       });
 
       if (team.users.length === 0) {
@@ -40,17 +40,23 @@ export const leaveRoom = (socket: Socket, { id, teamId }: Data) => {
   }
 };
 
-export const joinRoom = (socket: Socket, { id, teamId, name }: Data) => {
+export const joinRoom = (
+  socket: Socket,
+  { id, teamId, teamName, userName }: Data
+) => {
   const room = Rooms.get(id);
-  if (room && (teamId || name)) {
+  if (room && (teamId || teamName)) {
     let team = getTeamById(room, teamId);
-    if (!team && name) {
+    if (!team && teamName) {
       const id = uuidv4();
-      team = createTeam(id, name);
+      team = createTeam(id, teamName);
       room.teams.set(id, team);
     }
-    team?.users.push(socket.id);
-    socket.emit("room:team", { team: mapToString(team) });
+    team?.users.push({
+      id: socket.id,
+      name: userName ?? `envie_de_buzzer_${socket.id}`,
+    });
+
     io.to(room.id).emit("room:join", {
       room: mapToString(room),
       player: socket.data,
