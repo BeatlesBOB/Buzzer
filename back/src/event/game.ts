@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "..";
-import { getTeamById, mapToString, handleError } from "../utils/utils";
+import { getTeamById, handleError } from "../utils/utils";
 
 export const answer = (socket: Socket) => {
   const { teamId } = socket.data;
@@ -16,10 +16,10 @@ export const answer = (socket: Socket) => {
   }
 
   team.hasBuzzed = true;
-  io.to(room.id).emit("game:answer", { room: mapToString(room) });
+  io.to(room.id).emit("game:answer", { room });
   setTimeout(() => {
     team.hasBuzzed = false;
-    io.to(room.id).emit("game:answer", { room: mapToString(room) });
+    io.to(room.id).emit("game:answer", { room });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };
 
@@ -37,7 +37,7 @@ export const resetAllAnswer = (socket: Socket) => {
   room.teams.forEach((team) => {
     team.hasBuzzed = false;
   });
-  io.to(id).emit("game:answer", { room: mapToString(room) });
+  io.to(id).emit("game:answer", { room });
 };
 
 export const resetTeamAnswer = (socket: Socket) => {
@@ -56,5 +56,5 @@ export const resetTeamAnswer = (socket: Socket) => {
   }
 
   team.hasBuzzed = false;
-  io.to(id).emit("game:answer", { room: mapToString(room) });
+  io.to(id).emit("game:answer", { room });
 };

@@ -6,7 +6,6 @@ import {
   deleteRoom,
   getTeamById,
   initRoom,
-  mapToString,
   removeTeamById,
   handleError,
 } from "../utils/utils";
@@ -16,7 +15,7 @@ export const createRoom = (socket: Socket) => {
   socket.data.isAdmin = true;
   socket.join(id);
   const room = initRoom(id);
-  socket.emit("room:create", { room: mapToString(room), isAdmin: true });
+  socket.emit("room:create", { room: room, isAdmin: true });
 };
 
 export const leaveRoom = (socket: Socket, payload: any) => {
@@ -44,7 +43,7 @@ export const leaveRoom = (socket: Socket, payload: any) => {
     removeTeamById(room, teamId);
   }
 
-  if (room.teams.size === 0) {
+  if (room.teams.length === 0) {
     deleteRoom(room);
   }
 
@@ -72,7 +71,7 @@ export const joinRoom = (
   } else if (teamName) {
     const id = uuidv4();
     team = createTeam(id, teamName);
-    room.teams.set(id, team);
+    room.teams.push(team);
   } else {
     return handleError(socket, "Provide Atleast a Team name");
   }
@@ -81,7 +80,7 @@ export const joinRoom = (
   socket.data.teamName = teamName;
 
   io.to(room.id).emit("room:join", {
-    room: mapToString(room),
+    room,
     player: socket.data,
   });
 };
@@ -94,5 +93,5 @@ export const startGame = (socket: Socket) => {
   }
 
   room.hasStarted = true;
-  io.to(room.id).emit("room:start", { room: mapToString(room) });
+  io.to(room.id).emit("room:start", { room });
 };

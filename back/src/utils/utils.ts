@@ -14,23 +14,25 @@ export const createTeam = (id: string, name: string): Team => {
 };
 
 export const getTeamById = (room: Room, id: string): Team | undefined => {
-  const filtered = Array.from(
-    room.teams,
-    ([id, team]: [id: string, team: Team]) => ({
-      id,
-      team,
-    })
-  ).filter((room) => {
-    return room.team.id === id;
+  const index = room.teams.findIndex((team) => {
+    return team.id === id;
   });
 
-  return filtered[0]?.team;
+  if (index === -1) {
+    return undefined;
+  }
+
+  return room.teams[index];
 };
 
 export const removeTeamById = (room: Room, id: string) => {
-  const team = getTeamById(room, id);
-  if (team) {
-    room.teams.delete(team?.id);
+  const currentTeam = getTeamById(room, id);
+  const index = room.teams.findIndex((team) => {
+    team.id === currentTeam?.id;
+  });
+
+  if (index !== -1) {
+    room.teams.splice(index, 1);
   }
 };
 
@@ -39,15 +41,9 @@ export const deleteRoom = (room: Room) => {
 };
 
 export const initRoom = (id: string) => {
-  const room = { id, teams: new Map<string, Team>(), hasStarted: false };
+  const room = { id, teams: [], hasStarted: false };
   Rooms.set(id, room);
   return room;
-};
-
-export const mapToString = (map: any) => {
-  return JSON.stringify(map, (key, value) =>
-    value instanceof Map ? [...value] : value
-  );
 };
 
 export const handleError = (socket: Socket, msg: string) => {

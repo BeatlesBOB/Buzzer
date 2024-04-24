@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "..";
-import { getTeamById, mapToString, handleError } from "../utils/utils";
+import { getTeamById, handleError } from "../utils/utils";
 
 export const setPoint = (socket: Socket, { point }: { point: number }) => {
   const { teamId } = socket.data;
@@ -19,7 +19,7 @@ export const setPoint = (socket: Socket, { point }: { point: number }) => {
   }
 
   team.point = point || 0;
-  io.emit("game:status", { room: mapToString(room) });
+  io.emit("game:status", { room: room });
 };
 
 export const resetAllPoint = (socket: Socket) => {
@@ -34,5 +34,5 @@ export const resetAllPoint = (socket: Socket) => {
   room.teams.forEach((team) => {
     team.point = 0;
   });
-  io.emit("game:status", { room: mapToString(room) });
+  io.emit("game:status", { room });
 };

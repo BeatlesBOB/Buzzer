@@ -1,6 +1,6 @@
 export interface Room {
   id: string;
-  teams: Map<string, Team>;
+  teams: Array<Team>;
   hasStarted: boolean;
 }
 

@@ -5,7 +5,6 @@ import { createRoom, joinRoom, leaveRoom, startGame } from "./event/room";
 import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
 import { resetAllPoint, setPoint } from "./event/point";
 import { instrument } from "@socket.io/admin-ui";
-import { createTeam, initRoom, mapToString } from "./utils/utils";
 dotenv.config();
 
 const express = require("express");
