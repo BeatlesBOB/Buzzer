@@ -12,15 +12,6 @@ export interface Team {
   users: Array<User>;
 }
 
-export interface Data {
-  id: string;
-  teamId: string;
-  point?: number;
-  teamName?: string;
-  userName?: string;
-  userId?: string;
-}
-
 export interface User {
   id: string;
   name: string;

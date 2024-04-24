@@ -9,7 +9,7 @@ import {
   mapToString,
   removeTeamById,
 } from "../utils/utils";
-import { Data } from "../utils/interface";
+import { handleError } from "./error";
 
 export const createRoom = (socket: Socket) => {
   const id = uuidv4();
@@ -20,36 +20,46 @@ export const createRoom = (socket: Socket) => {
 };
 
 export const leaveRoom = (socket: Socket) => {
-  const { roomId, teamId, userId } = socket.data;
-  const room = Rooms.get(roomId);
-  if (room) {
-    const team = getTeamById(room, teamId);
-    if (team) {
-      if (userId) {
-        team.users = team.users.filter((user) => {
-          return user.id !== userId;
-        });
-        if (team.users.length === 0) {
-          removeTeamById(room, teamId);
-        }
-      } else {
-        removeTeamById(room, teamId);
-      }
+  const { teamId, userId } = socket.data;
+  const [id] = socket.rooms;
 
-      if (room.teams.size === 0) {
-        deleteRoom(room);
-      }
-
-      io.to(room.id).emit("room:leave", { room });
-      socket.leave(room.id);
-    }
+  const room = Rooms.get(id);
+  if (!room) {
+    return handleError(socket, "No Valid Room Provided");
   }
+
+  const team = getTeamById(room, teamId);
+  if (!team) {
+    return handleError(socket, "No Valid Team Id Provided");
+  }
+
+  if (userId) {
+    team.users = team.users.filter((user) => {
+      return user.id !== userId;
+    });
+    if (team.users.length === 0) {
+      removeTeamById(room, teamId);
+    }
+  } else {
+    removeTeamById(room, teamId);
+  }
+
+  if (room.teams.size === 0) {
+    deleteRoom(room);
+  }
+
+  io.to(room.id).emit("room:leave", { room });
+  socket.leave(room.id);
 };
 
-export const joinRoom = (socket: Socket) => {
-  const { roomId, teamId, teamName, userName } = socket.data;
-  const room = Rooms.get(roomId);
+export const joinRoom = (
+  socket: Socket,
+  { userName, teamName }: { userName: string; teamName: string }
+) => {
+  const [id] = socket.rooms;
+  const room = Rooms.get(id);
   if (room) {
+    const { teamId } = socket.data;
     let team = getTeamById(room, teamId);
     if (team) {
       team?.users.push({
@@ -77,8 +87,8 @@ export const joinRoom = (socket: Socket) => {
 };
 
 export const startGame = (socket: Socket) => {
-  const { roomId } = socket.data;
-  const room = Rooms.get(roomId);
+  const [id] = socket.rooms;
+  const room = Rooms.get(id);
   if (room) {
     room.hasStarted = true;
     io.to(room.id).emit("room:start", { room: mapToString(room) });
