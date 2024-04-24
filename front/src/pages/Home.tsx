@@ -1,19 +1,20 @@
 import { useContext, useEffect, useState, useCallback } from "react";
-import { SocketContext } from "../contexts/SocketContextProvider";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { GameContext } from "../contexts/GameContextProvider";
 import Button from "../components/Button";
+import useSocket from "../hook/useSocket";
+import { Room } from "../types/interfaces";
 
 export default function Home() {
-  const socket = useContext(SocketContext);
   const { setRoom, setIsAdmin } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { subscribe, dispatch, unSubscribe } = useSocket();
   const navigate = useNavigate();
 
   const createGame = () => {
-    socket.emit("room:create");
+    dispatch("room:create");
   };
 
   const joinGame = useCallback(
@@ -24,17 +25,18 @@ export default function Home() {
   );
 
   useEffect(() => {
-    socket.on("room:create", (payload) => {
-      const room = JSON.parse(payload.room);
+    subscribe("room:create", (socket, payload) => {
+      const room: Room = JSON.parse(payload.room);
       setRoom(room);
-      setIsAdmin(payload.isAdmin);
+      console.log(socket);
+      //setIsAdmin(socket.data.isAdmin);
       navigate(`lobby/${room.id}`);
     });
 
     return () => {
-      socket.off("room:create");
+      unSubscribe({ type: "room:create" });
     };
-  }, [socket, setIsAdmin, setRoom, navigate]);
+  }, [navigate, setIsAdmin, setRoom, subscribe, unSubscribe]);
 
   return (
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">

@@ -3,9 +3,9 @@ import QRCode from "react-qr-code";
 import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
 import Button from "../components/Button";
-import { parseTeams } from "../utils/utils";
 import Modal from "../components/Modal";
 import { Team, User } from "../types/interfaces";
+import useSocket from "../hook/useSocket";
 
 export default function Admin() {
   const {
@@ -19,6 +19,7 @@ export default function Admin() {
   } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
+  const {dispatch} = useSocket()
 
   const handleTeamSuppression = (team: Team) => {};
 
@@ -70,10 +71,12 @@ export default function Admin() {
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <ul>
           {selectedTeam?.users.map((user: User) => {
-            return <li onClick={() => l}>{user.name}</li>;
+            return <li onClick={()}>{user.name}</li>;
           })}
         </ul>
-        <Button label="Delete team" />
+        <Button label="Delete team" handleClick={() => {
+          dispatch("room:leave")
+        }}/>
       </Modal>
     </>
   );

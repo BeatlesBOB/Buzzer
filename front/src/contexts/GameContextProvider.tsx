@@ -31,45 +31,27 @@ export default function GameContextProvider({
   const { dispatch } = useSocket();
 
   const resetTeamBuzzer = (team: Team) => {
-    dispatch({
-      type: "game:buzzer:reset:team",
-      payload: { id: room?.id, teamId: team.id },
-    });
+    dispatch("game:buzzer:reset:team", { id: room?.id, teamId: team.id });
   };
 
   const updateTeamPoint = (team: Team, point: number) => {
-    dispatch({
-      type: "game:status",
-      payload: { id: room?.id, teamId: team.id, point },
-    });
+    dispatch("game:status", { id: room?.id, teamId: team.id, point });
   };
 
   const joinOrCreateATeam = (team: Team | null | undefined = null) => {
-    dispatch({
-      type: "room:join",
-      payload: { id: room?.id, teamId: team?.id },
-    });
+    dispatch("room:join", { id: room?.id, teamId: team?.id });
   };
 
   const startGame = () => {
-    dispatch({
-      type: "room:start",
-      payload: { id: room?.id },
-    });
+    dispatch("room:start", { id: room?.id });
   };
 
   const resetAllBuzzer = () => {
-    dispatch({
-      type: "game:buzzer:reset",
-      payload: { id: room?.id },
-    });
+    dispatch("game:buzzer:reset", { id: room?.id });
   };
 
   const resetAllPoints = () => {
-    dispatch({
-      type: "game:point:reset",
-      payload: { id: room?.id },
-    });
+    dispatch("game:point:reset", { id: room?.id });
   };
 
   return (

@@ -45,7 +45,7 @@ export const Rooms = new Map<string, Room>();
 const onConnection = (socket: Socket) => {
   socket.on("room:create", (payload) => createRoom(socket));
   socket.on("room:join", (payload) => joinRoom(socket, payload));
-  socket.on("room:leave", (payload) => leaveRoom(socket));
+  socket.on("room:leave", (payload) => leaveRoom(socket, payload));
   socket.on("room:start", (payload) => startGame(socket));
   socket.on("game:buzzer", (payload) => answer(socket));
   socket.on("game:buzzer:reset", (payload) => resetAllAnswer(socket));
