@@ -43,14 +43,14 @@ instrument(io, {
 export const Rooms = new Map<string, Room>();
 
 const onConnection = (socket: Socket) => {
-  socket.on("room:create", (payload) => createRoom(socket));
+  socket.on("room:create", () => createRoom(socket));
   socket.on("room:join", (payload) => joinRoom(socket, payload));
   socket.on("room:leave", (payload) => leaveRoom(socket, payload));
-  socket.on("room:start", (payload) => startGame(socket));
-  socket.on("game:buzzer", (payload) => answer(socket));
-  socket.on("game:buzzer:reset", (payload) => resetAllAnswer(socket));
-  socket.on("game:buzzer:reset:team", (payload) => resetTeamAnswer(socket));
-  socket.on("game:point:reset", (payload) => resetAllPoint(socket));
+  socket.on("room:start", () => startGame(socket));
+  socket.on("game:buzzer", () => answer(socket));
+  socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
+  socket.on("game:buzzer:reset:team", () => resetTeamAnswer(socket));
+  socket.on("game:point:reset", () => resetAllPoint(socket));
   socket.on("game:point", (payload) => setPoint(socket, payload));
 };
 
