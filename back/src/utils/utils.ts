@@ -1,3 +1,5 @@
+import { Socket } from "socket.io";
+import { io } from "..";
 import { Rooms } from "..";
 import { Room, Team } from "./interface";
 
@@ -7,7 +9,7 @@ export const createTeam = (id: string, name: string): Team => {
     name,
     point: 0,
     hasBuzzed: false,
-    users:[]
+    users: [],
   };
 };
 
@@ -46,4 +48,8 @@ export const mapToString = (map: any) => {
   return JSON.stringify(map, (key, value) =>
     value instanceof Map ? [...value] : value
   );
+};
+
+export const handleError = (socket: Socket, msg: string) => {
+  io.to(socket.id).emit("buzzer:notification", msg);
 };

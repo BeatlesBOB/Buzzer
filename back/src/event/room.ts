@@ -8,8 +8,8 @@ import {
   initRoom,
   mapToString,
   removeTeamById,
+  handleError,
 } from "../utils/utils";
-import { handleError } from "./error";
 
 export const createRoom = (socket: Socket) => {
   const id = uuidv4();

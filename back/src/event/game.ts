@@ -1,7 +1,6 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "..";
-import { getTeamById, mapToString } from "../utils/utils";
-import { handleError } from "./error";
+import { getTeamById, mapToString, handleError } from "../utils/utils";
 
 export const answer = (socket: Socket) => {
   const { teamId } = socket.data;
