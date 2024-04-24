@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import { Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
+import { parseTeams } from "../utils/utils";
 
 export default function Admin() {
   const {
@@ -16,30 +17,26 @@ export default function Admin() {
     resetAllPoints,
     updateTeamPoint,
     isAdmin,
+    setTeams,
   } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
-  const {dispatch} = useSocket()
+  const { dispatch, subscribe, unSubscribe } = useSocket();
 
-  const handleTeamSuppression = (team: Team) => {};
+  useEffect(() => {
+    subscribe("room:join", (socket, payload) => {
+      setTeams(parseTeams(JSON.parse(payload.room).teams) ?? []);
+    });
 
-  // const socket = useContext(SocketContext);
-  // ;
+    subscribe("game:status", (socket, payload) => {
+      setTeams(parseTeams(JSON.parse(payload.room).teams) ?? []);
+    });
 
-  // useEffect(() => {
-  //   socket.on("room:join", (payload) => {
-  //     setTeams?.(parseTeams(JSON.parse(payload.room).teams) ?? []);
-  //   });
-
-  //   socket.on("game:status", (payload) => {
-  //     setTeams?.(parseTeams(JSON.parse(payload.room).teams) ?? []);
-  //   });
-
-  //   return () => {
-  //     socket.off("room:join");
-  //     socket.off("game:status");
-  //   };
-  // }, [setTeams, socket]);
+    return () => {
+      unSubscribe("room:join");
+      unSubscribe("game:status");
+    };
+  }, [setTeams, subscribe, unSubscribe]);
 
   return (
     <>
@@ -71,12 +68,15 @@ export default function Admin() {
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <ul>
           {selectedTeam?.users.map((user: User) => {
-            return <li onClick={()}>{user.name}</li>;
+            return <li onClick={() => {}}>{user.name}</li>;
           })}
         </ul>
-        <Button label="Delete team" handleClick={() => {
-          dispatch("room:leave")
-        }}/>
+        <Button
+          label="Delete team"
+          handleClick={() => {
+            dispatch("room:leave");
+          }}
+        />
       </Modal>
     </>
   );

@@ -13,7 +13,7 @@ export default function useSocket() {
     socket.on(type, (payload) => callback?.(socket, payload));
   };
 
-  const unSubscribe = ({ type }: { type: string }) => {
+  const unSubscribe = (type: string) => {
     socket.off(type);
   };
 

@@ -34,7 +34,7 @@ export default function Home() {
     });
 
     return () => {
-      unSubscribe({ type: "room:create" });
+      unSubscribe("room:create");
     };
   }, [navigate, setIsAdmin, setRoom, subscribe, unSubscribe]);
 
