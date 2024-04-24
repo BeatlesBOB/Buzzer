@@ -21,12 +21,11 @@ export const createRoom = (socket: Socket) => {
 export const leaveRoom = (socket: Socket, payload: any) => {
   const { teamId, isAdmin } = socket.data;
   const [id] = socket.rooms;
-
-  const room = Rooms.get(id);
-  if (!room) {
-    return handleError(socket, "No Valid Room Provided");
+  if (!Rooms.has(id)) {
+    return handleError(socket, "No Room provided");
   }
 
+  const room = Rooms.get(id)!;
   const team = getTeamById(room, teamId);
   if (!team) {
     return handleError(socket, "No Valid Team Id Provided");
@@ -56,13 +55,14 @@ export const joinRoom = (
   { userName, teamName }: { userName: string; teamName: string }
 ) => {
   const [id] = socket.rooms;
-  const room = Rooms.get(id);
-  if (!room) {
+
+  if (!Rooms.has(id)) {
     return handleError(socket, "No Room provided");
   }
 
+  const room = Rooms.get(id)!;
   const { teamId } = socket.data;
-  let team = getTeamById(room!, teamId);
+  let team = getTeamById(room, teamId);
   if (team) {
     team.users.push({
       id: socket.id,
@@ -87,11 +87,10 @@ export const joinRoom = (
 
 export const startGame = (socket: Socket) => {
   const [id] = socket.rooms;
-  const room = Rooms.get(id);
-  if (!room) {
-    return handleError(socket, "Provide Atleast a Team name");
+  if (!Rooms.has(id)) {
+    return handleError(socket, "No Room provided");
   }
-
+  const room = Rooms.get(id)!;
   room.hasStarted = true;
   io.to(room.id).emit("room:start", { room });
 };
