@@ -6,7 +6,6 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import { Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
-import { parseTeams } from "../utils/utils";
 
 export default function Admin() {
   const {
@@ -25,11 +24,11 @@ export default function Admin() {
 
   useEffect(() => {
     subscribe("room:join", (socket, payload) => {
-      setTeams(parseTeams(JSON.parse(payload.room).teams) ?? []);
+      setTeams(payload.room.teams ?? []);
     });
 
     subscribe("game:status", (socket, payload) => {
-      setTeams(parseTeams(JSON.parse(payload.room).teams) ?? []);
+      setTeams(payload.room.teams ?? []);
     });
 
     return () => {

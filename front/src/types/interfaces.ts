@@ -1,7 +1,7 @@
 export interface Room {
-  id?: string;
-  teams: Array<unknown>;
-  hasStarted?: boolean;
+  id: string;
+  teams: Array<Team>;
+  hasStarted: boolean;
 }
 
 export interface Team {
@@ -10,13 +10,6 @@ export interface Team {
   point: number;
   hasBuzzed: boolean;
   users: Array<User>;
-}
-
-export interface Data {
-  id: string;
-  teamName: string;
-  point?: number;
-  userName?: string;
 }
 
 export interface User {
