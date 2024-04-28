@@ -52,7 +52,11 @@ export const leaveRoom = (socket: Socket, payload: any) => {
 
 export const joinRoom = (
   socket: Socket,
-  { userName, teamName }: { userName: string; teamName: string }
+  {
+    userName,
+    teamName,
+    teamId,
+  }: { userName: string; teamName: string; teamId: string }
 ) => {
   const [id] = socket.rooms;
 
@@ -61,7 +65,6 @@ export const joinRoom = (
   }
 
   const room = Rooms.get(id)!;
-  const { teamId } = socket.data;
   let team = getTeamById(room, teamId);
   if (team) {
     team.users.push({
@@ -81,7 +84,7 @@ export const joinRoom = (
 
   io.to(room.id).emit("room:join", {
     room,
-    player: socket.data,
+    player: { ...socket.data },
   });
 };
 
@@ -92,5 +95,7 @@ export const startGame = (socket: Socket) => {
   }
   const room = Rooms.get(id)!;
   room.hasStarted = true;
-  io.to(room.id).emit("room:start", { room });
+  io.to(room.id).emit("room:start", {
+    isStarted: true,
+  });
 };
