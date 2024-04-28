@@ -26,7 +26,7 @@ export const resetAllPoint = (socket: Socket) => {
   if (!Rooms.has(id) || !socket.data.isAdmin) {
     return handleError(
       socket,
-      "No room or your not the Adminof the current Game"
+      "No room or your not the Admin of the current Game"
     );
   }
 

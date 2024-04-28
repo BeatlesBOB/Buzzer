@@ -9,7 +9,7 @@ import { Team } from "../types/interfaces";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
-  const { isAdmin, room, setisGameStarted, isGameStarted } =
+  const { isAdmin, room, setisGameStarted, isGameStarted, setTeams } =
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -41,10 +41,15 @@ export default function Lobby() {
       setisGameStarted(payload.isStarted);
     });
 
+    subscribe("room:leave", (_socket, payload) => {
+      setTeams(payload.room.teams ?? []);
+    });
+
     return () => {
       unSubscribe("room:start");
+      unSubscribe("room:leave");
     };
-  }, [setisGameStarted, subscribe, unSubscribe]);
+  }, [setTeams, setisGameStarted, subscribe, unSubscribe]);
 
   const handeTeamLeave = () => {
     dispatch("room:leave");
@@ -86,7 +91,7 @@ export default function Lobby() {
           </form>
         </Modal>
       </div>
-      {isGameStarted && <Navigate to={`room/${room?.id}`} />}
+      {isGameStarted && <Navigate to={`buzzer/${room?.id}`} />}
     </>
   );
 }

@@ -22,9 +22,14 @@ export default function Admin() {
       setTeams(payload.room.teams ?? []);
     });
 
+    subscribe("room:leave", (_socket, payload) => {
+      setTeams(payload.room.teams ?? []);
+    });
+
     return () => {
       unSubscribe("room:join");
       unSubscribe("game:status");
+      unSubscribe("room:leave");
     };
   }, [setTeams, subscribe, unSubscribe]);
 

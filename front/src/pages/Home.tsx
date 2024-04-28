@@ -18,7 +18,7 @@ export default function Home() {
 
   const joinGame = useCallback(
     (gameId: string) => {
-      navigate(`room/${gameId}`);
+      navigate(`lobby/${gameId}`);
     },
     [navigate]
   );
