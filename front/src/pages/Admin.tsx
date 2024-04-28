@@ -85,7 +85,7 @@ export default function Admin() {
         <Button
           label="Delete team"
           handleClick={() => {
-            dispatch("room:leave");
+            dispatch("room:leave", { teamId: selectedTeam?.id });
           }}
         />
       </Modal>

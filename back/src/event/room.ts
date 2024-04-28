@@ -8,6 +8,7 @@ import {
   initRoom,
   removeTeamById,
   handleError,
+  removeUserFromTeam,
 } from "../utils/utils";
 
 export const createRoom = (socket: Socket) => {
@@ -32,13 +33,18 @@ export const leaveRoom = (socket: Socket, payload: any) => {
   }
 
   if (teamId) {
-    team.users = team.users.filter((user) => {
-      return user.id !== socket.id;
-    });
-    if (team.users.length === 0) {
-      removeTeamById(room, teamId);
+    removeUserFromTeam(team, socket.id);
+  } else if (isAdmin) {
+    if (payload.teamId) {
+      removeTeamById(room, payload.teamId);
     }
-  } else if (isAdmin && payload.teamId) {
+
+    if (payload.userId) {
+      removeUserFromTeam(team, payload.userId);
+    }
+  }
+
+  if (team.users.length === 0) {
     removeTeamById(room, teamId);
   }
 

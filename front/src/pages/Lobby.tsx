@@ -46,11 +46,19 @@ export default function Lobby() {
     };
   }, [setisGameStarted, subscribe, unSubscribe]);
 
+  const handeTeamLeave = () => {
+    dispatch("room:leave");
+  };
+
   return (
     <>
       <div className="grid grid-cols-2 h-dvh p-5">
         <div className="flex flex-col">
-          <Users isAdmin={isAdmin} joinTeam={joinOrCreateATeam} leaveTeam={} />
+          <Users
+            isAdmin={isAdmin}
+            joinTeam={joinOrCreateATeam}
+            leaveTeam={handeTeamLeave}
+          />
           <div className="mt-auto">
             <Button handleClick={() => setIsOpen(true)} label="Create A team" />
           </div>
@@ -78,7 +86,7 @@ export default function Lobby() {
           </form>
         </Modal>
       </div>
-      {isGameStarted && <Navigate to={`room:${room?.id}`} />}
+      {isGameStarted && <Navigate to={`room/${room?.id}`} />}
     </>
   );
 }

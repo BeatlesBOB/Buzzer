@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { io } from "..";
 import { Rooms } from "..";
-import { Room, Team } from "./interface";
+import { Room, Team, User } from "./interface";
 
 export const createTeam = (id: string, name: string): Team => {
   return {
@@ -48,4 +48,10 @@ export const initRoom = (id: string) => {
 
 export const handleError = (socket: Socket, msg: string) => {
   io.to(socket.id).emit("buzzer:notification", msg);
+};
+
+export const removeUserFromTeam = (team: Team, userId: string): User[] => {
+  return team.users.filter((user) => {
+    return user.id !== userId;
+  });
 };
