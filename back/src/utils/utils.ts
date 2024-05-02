@@ -13,7 +13,7 @@ export const createTeam = (id: string, name: string): Team => {
   };
 };
 
-export const getTeamById = (room: Room, id: string): Team | undefined => {
+export const getTeamById = (room: Room, id?: string): Team | undefined => {
   const index = room.teams.findIndex((team) => {
     return team.id === id;
   });

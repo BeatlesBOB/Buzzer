@@ -20,7 +20,7 @@ export const createRoom = (socket: Socket) => {
 };
 
 export const leaveRoom = (socket: Socket, payload: any) => {
-  const { teamId, isAdmin } = socket.data;
+  const { team: teamId, isAdmin } = socket.data;
   const [id] = socket.rooms;
   if (!Rooms.has(id)) {
     return handleError(socket, "No Room provided");
@@ -32,7 +32,7 @@ export const leaveRoom = (socket: Socket, payload: any) => {
     return handleError(socket, "No Valid Team Id Provided");
   }
 
-  if (teamId) {
+  if (team) {
     removeUserFromTeam(team, socket.id);
   } else if (isAdmin) {
     if (payload.teamId) {
@@ -62,35 +62,38 @@ export const joinRoom = (
     userName,
     teamName,
     teamId,
-  }: { userName: string; teamName: string; teamId: string }
+  }: { userName?: string; teamName?: string; teamId?: string }
 ) => {
   const [id] = socket.rooms;
 
   if (!Rooms.has(id)) {
     return handleError(socket, "No Room provided");
   }
-
   const room = Rooms.get(id)!;
   let team = getTeamById(room, teamId);
-  if (team) {
-    team.users.push({
-      id: socket.id,
-      name: userName ?? `envie_de_buzzer_${socket.id}`,
-    });
-  } else if (teamName) {
+
+  if (!team) {
     const id = uuidv4();
-    team = createTeam(id, teamName);
-    room.teams.push(team);
-  } else {
-    return handleError(socket, "Provide Atleast a Team name");
+    team = createTeam(id, teamName ?? `envie_de_buzzer_${id}`);
   }
 
-  socket.data.teamId = team.id;
-  socket.data.teamName = teamName;
+  const name = userName ?? `envie_de_buzzer_${socket.id}`;
+  team.users.push({
+    id: socket.id,
+    name: name ?? `envie_de_buzzer_${socket.id}`,
+  });
+
+  room.teams.push(team);
+
+  socket.data.team = team.id;
+  socket.data.name = name;
 
   io.to(room.id).emit("room:join", {
     room,
-    player: { ...socket.data },
+  });
+
+  io.to(socket.id).emit("room:user", {
+    user: { id: socket.id, ...socket.data },
   });
 };
 
@@ -102,6 +105,6 @@ export const startGame = (socket: Socket) => {
   const room = Rooms.get(id)!;
   room.hasStarted = true;
   io.to(room.id).emit("room:start", {
-    isStarted: true,
+    room,
   });
 };

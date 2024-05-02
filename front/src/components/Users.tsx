@@ -20,7 +20,7 @@ export default function Users({
   resetTeamBuzzer,
   joinTeam,
 }: IUsers) {
-  const { currentTeam } = useContext(GameContext);
+  const { user } = useContext(GameContext);
 
   return (
     <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
@@ -28,7 +28,7 @@ export default function Users({
         return (
           <li className="p-5 shadow-lg flex font-primary" key={team.id}>
             <p className="capitalize  text-lg">{team.name}</p>
-            {currentTeam?.id === team.id && leaveTeam && (
+            {user?.team === team.id && leaveTeam && (
               <Button label="Leave" handleClick={() => leaveTeam(team)} />
             )}
             {isAdmin && (

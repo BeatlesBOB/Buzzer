@@ -9,7 +9,7 @@ import { Team } from "../types/interfaces";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
-  const { isAdmin, room, setisGameStarted, isGameStarted, setTeams } =
+  const { isAdmin, room, setisGameStarted, isGameStarted, setTeams, setUser } =
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -39,19 +39,40 @@ export default function Lobby() {
 
   useEffect(() => {
     subscribe("room:start", (_socket, payload) => {
-      setisGameStarted(payload.isStarted);
-      navigate(`room/${room?.id}`);
+      const { room } = payload;
+      setisGameStarted(room.isStarted);
+      navigate(`room/${room.id}`);
     });
 
     subscribe("room:leave", (_socket, payload) => {
-      setTeams(payload.room.teams ?? []);
+      const { room } = payload;
+      setTeams(room.teams ?? []);
+    });
+
+    subscribe("room:join", (_socket, payload) => {
+      const { room } = payload;
+      setTeams(room.teams ?? []);
+    });
+
+    subscribe("room:user", (_socket, payload) => {
+      const { user } = payload;
+      setUser(user);
     });
 
     return () => {
       unSubscribe("room:start");
       unSubscribe("room:leave");
+      unSubscribe("room:join");
     };
-  }, [navigate, room?.id, setTeams, setisGameStarted, subscribe, unSubscribe]);
+  }, [
+    navigate,
+    room?.id,
+    setTeams,
+    setUser,
+    setisGameStarted,
+    subscribe,
+    unSubscribe,
+  ]);
 
   const handeTeamLeave = () => {
     dispatch("room:leave");

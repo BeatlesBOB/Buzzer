@@ -13,7 +13,7 @@ export const answer = (socket: Socket) => {
     return handleError(socket, "No room or the game isn't started yet");
   }
 
-  const { teamId } = socket.data;
+  const { team: teamId } = socket.data;
   const team = getTeamById(room, teamId);
 
   if (!team || team?.hasBuzzed) {
@@ -24,7 +24,7 @@ export const answer = (socket: Socket) => {
   io.to(room.id).emit("game:answer", { room });
   setTimeout(() => {
     team.hasBuzzed = false;
-    io.to(room.id).emit("h-dvh", { room });
+    io.to(room.id).emit("game:answer", { room });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };
 
@@ -45,13 +45,13 @@ export const resetAllAnswer = (socket: Socket) => {
 };
 
 export const resetTeamAnswer = (socket: Socket) => {
-  const { teamId } = socket.data;
   const [id] = socket.rooms;
 
   if (!Rooms.has(id)) {
     return handleError(socket, "No room provided");
   }
 
+  const { team: teamId } = socket.data;
   const room = Rooms.get(id)!;
   const team = getTeamById(room, teamId);
   if (!team) {

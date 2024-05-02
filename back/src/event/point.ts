@@ -3,7 +3,7 @@ import { Rooms, io } from "..";
 import { getTeamById, handleError } from "../utils/utils";
 
 export const setPoint = (socket: Socket, { point }: { point: number }) => {
-  const { teamId } = socket.data;
+  const { team: teamId } = socket.data;
   const [id] = socket.rooms;
   if (!Rooms.has(id) || !socket.data.isAdmin) {
     return handleError(
