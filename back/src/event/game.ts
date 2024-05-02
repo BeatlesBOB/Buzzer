@@ -21,10 +21,10 @@ export const answer = (socket: Socket) => {
   }
 
   team.hasBuzzed = true;
-  io.to(room.id).emit("game:answer", { room });
+  io.to(room.id).emit("game:answer", { room, team });
   setTimeout(() => {
     team.hasBuzzed = false;
-    io.to(room.id).emit("game:answer", { room });
+    io.to(room.id).emit("game:answer", { room, team });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };
 

@@ -4,7 +4,7 @@ import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import { Room, Team, User } from "../types/interfaces";
+import { Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 
 export default function Admin() {
@@ -28,15 +28,9 @@ export default function Admin() {
     });
 
     subscribe("game:answer", (_socket, payload) => {
-      const { room }: { room: Room } = payload;
-      const index = room.teams.findIndex((team: Team) => {
-        team.hasBuzzed === true;
-      });
-
-      if (index !== -1) {
-        setTeamAnswer(room.teams[index]);
-        setIsOpen(true);
-      }
+      const { team } = payload;
+      setTeamAnswer(team);
+      setIsOpen(true);
     });
 
     return () => {
