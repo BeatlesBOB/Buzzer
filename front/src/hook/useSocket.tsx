@@ -1,5 +1,5 @@
 import { Socket, io } from "socket.io-client";
-const socket: Socket = io("http://localhost:3000");
+const socket: Socket = io(import.meta.env.BACKEND_URL);
 
 export default function useSocket() {
   const dispatch = (type: string, payload?: object) => {
