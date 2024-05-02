@@ -1,5 +1,5 @@
 import { Socket, io } from "socket.io-client";
-const socket: Socket = io(import.meta.env.BACKEND_URL);
+const socket: Socket = io(import.meta.env.VITE_BACKEND_URL);
 
 export default function useSocket() {
   const dispatch = (type: string, payload?: object) => {
