@@ -80,7 +80,7 @@ export const joinRoom = (
   const name = userName ?? `envie_de_buzzer_${socket.id}`;
   team.users.push({
     id: socket.id,
-    name: name ?? `envie_de_buzzer_${socket.id}`,
+    name: name,
   });
 
   room.teams.push(team);
