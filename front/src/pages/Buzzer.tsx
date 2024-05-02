@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo } from "react";
 import useSocket from "../hook/useSocket";
 import { GameContext } from "../contexts/GameContextProvider";
 import useToasts from "../hook/useToasts";
+import { Room } from "../types/interfaces";
 
 export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
@@ -15,21 +16,25 @@ export default function Buzzer() {
   }, [room]);
 
   useEffect(() => {
-    subscribe("game:answer", (_socket, payload) => {
+    const handleTeamAnswer = (payload: { room: Room }) => {
       const { room } = payload;
       setTeams(room.teams);
-    });
+    };
 
-    subscribe("buzzer:notification", (_socket, payload) => {
+    const handleError = (payload: string) => {
       pushToast({
         title: "Whooops nan mon on savais que ça pouvais pas etre parfait",
         desc: payload,
       });
-    });
+    };
+
+    subscribe("game:answer", handleTeamAnswer);
+
+    subscribe("buzzer:notification", handleError);
 
     return () => {
-      unSubscribe("game:answer");
-      unSubscribe("buzzer:notification");
+      unSubscribe("game:answer", handleTeamAnswer);
+      unSubscribe("buzzer:notification", handleError);
     };
   }, [pushToast, setTeams, subscribe, unSubscribe]);
 

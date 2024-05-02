@@ -5,20 +5,15 @@ export default function useSocket() {
   const dispatch = (type: string, payload?: object) => {
     socket.emit(type, payload);
   };
-  const subscribe = (
-    type: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback: (socket: Socket, payload?: any) => void
-  ) => {
-    socket.on(type, (payload) => callback?.(socket, payload));
+  const subscribe = (type: string, callback: (...args: any[]) => void) => {
+    socket.on(type, (payload) => callback?.(payload));
   };
 
-  const unSubscribe = (type: string) => {
-    socket.off(type);
+  const unSubscribe = (type: string, callback: (...args: any[]) => void) => {
+    socket.off(type, callback);
   };
 
   return {
-    socket,
     dispatch,
     subscribe,
     unSubscribe,

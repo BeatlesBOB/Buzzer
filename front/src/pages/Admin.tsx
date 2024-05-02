@@ -4,7 +4,7 @@ import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import { Team, User } from "../types/interfaces";
+import { Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 
 export default function Admin() {
@@ -15,29 +15,29 @@ export default function Admin() {
   const [teamAnswer, setTeamAnswer] = useState<Team | undefined>(undefined);
 
   useEffect(() => {
-    subscribe("room:join", (_socket, payload) => {
+    const handleTeamsUpdate = (payload: { room: Room }) => {
       setTeams(payload.room.teams ?? []);
-    });
+    };
 
-    subscribe("game:status", (_socket, payload) => {
-      setTeams(payload.room.teams ?? []);
-    });
-
-    subscribe("room:leave", (_socket, payload) => {
-      setTeams(payload.room.teams ?? []);
-    });
-
-    subscribe("game:answer", (_socket, payload) => {
+    const handleAnswer = (payload: { team: Team }) => {
       const { team } = payload;
       setTeamAnswer(team);
       setIsOpen(true);
-    });
+    };
+
+    subscribe("room:join", handleTeamsUpdate);
+
+    subscribe("game:status", handleTeamsUpdate);
+
+    subscribe("room:leave", handleTeamsUpdate);
+
+    subscribe("game:answer", handleAnswer);
 
     return () => {
-      unSubscribe("room:join");
-      unSubscribe("game:status");
-      unSubscribe("room:leave");
-      unSubscribe("game:answer");
+      unSubscribe("room:join", handleTeamsUpdate);
+      unSubscribe("game:status", handleTeamsUpdate);
+      unSubscribe("room:leave", handleTeamsUpdate);
+      unSubscribe("game:answer", handleAnswer);
     };
   }, [setTeams, subscribe, unSubscribe]);
 

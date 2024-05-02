@@ -5,7 +5,7 @@ import Modal from "../components/Modal";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Team } from "../types/interfaces";
+import { Room, Team, User } from "../types/interfaces";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
@@ -38,31 +38,34 @@ export default function Lobby() {
   };
 
   useEffect(() => {
-    subscribe("room:start", (_socket, payload) => {
+    const handleStart = (payload: { room: Room }) => {
       const { room } = payload;
-      setisGameStarted(room.isStarted);
+      setisGameStarted(room.hasStarted);
       navigate(`room/${room.id}`);
-    });
+    };
 
-    subscribe("room:leave", (_socket, payload) => {
+    const handleTeamsUpdate = (payload: { room: Room }) => {
       const { room } = payload;
       setTeams(room.teams ?? []);
-    });
+    };
 
-    subscribe("room:join", (_socket, payload) => {
-      const { room } = payload;
-      setTeams(room.teams ?? []);
-    });
-
-    subscribe("room:user", (_socket, payload) => {
+    const handleUserUpdate = (payload: { user: User }) => {
       const { user } = payload;
       setUser(user);
-    });
+    };
+
+    subscribe("room:start", handleStart);
+
+    subscribe("room:leave", handleTeamsUpdate);
+
+    subscribe("room:join", handleTeamsUpdate);
+
+    subscribe("room:user", handleUserUpdate);
 
     return () => {
-      unSubscribe("room:start");
-      unSubscribe("room:leave");
-      unSubscribe("room:join");
+      unSubscribe("room:start", handleStart);
+      unSubscribe("room:leave", handleTeamsUpdate);
+      unSubscribe("room:join", handleUserUpdate);
     };
   }, [
     navigate,

@@ -12,7 +12,7 @@ export interface IGameContext {
   setRoom: (room: Room) => void;
   isAdmin: boolean;
   setIsAdmin: (isAdmin: boolean) => void;
-  setTeams: (team: Team) => void;
+  setTeams: (team: Team[]) => void;
   setisGameStarted: (isGameStarted: boolean) => void;
   isGameStarted: boolean;
   user?: User;
@@ -32,9 +32,9 @@ export default function GameContextProvider({
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const setTeams = useCallback(
-    (team: Team) => {
+    (teams: Team[]) => {
       const nRoom = { ...room };
-      nRoom.teams?.push(team);
+      nRoom.teams = teams;
       setRoom(nRoom);
     },
     [room]

@@ -5,6 +5,7 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 import { GameContext } from "../contexts/GameContextProvider";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
+import { Room } from "../types/interfaces";
 
 export default function Home() {
   const { setRoom, setIsAdmin } = useContext(GameContext);
@@ -24,7 +25,7 @@ export default function Home() {
   );
 
   useEffect(() => {
-    subscribe("room:create", (_socket, payload) => {
+    const handleRoomCreation = (payload: { room: Room; isAdmin: boolean }) => {
       const { room, isAdmin } = payload;
       setRoom(room);
       setIsAdmin(isAdmin);
@@ -33,10 +34,11 @@ export default function Home() {
       } else {
         navigate(`lobby/${room.id}`);
       }
-    });
+    };
+    subscribe("room:create", handleRoomCreation);
 
     return () => {
-      unSubscribe("room:create");
+      unSubscribe("room:create", handleRoomCreation);
     };
   }, [navigate, setIsAdmin, setRoom, subscribe, unSubscribe]);
 
