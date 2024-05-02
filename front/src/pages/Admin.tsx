@@ -4,7 +4,7 @@ import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import { Team, User } from "../types/interfaces";
+import { Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 
 export default function Admin() {
@@ -12,6 +12,7 @@ export default function Admin() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
   const { dispatch, subscribe, unSubscribe } = useSocket();
+  const [teamAnswer, setTeamAnswer] = useState<Team | undefined>(undefined);
 
   useEffect(() => {
     subscribe("room:join", (_socket, payload) => {
@@ -26,10 +27,23 @@ export default function Admin() {
       setTeams(payload.room.teams ?? []);
     });
 
+    subscribe("game:answer", (_socket, payload) => {
+      const { room }: { room: Room } = payload;
+      const index = room.teams.findIndex((team: Team) => {
+        team.hasBuzzed === true;
+      });
+
+      if (index !== -1) {
+        setTeamAnswer(room.teams[index]);
+        setIsOpen(true);
+      }
+    });
+
     return () => {
       unSubscribe("room:join");
       unSubscribe("game:status");
       unSubscribe("room:leave");
+      unSubscribe("game:answer");
     };
   }, [setTeams, subscribe, unSubscribe]);
 
@@ -82,17 +96,27 @@ export default function Admin() {
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <ul>
-          {selectedTeam?.users.map((user: User) => {
-            return <li onClick={() => {}}>{user.name}</li>;
-          })}
-        </ul>
-        <Button
-          label="Delete team"
-          handleClick={() => {
-            dispatch("room:leave", { teamId: selectedTeam?.id });
-          }}
-        />
+        {selectedTeam && (
+          <>
+            <ul>
+              {selectedTeam?.users.map((user: User) => {
+                return <li onClick={() => {}}>{user.name}</li>;
+              })}
+            </ul>
+            <Button
+              label="Delete team"
+              handleClick={() => {
+                dispatch("room:leave", { teamId: selectedTeam?.id });
+              }}
+            />
+          </>
+        )}
+        {teamAnswer && (
+          <>
+            <h1>{teamAnswer.name}</h1>
+            <h2>{teamAnswer.point}</h2>
+          </>
+        )}
       </Modal>
     </>
   );

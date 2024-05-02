@@ -4,7 +4,7 @@ import Users from "../components/Users";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Team } from "../types/interfaces";
 
 export default function Lobby() {
@@ -12,6 +12,7 @@ export default function Lobby() {
   const { isAdmin, room, setisGameStarted, isGameStarted, setTeams } =
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const { subscribe, unSubscribe } = useSocket();
 
@@ -39,6 +40,7 @@ export default function Lobby() {
   useEffect(() => {
     subscribe("room:start", (_socket, payload) => {
       setisGameStarted(payload.isStarted);
+      navigate(`room/${room?.id}`);
     });
 
     subscribe("room:leave", (_socket, payload) => {
@@ -49,7 +51,7 @@ export default function Lobby() {
       unSubscribe("room:start");
       unSubscribe("room:leave");
     };
-  }, [setTeams, setisGameStarted, subscribe, unSubscribe]);
+  }, [navigate, room?.id, setTeams, setisGameStarted, subscribe, unSubscribe]);
 
   const handeTeamLeave = () => {
     dispatch("room:leave");

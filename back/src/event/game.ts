@@ -24,7 +24,7 @@ export const answer = (socket: Socket) => {
   io.to(room.id).emit("game:answer", { room });
   setTimeout(() => {
     team.hasBuzzed = false;
-    io.to(room.id).emit("game:answer", { room });
+    io.to(room.id).emit("h-dvh", { room });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };
 
@@ -60,4 +60,17 @@ export const resetTeamAnswer = (socket: Socket) => {
 
   team.hasBuzzed = false;
   io.to(id).emit("game:answer", { room });
+};
+
+export const gamePaused = (socket: Socket) => {
+  const [id] = socket.rooms;
+  if (!Rooms.has(id) || !socket.data.isAdmin) {
+    return handleError(
+      socket,
+      "No room or your not the admin of the current room"
+    );
+  }
+
+  const room = Rooms.get(id)!;
+  room.hasStarted = false;
 };
