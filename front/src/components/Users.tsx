@@ -28,7 +28,7 @@ export default function Users({
         return (
           <li className="p-5 shadow-lg flex font-primary" key={team.id}>
             <p className="capitalize  text-lg">{team.name}</p>
-            {currentTeam.id === team.id && leaveTeam && (
+            {currentTeam?.id === team.id && leaveTeam && (
               <Button label="Leave" handleClick={() => leaveTeam(team)} />
             )}
             {isAdmin && (

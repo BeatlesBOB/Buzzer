@@ -8,7 +8,7 @@ import { Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 
 export default function Admin() {
-  const { room, teams, isAdmin, setTeams } = useContext(GameContext);
+  const { room, isAdmin, setTeams } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
   const { dispatch, subscribe, unSubscribe } = useSocket();
@@ -74,7 +74,7 @@ export default function Admin() {
           resetTeamBuzzer={resetTeamBuzzer}
           leaveTeam={(team) => setSelectedTeam(team)}
           isAdmin={isAdmin}
-          teams={teams}
+          teams={room?.teams}
           updateTeamPoint={updateTeamPoint}
         />
         <div className="flex flex-col items-center justify-center gap-6 h-full">

@@ -5,14 +5,14 @@ import useToasts from "../hook/useToasts";
 
 export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
-  const { setTeams, teams } = useContext(GameContext);
+  const { room, setTeams } = useContext(GameContext);
   const { pushToast } = useToasts();
 
   const isDisabled = useMemo(() => {
-    return teams?.some((team) => {
+    return room?.teams?.some((team) => {
       return team.hasBuzzed === true;
     });
-  }, [teams]);
+  }, [room]);
 
   useEffect(() => {
     subscribe("game:answer", (_socket, payload) => {
