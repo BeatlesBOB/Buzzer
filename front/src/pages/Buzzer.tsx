@@ -6,7 +6,7 @@ import { Room } from "../types/interfaces";
 
 export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
-  const { room, setTeams } = useContext(GameContext);
+  const { room, setRoom } = useContext(GameContext);
   const { pushToast } = useToasts();
 
   const isDisabled = useMemo(() => {
@@ -18,7 +18,7 @@ export default function Buzzer() {
   useEffect(() => {
     const handleTeamAnswer = (payload: { room: Room }) => {
       const { room } = payload;
-      setTeams(room.teams);
+      setRoom(room);
     };
 
     const handleError = (payload: string) => {

@@ -9,7 +9,7 @@ import useSocket from "../hook/useSocket";
 import Title from "../components/Title";
 
 export default function Admin() {
-  const { room, isAdmin, setTeams } = useContext(GameContext);
+  const { room, isAdmin, setRoom } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
   const { dispatch, subscribe, unSubscribe } = useSocket();
@@ -17,7 +17,8 @@ export default function Admin() {
 
   useEffect(() => {
     const handleTeamsUpdate = (payload: { room: Room }) => {
-      setTeams(payload.room.teams ?? []);
+      const { room } = payload;
+      setRoom(room);
     };
 
     const handleAnswer = (payload: { team: Team }) => {

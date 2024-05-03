@@ -9,7 +9,7 @@ import { Room, Team, User } from "../types/interfaces";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
-  const { isAdmin, room, setisGameStarted, setTeams, setUser } =
+  const { isAdmin, room, setisGameStarted, setUser, setRoom } =
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export default function Lobby() {
 
     const handleTeamsUpdate = (payload: { room: Room }) => {
       const { room } = payload;
-      setTeams(room.teams ?? []);
+      setRoom(room);
     };
 
     const handleUserUpdate = (payload: { user: User }) => {
