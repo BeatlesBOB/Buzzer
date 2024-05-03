@@ -65,6 +65,7 @@ export const joinRoom = (
     teamId,
   }: { userName?: string; teamName?: string; teamId?: string; roomId: string }
 ) => {
+  console.log(roomId);
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
   }

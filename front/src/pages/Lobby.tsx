@@ -4,7 +4,7 @@ import Users from "../components/Users";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Room, Team, User } from "../types/interfaces";
 
 export default function Lobby() {
@@ -13,6 +13,7 @@ export default function Lobby() {
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const { subscribe, unSubscribe } = useSocket();
 
@@ -31,7 +32,7 @@ export default function Lobby() {
     userName: string | null = null
   ) => {
     dispatch("room:join", {
-      roomId: room?.id,
+      roomId: id,
       userName,
       teamName: team.name,
       teamId: team.id,
