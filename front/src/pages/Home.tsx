@@ -46,31 +46,6 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    let wakeLock: WakeLockSentinel | null = null;
-
-    async function makeDeviceWakeLocked() {
-      try {
-        wakeLock = await navigator.wakeLock.request("screen");
-      } catch (err: any) {
-        pushToast({
-          title: "Whooops nan mon on savais que ça pouvais pas etre parfait",
-          desc: `${err.name}, ${err.message}`,
-        });
-      }
-    }
-
-    makeDeviceWakeLocked();
-
-    return () => {
-      if (wakeLock) {
-        wakeLock.release().then(() => {
-          wakeLock = null;
-        });
-      }
-    };
-  }, []);
-
   return (
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
       <div className="row-start-2 col-start-2 col-end-3">
