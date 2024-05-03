@@ -28,7 +28,7 @@ export default function Home() {
   );
 
   useEffect(() => {
-    function handleRoomCreation(payload: { room: Room; isAdmin: boolean }) {
+    const handleRoomCreation = (payload: { room: Room; isAdmin: boolean }) => {
       const { room, isAdmin } = payload;
       setRoom(room);
       setIsAdmin(isAdmin);
@@ -37,7 +37,7 @@ export default function Home() {
       } else {
         navigate(`lobby/${room.id}`);
       }
-    }
+    };
 
     subscribe("room:create", handleRoomCreation);
 
