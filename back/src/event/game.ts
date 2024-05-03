@@ -3,17 +3,16 @@ import { Rooms, io } from "..";
 import { getTeamById, handleError } from "../utils/utils";
 
 export const answer = (socket: Socket) => {
-  const [id] = socket.rooms;
-  if (!Rooms.has(id)) {
+  const { team: teamId, room: roomId } = socket.data;
+  if (!Rooms.has(roomId)) {
     return handleError(socket, "No room provided");
   }
 
-  const room = Rooms.get(id)!;
+  const room = Rooms.get(roomId)!;
   if (!room?.hasStarted) {
     return handleError(socket, "No room or the game isn't started yet");
   }
 
-  const { team: teamId } = socket.data;
   const team = getTeamById(room, teamId);
 
   if (!team || team?.hasBuzzed) {
@@ -29,37 +28,37 @@ export const answer = (socket: Socket) => {
 };
 
 export const resetAllAnswer = (socket: Socket) => {
-  const [id] = socket.rooms;
-  if (!Rooms.has(id) || !socket.data.isAdmin) {
+  const { room: roomId } = socket.data;
+  if (!Rooms.has(roomId) || !socket.data.isAdmin) {
     return handleError(
       socket,
       "No room or your not the admin of the current room"
     );
   }
 
-  const room = Rooms.get(id)!;
+  const room = Rooms.get(roomId)!;
   room.teams.forEach((team) => {
     team.hasBuzzed = false;
   });
-  io.to(id).emit("game:answer", { room });
+
+  io.to(room.id).emit("game:answer", { room });
 };
 
 export const resetTeamAnswer = (socket: Socket) => {
-  const [id] = socket.rooms;
+  const { team: teamId, room: roomId } = socket.data;
 
-  if (!Rooms.has(id)) {
+  if (!Rooms.has(roomId)) {
     return handleError(socket, "No room provided");
   }
 
-  const { team: teamId } = socket.data;
-  const room = Rooms.get(id)!;
+  const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);
   if (!team) {
     return handleError(socket, "No Team provided");
   }
 
   team.hasBuzzed = false;
-  io.to(id).emit("game:answer", { room });
+  io.to(room.id).emit("game:answer", { room });
 };
 
 export const gamePaused = (socket: Socket) => {

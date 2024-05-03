@@ -3,15 +3,14 @@ import { Rooms, io } from "..";
 import { getTeamById, handleError } from "../utils/utils";
 
 export const setPoint = (socket: Socket, { point }: { point: number }) => {
-  const { team: teamId } = socket.data;
-  const [id] = socket.rooms;
-  if (!Rooms.has(id) || !socket.data.isAdmin) {
+  const { team: teamId, room: roomId } = socket.data;
+  if (!Rooms.has(roomId) || !socket.data.isAdmin) {
     return handleError(
       socket,
       "No room or your not the Admin of the current Game"
     );
   }
-  const room = Rooms.get(id)!;
+  const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);
   if (!team) {
     return handleError(socket, "No team provided");
@@ -22,15 +21,15 @@ export const setPoint = (socket: Socket, { point }: { point: number }) => {
 };
 
 export const resetAllPoint = (socket: Socket) => {
-  const [id] = socket.rooms;
-  if (!Rooms.has(id) || !socket.data.isAdmin) {
+  const { room: roomId, isAdmin } = socket.data;
+  if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
       socket,
       "No room or your not the Admin of the current Game"
     );
   }
 
-  const room = Rooms.get(id)!;
+  const room = Rooms.get(roomId)!;
   room.teams.forEach((team) => {
     team.point = 0;
   });

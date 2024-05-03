@@ -72,6 +72,10 @@ export default function Lobby() {
     };
   }, []);
 
+  useEffect(() => {
+    dispatch("room:lobby", { lobby: id });
+  }, []);
+
   const handeTeamLeave = () => {
     dispatch("room:leave");
   };

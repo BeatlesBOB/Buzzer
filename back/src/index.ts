@@ -1,7 +1,13 @@
 import dotenv from "dotenv";
 import { Socket } from "socket.io";
 import { Room } from "./utils/interface";
-import { createRoom, joinRoom, leaveRoom, startGame } from "./event/room";
+import {
+  createRoom,
+  handleLobbyStatus,
+  joinRoom,
+  leaveRoom,
+  startGame,
+} from "./event/room";
 import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
 import { resetAllPoint, setPoint } from "./event/point";
 import { instrument } from "@socket.io/admin-ui";
@@ -45,6 +51,7 @@ const onConnection = (socket: Socket) => {
   socket.on("room:create", () => createRoom(socket));
   socket.on("room:join", (payload) => joinRoom(socket, payload));
   socket.on("room:leave", (payload) => leaveRoom(socket, payload));
+  socket.on("room:lobby", (payload) => handleLobbyStatus(socket, payload));
   socket.on("room:start", () => startGame(socket));
   socket.on("game:buzzer", () => answer(socket));
   socket.on("game:buzzer:reset", () => resetAllAnswer(socket));

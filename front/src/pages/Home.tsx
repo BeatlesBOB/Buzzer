@@ -35,6 +35,7 @@ export default function Home() {
       if (isAdmin) {
         navigate(`admin/${room.id}`);
       } else {
+        dispatch("room:lobby", { lobby: room.id });
         navigate(`lobby/${room.id}`);
       }
     };
