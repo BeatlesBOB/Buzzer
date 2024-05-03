@@ -4,12 +4,12 @@ import Users from "../components/Users";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Room, Team, User } from "../types/interfaces";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
-  const { isAdmin, room, setisGameStarted, isGameStarted, setTeams, setUser } =
+  const { isAdmin, room, setisGameStarted, setTeams, setUser } =
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -31,6 +31,7 @@ export default function Lobby() {
     userName: string | null = null
   ) => {
     dispatch("room:join", {
+      roomId:room?.id,
       userName,
       teamName: team.name,
       teamId: team.id,
@@ -53,7 +54,6 @@ export default function Lobby() {
       const { user } = payload;
       setUser(user);
     };
-
     subscribe("room:start", handleStart);
 
     subscribe("room:leave", handleTeamsUpdate);
@@ -76,6 +76,7 @@ export default function Lobby() {
     subscribe,
     unSubscribe,
   ]);
+
 
   const handeTeamLeave = () => {
     dispatch("room:leave");
@@ -117,7 +118,6 @@ export default function Lobby() {
           </form>
         </Modal>
       </div>
-      {isGameStarted && <Navigate to={`buzzer/${room?.id}`} />}
     </>
   );
 }

@@ -59,17 +59,18 @@ export const leaveRoom = (socket: Socket, payload: any) => {
 export const joinRoom = (
   socket: Socket,
   {
+    roomId,
     userName,
     teamName,
     teamId,
-  }: { userName?: string; teamName?: string; teamId?: string }
+  }: { userName?: string; teamName?: string; teamId?: string,roomId:string }
 ) => {
-  const [id] = socket.rooms;
 
-  if (!Rooms.has(id)) {
+  if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
   }
-  const room = Rooms.get(id)!;
+
+  const room = Rooms.get(roomId)!;
   let team = getTeamById(room, teamId);
 
   if (!team) {
@@ -95,6 +96,8 @@ export const joinRoom = (
   io.to(socket.id).emit("room:user", {
     user: { id: socket.id, ...socket.data },
   });
+
+  socket.join(roomId)
 };
 
 export const startGame = (socket: Socket) => {
