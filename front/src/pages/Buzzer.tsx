@@ -36,7 +36,7 @@ export default function Buzzer() {
       unSubscribe("game:answer", handleTeamAnswer);
       unSubscribe("buzzer:notification", handleError);
     };
-  }, [pushToast, setTeams, subscribe, unSubscribe]);
+  }, []);
 
   const handleAnswer = () => {
     dispatch("game:answer");

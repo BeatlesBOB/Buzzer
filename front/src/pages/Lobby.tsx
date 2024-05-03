@@ -31,7 +31,7 @@ export default function Lobby() {
     userName: string | null = null
   ) => {
     dispatch("room:join", {
-      roomId:room?.id,
+      roomId: room?.id,
       userName,
       teamName: team.name,
       teamId: team.id,
@@ -68,15 +68,7 @@ export default function Lobby() {
       unSubscribe("room:join", handleUserUpdate);
       unSubscribe("room:user", handleUserUpdate);
     };
-  }, [
-    navigate,
-    setTeams,
-    setUser,
-    setisGameStarted,
-    subscribe,
-    unSubscribe,
-  ]);
-
+  }, []);
 
   const handeTeamLeave = () => {
     dispatch("room:leave");

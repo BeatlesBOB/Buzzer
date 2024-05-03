@@ -14,7 +14,7 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { subscribe, dispatch, unSubscribe } = useSocket();
   const navigate = useNavigate();
-  const {pushToast} = useToasts()
+  const { pushToast } = useToasts();
 
   const createGame = () => {
     dispatch("room:create");
@@ -28,7 +28,7 @@ export default function Home() {
   );
 
   useEffect(() => {
-    const handleRoomCreation = (payload: { room: Room; isAdmin: boolean }) => {
+    function handleRoomCreation(payload: { room: Room; isAdmin: boolean }) {
       const { room, isAdmin } = payload;
       setRoom(room);
       setIsAdmin(isAdmin);
@@ -37,18 +37,19 @@ export default function Home() {
       } else {
         navigate(`lobby/${room.id}`);
       }
-    };
+    }
+
     subscribe("room:create", handleRoomCreation);
 
     return () => {
       unSubscribe("room:create", handleRoomCreation);
     };
-  }, [navigate, setIsAdmin, setRoom, subscribe, unSubscribe]);
+  }, []);
 
   return (
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
       <div className="row-start-2 col-start-2 col-end-3">
-        <Title />       
+        <Title />
         <div className="flex mt-1.5 gap-10 justify-center">
           <Button handleClick={createGame} label="Créer une partie" />
           <Button
@@ -62,9 +63,10 @@ export default function Home() {
           onDecode={joinGame}
           onError={(error) => {
             pushToast({
-              title: "Whooops nan mon on savais que ça pouvais pas etre parfait",
-              desc:error.message
-            })
+              title:
+                "Whooops nan mon on savais que ça pouvais pas etre parfait",
+              desc: error.message,
+            });
           }}
         />
       </Modal>

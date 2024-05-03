@@ -40,7 +40,7 @@ export default function Admin() {
       unSubscribe("room:leave", handleTeamsUpdate);
       unSubscribe("game:answer", handleAnswer);
     };
-  }, [setTeams, subscribe, unSubscribe]);
+  }, []);
 
   const resetTeamBuzzer = (team: Team) => {
     dispatch("game:buzzer:reset:team", { id: room?.id, teamId: team.id });

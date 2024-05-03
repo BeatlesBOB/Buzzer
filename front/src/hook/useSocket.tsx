@@ -6,7 +6,7 @@ export default function useSocket() {
     socket.emit(type, payload);
   };
   const subscribe = (type: string, callback: (...args: any[]) => void) => {
-    socket.on(type, (payload) => callback?.(payload));
+    socket.on(type, callback);
   };
 
   const unSubscribe = (type: string, callback: (...args: any[]) => void) => {
