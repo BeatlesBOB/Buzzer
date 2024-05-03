@@ -66,6 +66,7 @@ export default function Home() {
               }}
             >
               <input
+                required
                 placeholder="ROOM ID"
                 type="text"
                 className="border border-black border-1 p-2"
