@@ -25,6 +25,7 @@ export default function Lobby() {
       { name: formData.get("team")?.toString() },
       formData.get("user")?.toString()
     );
+    setIsOpen(false);
   };
 
   const joinOrCreateATeam = (
@@ -53,7 +54,6 @@ export default function Lobby() {
 
     const handleUserUpdate = (payload: { user: User }) => {
       const { user } = payload;
-      setIsOpen(false);
       setUser(user);
     };
     subscribe("room:start", handleStart);

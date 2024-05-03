@@ -48,7 +48,7 @@ export default function Users({
                 />
               )}
 
-              {!isAdmin && joinTeam && (
+              {!isAdmin && joinTeam && user?.team !== team.id && (
                 <Button label="Join team" handleClick={() => joinTeam(team)} />
               )}
 
