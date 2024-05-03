@@ -47,7 +47,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
+    <div className="grid  place-content-center h-dvh relative">
       <div className="row-start-2 col-start-2 col-end-3">
         <Title />
         <div className="flex mt-1.5 gap-10 justify-center">

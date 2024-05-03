@@ -11,7 +11,7 @@ export interface IToast {
 
 export default memo(function Toast({ title, desc, duration }: IToast) {
   return (
-    <div className="flex flex-col p-5 w-96 rounded-sm gap-4">
+    <div className="flex flex-col p-5 w-96 rounded-sm gap-4 shadow-md border">
       <p className="uppercase text-lg">{title}</p>
       <div className="text-base">{desc}</div>
       <motion.div

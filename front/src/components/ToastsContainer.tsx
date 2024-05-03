@@ -27,7 +27,7 @@ export default memo(function ToastsContainer() {
   );
 
   return (
-    <div className="fixed z-50 flex flex-col gap-4 bottom-12 right-12 rotate-12 items-end justify-end overflow-hidden">
+    <div className="fixed z-50 flex flex-col gap-4 bottom-12 right-12 items-end justify-end overflow-hidden">
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div
