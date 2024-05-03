@@ -87,7 +87,7 @@ export const joinRoom = (
 
   socket.data.team = team.id;
   socket.data.name = name;
-  socket.join(roomId);
+  socket.join(room.id);
   io.to(room.id).emit("room:join", {
     room,
   });

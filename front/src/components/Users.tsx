@@ -28,33 +28,34 @@ export default function Users({
         return (
           <li className="p-5 shadow-lg flex font-primary" key={team.id}>
             <p className="capitalize  text-lg">{team.name}</p>
-            {user?.team === team.id && leaveTeam && (
-              <Button label="Leave" handleClick={() => leaveTeam(team)} />
-            )}
-            {isAdmin && (
-              <div className="flex ml-auto">
-                {updateTeamPoint && (
-                  <input
-                    min={0}
-                    type="number"
-                    value={team.point}
-                    onChange={(e) => {
-                      updateTeamPoint(team, parseInt(e.target.value));
-                    }}
-                  />
-                )}
 
-                {resetTeamBuzzer && (
-                  <Button
-                    label="Reset buzzer"
-                    handleClick={() => resetTeamBuzzer(team)}
-                  />
-                )}
-              </div>
-            )}
-            {!isAdmin && joinTeam && (
-              <Button label="Join team" handleClick={() => joinTeam(team)} />
-            )}
+            <div className="flex ml-auto gap-5">
+              {isAdmin && updateTeamPoint && (
+                <input
+                  min={0}
+                  type="number"
+                  value={team.point}
+                  onChange={(e) => {
+                    updateTeamPoint(team, parseInt(e.target.value));
+                  }}
+                />
+              )}
+
+              {isAdmin && resetTeamBuzzer && (
+                <Button
+                  label="Reset buzzer"
+                  handleClick={() => resetTeamBuzzer(team)}
+                />
+              )}
+
+              {!isAdmin && joinTeam && (
+                <Button label="Join team" handleClick={() => joinTeam(team)} />
+              )}
+
+              {user?.team === team.id && leaveTeam && (
+                <Button label="Leave" handleClick={() => leaveTeam(team)} />
+              )}
+            </div>
           </li>
         );
       })}

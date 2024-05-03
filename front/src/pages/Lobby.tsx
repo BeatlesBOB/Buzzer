@@ -53,6 +53,7 @@ export default function Lobby() {
 
     const handleUserUpdate = (payload: { user: User }) => {
       const { user } = payload;
+      setIsOpen(false);
       setUser(user);
     };
     subscribe("room:start", handleStart);
@@ -80,6 +81,7 @@ export default function Lobby() {
       <div className="grid grid-cols-2 h-dvh p-5">
         <div className="flex flex-col">
           <Users
+            teams={room?.teams}
             isAdmin={isAdmin}
             joinTeam={joinOrCreateATeam}
             leaveTeam={handeTeamLeave}
