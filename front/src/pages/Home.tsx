@@ -7,12 +7,14 @@ import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
 import { Room } from "../types/interfaces";
 import Title from "../components/Title";
+import useToasts from "../hook/useToasts";
 
 export default function Home() {
   const { setRoom, setIsAdmin } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { subscribe, dispatch, unSubscribe } = useSocket();
   const navigate = useNavigate();
+  const {pushToast} = useToasts()
 
   const createGame = () => {
     dispatch("room:create");
@@ -58,7 +60,12 @@ export default function Home() {
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <QrScanner
           onDecode={joinGame}
-          onError={(error) => console.log(error?.message)}
+          onError={(error) => {
+            pushToast({
+              title: "Whooops nan mon on savais que ça pouvais pas etre parfait",
+              desc:error.message
+            })
+          }}
         />
       </Modal>
     </div>
