@@ -63,9 +63,8 @@ export const joinRoom = (
     userName,
     teamName,
     teamId,
-  }: { userName?: string; teamName?: string; teamId?: string,roomId:string }
+  }: { userName?: string; teamName?: string; teamId?: string; roomId: string }
 ) => {
-
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
   }
@@ -97,7 +96,7 @@ export const joinRoom = (
     user: { id: socket.id, ...socket.data },
   });
 
-  socket.join(roomId)
+  socket.join(roomId);
 };
 
 export const startGame = (socket: Socket) => {
