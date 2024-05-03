@@ -42,7 +42,7 @@ export default function Lobby() {
     const handleStart = (payload: { room: Room }) => {
       const { room } = payload;
       setisGameStarted(room.hasStarted);
-      navigate(`room/${room.id}`);
+      navigate(`buzzer/${room.id}`);
     };
 
     const handleTeamsUpdate = (payload: { room: Room }) => {
@@ -66,6 +66,7 @@ export default function Lobby() {
       unSubscribe("room:start", handleStart);
       unSubscribe("room:leave", handleTeamsUpdate);
       unSubscribe("room:join", handleUserUpdate);
+      unSubscribe("room:user", handleUserUpdate);
     };
   }, [
     navigate,
