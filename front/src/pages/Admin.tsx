@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import { Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
+import Title from "../components/Title";
 
 export default function Admin() {
   const { room, isAdmin, setTeams } = useContext(GameContext);
@@ -72,9 +73,7 @@ export default function Admin() {
           updateTeamPoint={updateTeamPoint}
         />
         <div className="flex flex-col items-center justify-center gap-6 h-full">
-          <h1 className="pointer-events-none font-primary font-black text-shadow text-9xl drop-shadow-3xl text-center text-white">
-            Buzzer
-          </h1>
+          <Title />
           <QRCode value={room?.id || ""} />
           <div className="flex gap-2 wrap">
             <Button
