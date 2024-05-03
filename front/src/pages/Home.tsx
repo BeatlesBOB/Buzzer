@@ -56,7 +56,7 @@ export default function Home() {
             handleClick={() => setIsOpen(true)}
             label="Rejoindre une partie"
           />
-          {!import.meta.env.PROD && (
+          {import.meta.env.DEV && (
             <form
               className="flex flex-col basis-full border-2 border-black p-5"
               onSubmit={(e) => {
