@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Room, Team, User } from "../types/interfaces";
+import { Room, User } from "../types/interfaces";
 
 export interface IGameContext {
   room?: Room;
