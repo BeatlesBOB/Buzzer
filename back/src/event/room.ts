@@ -65,7 +65,6 @@ export const joinRoom = (
     teamId,
   }: { userName?: string; teamName?: string; teamId?: string; roomId: string }
 ) => {
-  console.log(roomId);
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
   }
@@ -88,7 +87,7 @@ export const joinRoom = (
 
   socket.data.team = team.id;
   socket.data.name = name;
-
+  socket.join(roomId);
   io.to(room.id).emit("room:join", {
     room,
   });
@@ -96,8 +95,6 @@ export const joinRoom = (
   io.to(socket.id).emit("room:user", {
     user: { id: socket.id, ...socket.data },
   });
-
-  socket.join(roomId);
 };
 
 export const startGame = (socket: Socket) => {
