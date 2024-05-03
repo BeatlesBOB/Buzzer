@@ -70,7 +70,6 @@ export default function Lobby() {
     };
   }, [
     navigate,
-    room?.id,
     setTeams,
     setUser,
     setisGameStarted,
