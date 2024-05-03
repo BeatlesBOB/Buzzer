@@ -46,7 +46,7 @@ export default function Home() {
     <div className="grid grid-cols-[1fr_max-content_1fr] grid-rows-3 place-content-center h-dvh relative">
       <div className="row-start-2 col-start-2 col-end-3">
         <h1 className="pointer-events-none font-primary font-black text-shadow text-6xl 2xl:text-9xl drop-shadow-2xl 2xl:drop-shadow-3xl text-center text-white">
-          ENVIE DE BUZZER
+         APPUIIIIIE !
         </h1>
         <div className="flex mt-1.5 gap-10 justify-center">
           <Button handleClick={createGame} label="Créer une partie" />

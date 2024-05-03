@@ -7,7 +7,7 @@ export default {
     },
     extend: {
       dropShadow: {
-        "3xl": "-24px 12px 0px #000000",
+        "3xl": "-15px 5px 0px #000000",
       },
     },
   },
