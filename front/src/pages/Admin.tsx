@@ -159,7 +159,7 @@ export default function Admin() {
       >
         <div className="p-5">
           <form
-            className="group"
+            className="group flex flex-col gap-5"
             onSubmit={(e) => {
               e.preventDefault();
             }}
