@@ -8,7 +8,12 @@ import {
   leaveRoom,
   startGame,
 } from "./event/room";
-import { answer, resetAllAnswer, resetTeamAnswer } from "./event/game";
+import {
+  answer,
+  gamePause,
+  resetAllAnswer,
+  resetTeamAnswer,
+} from "./event/game";
 import { resetAllPoint, setPoint } from "./event/point";
 import { instrument } from "@socket.io/admin-ui";
 dotenv.config();
@@ -53,6 +58,7 @@ const onConnection = (socket: Socket) => {
   socket.on("room:leave", (payload) => leaveRoom(socket, payload));
   socket.on("room:lobby", (payload) => handleLobbyStatus(socket, payload));
   socket.on("room:start", () => startGame(socket));
+  socket.on("room:pause", () => gamePause(socket));
   socket.on("game:answer", () => answer(socket));
   socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
   socket.on("game:buzzer:reset:team", (payload) =>

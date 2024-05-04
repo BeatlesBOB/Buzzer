@@ -10,9 +10,11 @@ export default function Buzzer() {
   const { pushToast } = useToasts();
 
   const isDisabled = useMemo(() => {
-    return room?.teams?.some((team) => {
-      return team.hasBuzzed === true;
-    });
+    return (
+      room?.teams?.some((team) => {
+        return team.hasBuzzed === true;
+      }) || !room?.hasStarted
+    );
   }, [room]);
 
   useEffect(() => {
@@ -31,8 +33,10 @@ export default function Buzzer() {
     subscribe("game:answer", handleTeamAnswer);
     subscribe("game:status", handleTeamAnswer);
     subscribe("buzzer:notification", handleError);
+    subscribe("room:pause", handleTeamAnswer);
 
     return () => {
+      subscribe("room:pause", handleTeamAnswer);
       unSubscribe("game:answer", handleTeamAnswer);
       unSubscribe("game:status", handleTeamAnswer);
       unSubscribe("buzzer:notification", handleError);

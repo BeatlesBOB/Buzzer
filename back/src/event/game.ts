@@ -69,9 +69,8 @@ export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
   io.to(room.id).emit("game:status", { room });
 };
 
-export const gamePaused = (socket: Socket, payload: { room: string }) => {
-  const { isAdmin } = socket.data;
-  const { room: roomId } = payload;
+export const gamePause = (socket: Socket) => {
+  const { isAdmin, room: roomId } = socket.data;
 
   if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
@@ -82,4 +81,5 @@ export const gamePaused = (socket: Socket, payload: { room: string }) => {
 
   const room = Rooms.get(roomId)!;
   room.hasStarted = false;
+  io.to(room.id).emit("room:pause", { room });
 };

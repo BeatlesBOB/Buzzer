@@ -28,17 +28,18 @@ export default function Admin() {
     };
 
     subscribe("room:join", handleTeamsUpdate);
-
+    subscribe("room:start", handleTeamsUpdate);
     subscribe("game:status", handleTeamsUpdate);
-
     subscribe("room:leave", handleTeamsUpdate);
-
     subscribe("game:answer", handleAnswer);
+    subscribe("room:pause", handleTeamsUpdate);
 
     return () => {
       unSubscribe("room:join", handleTeamsUpdate);
       unSubscribe("game:status", handleTeamsUpdate);
       unSubscribe("room:leave", handleTeamsUpdate);
+      unSubscribe("room:start", handleTeamsUpdate);
+      unSubscribe("room:pause", handleTeamsUpdate);
       unSubscribe("game:answer", handleAnswer);
     };
   }, []);
@@ -53,6 +54,10 @@ export default function Admin() {
 
   const startGame = () => {
     dispatch("room:start");
+  };
+
+  const pauseGame = () => {
+    dispatch("room:pause");
   };
 
   const resetAllBuzzer = () => {
@@ -85,7 +90,12 @@ export default function Admin() {
               label="Reset tous les points"
               handleClick={resetAllPoints}
             />
-            <Button label="Start" handleClick={startGame} />
+            {!room?.hasStarted && (
+              <Button label="Start" handleClick={startGame} />
+            )}
+            {room?.hasStarted && (
+              <Button label="Pause" handleClick={pauseGame} />
+            )}
           </div>
         </div>
       </div>
