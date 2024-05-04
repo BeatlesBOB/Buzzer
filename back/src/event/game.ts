@@ -1,8 +1,9 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "..";
 import { getTeamById, getUserById, handleError } from "../utils/utils";
+import { BuzzerType } from "../utils/interface";
 
-export const answer = (socket: Socket) => {
+export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   const { team: teamId, room: roomId } = socket.data;
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No room provided");
@@ -25,7 +26,9 @@ export const answer = (socket: Socket) => {
     return handleError(socket, "User not found");
   }
 
-  io.to(room.id).emit("game:answer", { room, team });
+  io.to(room.id).except(room.admin).emit("game:answer", { room, team });
+  io.to(room.admin).emit("game:answer", { room, team, answer: payload.answer });
+
   setTimeout(() => {
     team.hasBuzzed = false;
     user.hasBuzzed = false;
@@ -69,17 +72,14 @@ export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
   io.to(room.id).emit("game:status", { room });
 };
 
-export const gamePause = (socket: Socket) => {
+export const handleBuzzerType = (
+  socket: Socket,
+  payload: { type: BuzzerType; multiple: number }
+) => {
   const { isAdmin, room: roomId } = socket.data;
-
-  if (!Rooms.has(roomId) || !isAdmin) {
-    return handleError(
-      socket,
-      "No room or your not the admin of the current room"
-    );
+  if (!isAdmin) {
+    return handleError(socket, "No Admin of this room");
   }
 
-  const room = Rooms.get(roomId)!;
-  room.hasStarted = false;
-  io.to(room.id).emit("room:pause", { room });
+  io.to(roomId, "game:answer:type");
 };

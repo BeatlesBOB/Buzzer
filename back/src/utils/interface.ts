@@ -18,3 +18,5 @@ export interface User {
   name: string;
   hasBuzzed: boolean;
 }
+
+export type BuzzerType = "speed" | "choice" | "text";

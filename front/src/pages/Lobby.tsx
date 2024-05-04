@@ -57,27 +57,16 @@ export default function Lobby() {
       setUser(user);
     };
 
-    const handleUserleave = (payload: { path: string }) => {
-      const { path } = payload;
-      navigate(path);
-    };
-
     subscribe("room:start", handleStart);
-
     subscribe("room:leave", handleTeamsUpdate);
-
     subscribe("room:join", handleTeamsUpdate);
-
     subscribe("room:user", handleUserUpdate);
-
-    subscribe("room:user:leave", handleUserUpdate);
 
     return () => {
       unSubscribe("room:start", handleStart);
       unSubscribe("room:leave", handleTeamsUpdate);
       unSubscribe("room:join", handleUserUpdate);
-      unSubscribe("room:user", handleUserleave);
-      unSubscribe("room:user:leave", handleUserleave);
+      unSubscribe("room:user", handleUserUpdate);
     };
   }, []);
 
@@ -87,45 +76,44 @@ export default function Lobby() {
 
   const handeTeamLeave = () => {
     dispatch("room:leave");
+    navigate("../");
   };
 
   return (
-    <>
-      <div className="h-dvh p-5">
-        <div className="flex flex-col h-full">
-          <Users
-            teams={room?.teams}
-            isAdmin={isAdmin}
-            joinTeam={joinOrCreateATeam}
-            leaveTeam={handeTeamLeave}
-          />
-          <div className="mt-auto py-5">
-            <Button handleClick={() => setIsOpen(true)} label="Create A team" />
-          </div>
+    <div className="h-dvh p-5">
+      <div className="flex flex-col h-full">
+        <Users
+          teams={room?.teams}
+          isAdmin={isAdmin}
+          joinTeam={joinOrCreateATeam}
+          leaveTeam={handeTeamLeave}
+        />
+        <div className="mt-auto py-5">
+          <Button handleClick={() => setIsOpen(true)} label="Create A team" />
         </div>
-        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-          <form
-            onSubmit={handleTeamCreation}
-            className="flex flex-col gap-y-5 p-5"
-          >
-            <input
-              type="text"
-              name="team"
-              className="border-b-2"
-              placeholder="Team Name"
-              required
-            />
-            <input
-              type="text"
-              name="user"
-              className="border-b-2"
-              placeholder="User Name"
-              required
-            />
-            <Button label="Create" />
-          </form>
-        </Modal>
       </div>
-    </>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <form
+          onSubmit={handleTeamCreation}
+          className="flex flex-col gap-y-5 p-5"
+        >
+          <input
+            type="text"
+            name="team"
+            className="border-b-2"
+            placeholder="Team Name"
+            required
+          />
+          <input
+            type="text"
+            name="user"
+            className="border-b-2"
+            placeholder="User Name"
+            required
+          />
+          <Button label="Create" />
+        </form>
+      </Modal>
+    </div>
   );
 }

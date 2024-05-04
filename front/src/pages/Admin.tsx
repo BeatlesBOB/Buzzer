@@ -81,7 +81,17 @@ export default function Admin() {
         <div className="flex flex-col items-center justify-center gap-6 h-full">
           <Title />
           <QRCode value={room?.id || ""} />
-          <div className="flex gap-2 wrap">
+          <div className="flex gap-2 flex-wrap justify-center">
+            <div className="basis-full flex justify-center">
+              <Button
+                classes={
+                  "bg-black px-10 text-white py-2.5 border border-black hover:bg-transparent hover:text-black"
+                }
+                label={room?.hasStarted ? "Pause" : "Start"}
+                handleClick={room?.hasStarted ? pauseGame : startGame}
+              />
+            </div>
+
             <Button
               label="Reset tous les buzzer"
               handleClick={resetAllBuzzer}
@@ -90,12 +100,6 @@ export default function Admin() {
               label="Reset tous les points"
               handleClick={resetAllPoints}
             />
-            {!room?.hasStarted && (
-              <Button label="Start" handleClick={startGame} />
-            )}
-            {room?.hasStarted && (
-              <Button label="Pause" handleClick={pauseGame} />
-            )}
           </div>
         </div>
       </div>

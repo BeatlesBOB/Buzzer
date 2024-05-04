@@ -3,7 +3,6 @@ import { Socket } from "socket.io";
 import { Rooms, io } from "..";
 import {
   createTeam,
-  deleteRoom,
   getTeamById,
   initRoom,
   removeTeamById,
@@ -55,9 +54,6 @@ export const leaveRoom = (socket: Socket, payload: any) => {
     user: { id: socket.id, ...socket.data },
   });
 
-  io.to(socket.id).emit("room:user:leave", {
-    path: "/",
-  });
   socket.leave(room.id);
 };
 
@@ -132,4 +128,19 @@ export const handleLobbyStatus = (
   const room = Rooms.get(lobby);
   io.to(socket.id).emit("room:join", { room });
   socket.join(lobby);
+};
+
+export const gamePause = (socket: Socket) => {
+  const { isAdmin, room: roomId } = socket.data;
+
+  if (!Rooms.has(roomId) || !isAdmin) {
+    return handleError(
+      socket,
+      "No room or your not the admin of the current room"
+    );
+  }
+
+  const room = Rooms.get(roomId)!;
+  room.hasStarted = false;
+  io.to(room.id).emit("room:pause", { room });
 };
