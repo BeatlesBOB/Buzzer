@@ -56,6 +56,12 @@ export default function Lobby() {
       const { user } = payload;
       setUser(user);
     };
+
+    const handleUserleave = (payload: { path: string }) => {
+      const { path } = payload;
+      navigate(path);
+    };
+
     subscribe("room:start", handleStart);
 
     subscribe("room:leave", handleTeamsUpdate);
@@ -64,11 +70,14 @@ export default function Lobby() {
 
     subscribe("room:user", handleUserUpdate);
 
+    subscribe("room:user:leave", handleUserUpdate);
+
     return () => {
       unSubscribe("room:start", handleStart);
       unSubscribe("room:leave", handleTeamsUpdate);
       unSubscribe("room:join", handleUserUpdate);
-      unSubscribe("room:user", handleUserUpdate);
+      unSubscribe("room:user", handleUserleave);
+      unSubscribe("room:user:leave", handleUserleave);
     };
   }, []);
 

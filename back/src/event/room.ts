@@ -47,13 +47,15 @@ export const leaveRoom = (socket: Socket, payload: any) => {
     removeTeamById(room, teamId);
   }
 
-  if (room.teams.length === 0) {
-    deleteRoom(room);
-  }
-
-  io.to(room.id).emit("room:leave", { room });
+  io.to(room.id).emit("room:leave", {
+    room,
+  });
   io.to(socket.id).emit("room:user", {
     user: { id: socket.id, ...socket.data },
+  });
+
+  io.to(socket.id).emit("room:user:leave", {
+    path: "/",
   });
   socket.leave(room.id);
 };
