@@ -48,7 +48,7 @@ export default function Admin() {
   };
 
   const updateTeamPoint = (team: Team, point: number) => {
-    dispatch("game:status", { team: team.id, point });
+    dispatch("game:point", { team: team.id, point });
   };
 
   const startGame = () => {
