@@ -23,17 +23,18 @@ export default function Buzzer() {
 
     const handleError = (payload: string) => {
       pushToast({
-        title: "Whooops nan mon on savais que ça pouvais pas etre parfait",
+        title: "Whooops, nan mon on savais que ça pouvais pas etre parfait",
         desc: payload,
       });
     };
 
     subscribe("game:answer", handleTeamAnswer);
-
+    subscribe("game:status", handleTeamAnswer);
     subscribe("buzzer:notification", handleError);
 
     return () => {
       unSubscribe("game:answer", handleTeamAnswer);
+      unSubscribe("game:status", handleTeamAnswer);
       unSubscribe("buzzer:notification", handleError);
     };
   }, []);
@@ -44,7 +45,7 @@ export default function Buzzer() {
 
   return (
     <button
-      className="h-dvh w-dvw"
+      className="h-dvh w-dvw disabled:bg-gray-300"
       onClick={handleAnswer}
       disabled={isDisabled}
     ></button>

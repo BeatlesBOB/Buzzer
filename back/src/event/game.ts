@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "..";
-import { getTeamById, handleError } from "../utils/utils";
+import { getTeamById, getUserById, handleError } from "../utils/utils";
 
 export const answer = (socket: Socket) => {
   const { team: teamId, room: roomId } = socket.data;
@@ -20,10 +20,16 @@ export const answer = (socket: Socket) => {
   }
 
   team.hasBuzzed = true;
+  const user = getUserById(team, socket.id);
+  if (!user) {
+    return handleError(socket, "User not found");
+  }
+
   io.to(room.id).emit("game:answer", { room, team });
   setTimeout(() => {
     team.hasBuzzed = false;
-    io.to(room.id).emit("game:answer", { room, team });
+    user.hasBuzzed = false;
+    io.to(room.id).emit("game:status", { room, team });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };
 
@@ -42,7 +48,7 @@ export const resetAllAnswer = (socket: Socket) => {
     team.hasBuzzed = false;
   });
 
-  io.to(room.id).emit("game:answer", { room });
+  io.to(room.id).emit("game:status", { room });
 };
 
 export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
@@ -60,7 +66,7 @@ export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
   }
 
   team.hasBuzzed = false;
-  io.to(room.id).emit("game:answer", { room });
+  io.to(room.id).emit("game:status", { room });
 };
 
 export const gamePaused = (socket: Socket, payload: { room: string }) => {

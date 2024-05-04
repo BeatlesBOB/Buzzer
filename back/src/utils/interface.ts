@@ -2,6 +2,7 @@ export interface Room {
   id: string;
   teams: Array<Team>;
   hasStarted: boolean;
+  admin: string;
 }
 
 export interface Team {
@@ -15,4 +16,5 @@ export interface Team {
 export interface User {
   id: string;
   name: string;
+  hasBuzzed: boolean;
 }

@@ -16,7 +16,7 @@ export const createRoom = (socket: Socket) => {
   socket.data.isAdmin = true;
   socket.data.room = id;
   socket.join(id);
-  const room = initRoom(id);
+  const room = initRoom(id, socket.id);
   socket.emit("room:create", { room: room, isAdmin: true });
 };
 
@@ -91,6 +91,7 @@ export const joinRoom = (
   team.users.push({
     id: socket.id,
     name: name,
+    hasBuzzed: false,
   });
 
   socket.data.team = team.id;

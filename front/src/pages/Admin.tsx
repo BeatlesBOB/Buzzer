@@ -90,27 +90,29 @@ export default function Admin() {
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        {selectedTeam && (
-          <>
-            <ul>
-              {selectedTeam?.users.map((user: User) => {
-                return <li onClick={() => {}}>{user.name}</li>;
-              })}
-            </ul>
-            <Button
-              label="Delete team"
-              handleClick={() => {
-                dispatch("room:leave", { teamId: selectedTeam?.id });
-              }}
-            />
-          </>
-        )}
-        {teamAnswer && (
-          <>
-            <h1>{teamAnswer.name}</h1>
-            <h2>{teamAnswer.point}</h2>
-          </>
-        )}
+        <div className="p-5">
+          {selectedTeam && (
+            <>
+              <ul>
+                {selectedTeam?.users.map((user: User) => {
+                  return <li onClick={() => {}}>{user.name}</li>;
+                })}
+              </ul>
+              <Button
+                label="Delete team"
+                handleClick={() => {
+                  dispatch("room:leave", { teamId: selectedTeam?.id });
+                }}
+              />
+            </>
+          )}
+          {teamAnswer && (
+            <div className="flex flex-col gap-5">
+              <h1 className="font-semibold text-lg">{teamAnswer.name}</h1>
+              <h2 className="font-medium text-md">{teamAnswer.point}</h2>
+            </div>
+          )}
+        </div>
       </Modal>
     </>
   );

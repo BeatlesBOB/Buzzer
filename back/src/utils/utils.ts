@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { io } from "..";
 import { Rooms } from "..";
-import { Room, Team, User } from "./interface";
+import { Room, Team } from "./interface";
 
 export const createTeam = (id: string, name: string): Team => {
   return {
@@ -40,8 +40,8 @@ export const deleteRoom = (room: Room) => {
   Rooms.delete(room.id);
 };
 
-export const initRoom = (id: string) => {
-  const room = { id, teams: [], hasStarted: false };
+export const initRoom = (id: string, admin: string) => {
+  const room = { id, teams: [], hasStarted: false, admin };
   Rooms.set(id, room);
   return room;
 };
@@ -57,5 +57,15 @@ export const removeUserFromTeam = (team: Team, userId: string) => {
 
   if (index !== -1) {
     team.users.splice(index, 1);
+  }
+};
+
+export const getUserById = (team: Team, userId: string) => {
+  const index = team.users.findIndex((user) => {
+    return user.id === userId;
+  });
+
+  if (index !== -1) {
+    return team.users[index];
   }
 };

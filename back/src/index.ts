@@ -53,7 +53,7 @@ const onConnection = (socket: Socket) => {
   socket.on("room:leave", (payload) => leaveRoom(socket, payload));
   socket.on("room:lobby", (payload) => handleLobbyStatus(socket, payload));
   socket.on("room:start", () => startGame(socket));
-  socket.on("game:buzzer", () => answer(socket));
+  socket.on("game:answer", () => answer(socket));
   socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
   socket.on("game:buzzer:reset:team", (payload) =>
     resetTeamAnswer(socket, payload)
