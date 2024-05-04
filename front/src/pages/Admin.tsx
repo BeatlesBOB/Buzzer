@@ -44,23 +44,23 @@ export default function Admin() {
   }, []);
 
   const resetTeamBuzzer = (team: Team) => {
-    dispatch("game:buzzer:reset:team", { id: room?.id, teamId: team.id });
+    dispatch("game:buzzer:reset:team", { team: team.id });
   };
 
   const updateTeamPoint = (team: Team, point: number) => {
-    dispatch("game:status", { id: room?.id, teamId: team.id, point });
+    dispatch("game:status", { team: team.id, point });
   };
 
   const startGame = () => {
-    dispatch("room:start", { id: room?.id });
+    dispatch("room:start");
   };
 
   const resetAllBuzzer = () => {
-    dispatch("game:buzzer:reset", { id: room?.id });
+    dispatch("game:buzzer:reset");
   };
 
   const resetAllPoints = () => {
-    dispatch("game:point:reset", { id: room?.id });
+    dispatch("game:point:reset");
   };
 
   return (

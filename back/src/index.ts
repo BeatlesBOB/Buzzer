@@ -55,8 +55,10 @@ const onConnection = (socket: Socket) => {
   socket.on("room:start", () => startGame(socket));
   socket.on("game:buzzer", () => answer(socket));
   socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
-  socket.on("game:buzzer:reset:team", () => resetTeamAnswer(socket));
-  socket.on("game:point:reset", () => resetAllPoint(socket));
+  socket.on("game:buzzer:reset:team", (payload) =>
+    resetTeamAnswer(socket, payload)
+  );
+  socket.on("game:point:reset", (payload) => resetAllPoint(socket));
   socket.on("game:point", (payload) => setPoint(socket, payload));
 };
 

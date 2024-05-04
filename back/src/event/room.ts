@@ -14,6 +14,7 @@ import {
 export const createRoom = (socket: Socket) => {
   const id = uuidv4();
   socket.data.isAdmin = true;
+  socket.data.room = id;
   socket.join(id);
   const room = initRoom(id);
   socket.emit("room:create", { room: room, isAdmin: true });
@@ -105,11 +106,14 @@ export const joinRoom = (
 };
 
 export const startGame = (socket: Socket) => {
-  const { room: roomId } = socket.data;
+  const { isAdmin, room: roomId } = socket.data;
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
   }
   const room = Rooms.get(roomId)!;
+  if (!isAdmin) {
+    return handleError(socket, "You are not admin of this room");
+  }
   room.hasStarted = true;
   io.to(room.id).emit("room:start", {
     room,

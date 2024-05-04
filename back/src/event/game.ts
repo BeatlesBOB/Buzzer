@@ -28,8 +28,9 @@ export const answer = (socket: Socket) => {
 };
 
 export const resetAllAnswer = (socket: Socket) => {
-  const { room: roomId } = socket.data;
-  if (!Rooms.has(roomId) || !socket.data.isAdmin) {
+  const { isAdmin, room: roomId } = socket.data;
+
+  if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
       socket,
       "No room or your not the admin of the current room"
@@ -44,8 +45,9 @@ export const resetAllAnswer = (socket: Socket) => {
   io.to(room.id).emit("game:answer", { room });
 };
 
-export const resetTeamAnswer = (socket: Socket) => {
-  const { team: teamId, room: roomId } = socket.data;
+export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
+  const { team: teamId } = payload;
+  const { isAdmin, room: roomId } = socket.data;
 
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No room provided");
@@ -53,23 +55,25 @@ export const resetTeamAnswer = (socket: Socket) => {
 
   const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);
-  if (!team) {
-    return handleError(socket, "No Team provided");
+  if (!team || !isAdmin) {
+    return handleError(socket, "No Team provided or not admin of this room");
   }
 
   team.hasBuzzed = false;
   io.to(room.id).emit("game:answer", { room });
 };
 
-export const gamePaused = (socket: Socket) => {
-  const [id] = socket.rooms;
-  if (!Rooms.has(id) || !socket.data.isAdmin) {
+export const gamePaused = (socket: Socket, payload: { room: string }) => {
+  const { isAdmin } = socket.data;
+  const { room: roomId } = payload;
+
+  if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
       socket,
       "No room or your not the admin of the current room"
     );
   }
 
-  const room = Rooms.get(id)!;
+  const room = Rooms.get(roomId)!;
   room.hasStarted = false;
 };
