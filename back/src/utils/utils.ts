@@ -28,7 +28,7 @@ export const getTeamById = (room: Room, id?: string): Team | undefined => {
 export const removeTeamById = (room: Room, id: string) => {
   const currentTeam = getTeamById(room, id);
   const index = room.teams.findIndex((team) => {
-    team.id === currentTeam?.id;
+    return team.id === currentTeam?.id;
   });
 
   if (index !== -1) {
@@ -50,8 +50,12 @@ export const handleError = (socket: Socket, msg: string) => {
   io.to(socket.id).emit("buzzer:notification", msg);
 };
 
-export const removeUserFromTeam = (team: Team, userId: string): User[] => {
-  return team.users.filter((user) => {
-    return user.id !== userId;
+export const removeUserFromTeam = (team: Team, userId: string) => {
+  const index = team.users.findIndex((user) => {
+    return user.id === userId;
   });
+
+  if (index !== -1) {
+    team.users.splice(index, 1);
+  }
 };
