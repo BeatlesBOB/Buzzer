@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const dropIn = {
@@ -26,11 +26,17 @@ export default function Modal({
   isOpen,
   setIsOpen,
   children,
+  onVisibilityChange,
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   children: ReactNode;
+  onVisibilityChange?: (isOpen: boolean) => void;
 }) {
+  useEffect(() => {
+    onVisibilityChange?.(isOpen);
+  }, [isOpen]);
+
   return (
     <AnimatePresence>
       {isOpen && (

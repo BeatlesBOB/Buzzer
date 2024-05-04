@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
@@ -10,10 +10,12 @@ import Title from "../components/Title";
 
 export default function Admin() {
   const { room, isAdmin, setRoom } = useContext(GameContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSelectedModalOpen, setIsSelectedModalOpen] = useState(false);
+  const [isAnswerModalOpen, setAnswerModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
   const { dispatch, subscribe, unSubscribe } = useSocket();
   const [teamAnswer, setTeamAnswer] = useState<Team | undefined>(undefined);
+  const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
 
   useEffect(() => {
     const handleTeamsUpdate = (payload: { room: Room }) => {
@@ -24,7 +26,7 @@ export default function Admin() {
     const handleAnswer = (payload: { team: Team }) => {
       const { team } = payload;
       setTeamAnswer(team);
-      setIsOpen(true);
+      setAnswerModalOpen(true);
     };
 
     subscribe("room:join", handleTeamsUpdate);
@@ -73,7 +75,10 @@ export default function Admin() {
       <div className="grid lg:grid-cols-2 h-dvh p-5">
         <Users
           resetTeamBuzzer={resetTeamBuzzer}
-          leaveTeam={(team) => setSelectedTeam(team)}
+          leaveTeam={(team) => {
+            setSelectedTeam(team);
+            setIsSelectedModalOpen(true);
+          }}
           isAdmin={isAdmin}
           teams={room?.teams}
           updateTeamPoint={updateTeamPoint}
@@ -100,16 +105,32 @@ export default function Admin() {
               label="Reset tous les points"
               handleClick={resetAllPoints}
             />
+
+            <Button
+              label="Change buzzer type"
+              handleClick={() => setIsBuzzerTypeModalOpen(true)}
+            />
           </div>
         </div>
       </div>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Modal isOpen={isSelectedModalOpen} setIsOpen={setIsSelectedModalOpen}>
         <div className="p-5">
           {selectedTeam && (
             <>
               <ul>
                 {selectedTeam?.users.map((user: User) => {
-                  return <li onClick={() => {}}>{user.name}</li>;
+                  return (
+                    <li
+                      onClick={() => {
+                        dispatch("room:leave", {
+                          team: selectedTeam?.id,
+                          user: user.id,
+                        });
+                      }}
+                    >
+                      {user.name}
+                    </li>
+                  );
                 })}
               </ul>
               <Button
@@ -120,12 +141,41 @@ export default function Admin() {
               />
             </>
           )}
+        </div>
+      </Modal>
+      <Modal isOpen={isAnswerModalOpen} setIsOpen={setAnswerModalOpen}>
+        <div className="p-5">
           {teamAnswer && (
             <div className="flex flex-col gap-5">
               <h1 className="font-semibold text-lg">{teamAnswer.name}</h1>
               <h2 className="font-medium text-md">{teamAnswer.point}</h2>
             </div>
           )}
+        </div>
+      </Modal>
+      <Modal
+        isOpen={isBuzzerTypeModalOpen}
+        setIsOpen={setIsBuzzerTypeModalOpen}
+      >
+        <div className="p-5">
+          <form
+            className="group"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <input type="radio" value="speed" required name="type" />
+            <input type="radio" value="choice" required name="type" />
+            <input
+              type="number"
+              name="number"
+              value="-1"
+              className="hidden group-has-[input[value='choice']:checked]:block"
+              required
+            />
+            <input type="radio" value="text" required name="type" />
+            <Button label="change" />
+          </form>
         </div>
       </Modal>
     </>

@@ -19,7 +19,10 @@ export const createRoom = (socket: Socket) => {
   socket.emit("room:create", { room: room, isAdmin: true });
 };
 
-export const leaveRoom = (socket: Socket, payload: any) => {
+export const leaveRoom = (
+  socket: Socket,
+  payload: { team?: string; user?: string }
+) => {
   const { team: teamId, isAdmin, room: roomId } = socket.data;
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
@@ -34,12 +37,12 @@ export const leaveRoom = (socket: Socket, payload: any) => {
   if (team) {
     removeUserFromTeam(team, socket.id);
   } else if (isAdmin) {
-    if (payload.teamId) {
-      removeTeamById(room, payload.teamId);
+    if (payload.team) {
+      removeTeamById(room, payload.team);
     }
 
-    if (payload.userId) {
-      removeUserFromTeam(team, payload.userId);
+    if (payload.user) {
+      removeUserFromTeam(team, payload.user);
     }
   }
 
