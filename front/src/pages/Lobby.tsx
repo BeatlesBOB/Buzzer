@@ -44,7 +44,7 @@ export default function Lobby() {
     const handleStart = (payload: { room: Room }) => {
       const { room } = payload;
       setisGameStarted(room.hasStarted);
-      navigate(`buzzer/${room.id}`);
+      navigate(`../buzzer/${room.id}`);
     };
 
     const handleTeamsUpdate = (payload: { room: Room }) => {
