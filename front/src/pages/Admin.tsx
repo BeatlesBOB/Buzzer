@@ -65,7 +65,7 @@ export default function Admin() {
 
   return (
     <>
-      <div className="grid grid-cols-2 h-dvh">
+      <div className="grid lg:grid-cols-2 h-dvh p-5">
         <Users
           resetTeamBuzzer={resetTeamBuzzer}
           leaveTeam={(team) => setSelectedTeam(team)}

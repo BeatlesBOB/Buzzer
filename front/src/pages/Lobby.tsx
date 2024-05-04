@@ -82,15 +82,15 @@ export default function Lobby() {
 
   return (
     <>
-      <div className="grid grid-cols-2 h-dvh p-5">
-        <div className="flex flex-col">
+      <div className="h-dvh p-5">
+        <div className="flex flex-col h-full">
           <Users
             teams={room?.teams}
             isAdmin={isAdmin}
             joinTeam={joinOrCreateATeam}
             leaveTeam={handeTeamLeave}
           />
-          <div className="mt-auto">
+          <div className="mt-auto py-5">
             <Button handleClick={() => setIsOpen(true)} label="Create A team" />
           </div>
         </div>

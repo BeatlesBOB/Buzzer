@@ -52,8 +52,8 @@ export const leaveRoom = (socket: Socket, payload: any) => {
   }
 
   io.to(room.id).emit("room:leave", { room });
-  io.to(socket.data.lobby).emit("room:join", {
-    room,
+  io.to(socket.id).emit("room:user", {
+    user: { id: socket.id, ...socket.data },
   });
   socket.leave(room.id);
 };
@@ -81,6 +81,7 @@ export const joinRoom = (
   if (!team) {
     const id = uuidv4();
     team = createTeam(id, teamName ?? `envie_de_buzzer_${id}`);
+    room.teams.push(team);
   }
 
   const name = userName ?? `envie_de_buzzer_${socket.id}`;
@@ -88,8 +89,6 @@ export const joinRoom = (
     id: socket.id,
     name: name,
   });
-
-  room.teams.push(team);
 
   socket.data.team = team.id;
   socket.data.name = name;
@@ -120,5 +119,10 @@ export const handleLobbyStatus = (
   payload: { lobby: string }
 ) => {
   const { lobby } = payload;
+  if (!Rooms.has(lobby)) {
+    return handleError(socket, "No Room provided");
+  }
+  const room = Rooms.get(lobby);
+  io.to(socket.id).emit("room:join", { room });
   socket.join(lobby);
 };

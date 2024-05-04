@@ -48,8 +48,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="grid  place-content-center h-dvh relative">
-      <div className="row-start-2 col-start-2 col-end-3">
+    <div className="grid grid-cols-container h-dvh items-center">
+      <div className="col-start-content-start col-end-content-end flex flex-col gap-10 justify-center">
         <Title />
         <div className="flex flex-wrap mt-1.5 gap-10 justify-center">
           <Button handleClick={createGame} label="Créer une partie" />
@@ -57,26 +57,26 @@ export default function Home() {
             handleClick={() => setIsOpen(true)}
             label="Rejoindre une partie"
           />
-          {import.meta.env.DEV && (
-            <form
-              className="flex flex-col basis-full border-2 border-black p-5"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                joinGame(formData.get("room")?.toString()!);
-              }}
-            >
-              <input
-                required
-                placeholder="ROOM ID"
-                type="text"
-                className="border border-black border-1 p-2"
-                name="room"
-              />
-              <button>Connect</button>
-            </form>
-          )}
         </div>
+        {import.meta.env.DEV && (
+          <form
+            className="flex flex-col basis-full border-2 border-black p-5 max-w-md w-full gap-5 self-center"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              joinGame(formData.get("room")?.toString()!);
+            }}
+          >
+            <input
+              required
+              placeholder="ROOM ID"
+              type="text"
+              className="border border-black border-1 p-2 w-full"
+              name="room"
+            />
+            <button>Connect</button>
+          </form>
+        )}
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <QrScanner
