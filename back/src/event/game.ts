@@ -35,7 +35,6 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
 
   setTimeout(() => {
     team.hasBuzzed = false;
-    user.hasBuzzed = false;
     io.to(room.id).emit("game:status", { room, team });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };
