@@ -26,10 +26,13 @@ export default function Users({
     <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
       {teams?.map((team: Team) => {
         return (
-          <li className="p-5 shadow-lg flex font-primary" key={team.id}>
+          <li
+            className="p-5 shadow-lg flex flex-wrap font-primary"
+            key={team.id}
+          >
             <p className="capitalize  text-lg">{team.name}</p>
 
-            <div className="flex ml-auto gap-5">
+            <div className="flex flex-wrap ml-auto gap-5">
               {isAdmin && updateTeamPoint && (
                 <input
                   min={0}
