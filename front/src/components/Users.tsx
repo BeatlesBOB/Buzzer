@@ -9,7 +9,7 @@ export interface IUsers {
   leaveTeam: (team: Team) => void;
   updateTeamPoint?: (team: Team, point: number) => void;
   resetTeamBuzzer?: (team: Team) => void;
-  joinTeam?: (team: Partial<Team>) => void;
+  joinTeam?: (team: Team) => void;
 }
 
 export default function Users({

@@ -8,6 +8,7 @@ import {
   removeTeamById,
   handleError,
   removeUserFromTeam,
+  deleteRoom,
 } from "../utils/utils";
 
 export const createRoom = (socket: Socket) => {
@@ -48,6 +49,10 @@ export const leaveRoom = (
 
   if (team.users.length === 0) {
     removeTeamById(room, teamId);
+  }
+
+  if (room.teams.length === 0) {
+    deleteRoom(room);
   }
 
   io.to(room.id).emit("room:leave", {
