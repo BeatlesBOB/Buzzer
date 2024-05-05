@@ -25,9 +25,13 @@ export default function Users({
   return (
     <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
       {teams?.map((team: Team) => {
+        let teamUsers = team.users, teamUserName = '';
+        teamUsers.forEach((user) => teamUserName = teamUserName + ', ' + user.name)
+
         return (
           <li className="p-5 shadow-lg flex font-primary" key={team.id}>
-            <p className="capitalize  text-lg">{team.name}</p>
+            <p className="capitalize text-lg">{team.name}</p>
+            <p className="text-lg">({teamUserName.substring(2)})</p>
 
             <div className="flex ml-auto gap-5">
               {isAdmin && updateTeamPoint && (

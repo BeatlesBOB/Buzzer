@@ -70,23 +70,23 @@ export const joinRoom = (
   }: { userName?: string; teamName?: string; teamId?: string; roomId: string }
 ) => {
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "No Room provided");
+    return handleError(socket, "Pas de room Bolosse");
   }
 
   const room = Rooms.get(roomId)!;
   if (room.hasStarted) {
-    return handleError(socket, "Game Already Started");
+    return handleError(socket, "Trop tard, ça a déjà commencé");
   }
 
   let team = getTeamById(room, teamId);
 
   if (!team) {
     const id = uuidv4();
-    team = createTeam(id, teamName ?? `envie_de_buzzer_${id}`);
+    team = createTeam(id, teamName ?? `joueur_qui_appuiiiiie_numéro_${id}`);
     room.teams.push(team);
   }
 
-  const name = userName ?? `envie_de_buzzer_${socket.id}`;
+  const name = userName ?? `joueur_qui_appuiiiiie_numéro_${socket.id}`;
   team.users.push({
     id: socket.id,
     name: name,

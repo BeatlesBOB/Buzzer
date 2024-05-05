@@ -78,6 +78,13 @@ export default function Lobby() {
     dispatch("room:leave");
     navigate("../");
   };
+  
+  const homePath = () =>{ 
+    let path = `/`; 
+    if (confirm('Tu veux vraiment revenir en arrière ?')) {
+      navigate(path);
+    } 
+  }
 
   return (
     <div className="h-dvh p-5">
@@ -94,6 +101,12 @@ export default function Lobby() {
             handleClick={() => setIsOpen(true)}
             label="Create A team"
           />
+          <span>&nbsp;</span>
+          <Button
+                type="primary"
+                label= "Retour"
+                handleClick={homePath}
+              />
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>

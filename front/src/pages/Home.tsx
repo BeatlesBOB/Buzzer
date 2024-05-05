@@ -16,6 +16,8 @@ export default function Home() {
   const navigate = useNavigate();
   const { pushToast } = useToasts();
 
+  console.log(useContext(GameContext))
+
   const createGame = () => {
     dispatch("room:create");
   };
@@ -84,7 +86,7 @@ export default function Home() {
           onError={(error) => {
             pushToast({
               title:
-                "Whooops nan mon on savais que ça pouvais pas etre parfait",
+                "Whooops, nan mais on savait que ça pouvait pas être parfait",
               desc: error.message,
             });
           }}
