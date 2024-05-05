@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";

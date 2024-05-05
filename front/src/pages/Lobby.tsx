@@ -89,7 +89,13 @@ export default function Lobby() {
           leaveTeam={handeTeamLeave}
         />
         <div className="mt-auto py-5">
-          <Button handleClick={() => setIsOpen(true)} label="Create A team" />
+          <Button
+            classes={
+              "bg-black px-10 text-white py-2.5 border border-black hover:bg-transparent hover:text-black"
+            }
+            handleClick={() => setIsOpen(true)}
+            label="Create A team"
+          />
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -111,7 +117,12 @@ export default function Lobby() {
             placeholder="User Name"
             required
           />
-          <Button label="Create" />
+          <Button
+            classes={
+              "bg-black px-10 text-white py-2.5 border border-black hover:bg-transparent hover:text-black"
+            }
+            label="Create"
+          />
         </form>
       </Modal>
     </div>
