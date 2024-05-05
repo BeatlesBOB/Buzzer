@@ -86,7 +86,7 @@ export default function Admin() {
         <div className="flex flex-col items-center justify-center gap-6 h-full">
           <Title />
           <QRCode value={room?.id || ""} />
-          <div className="flex gap-2 flex-wrap justify-center">
+          <div className="flex gap-5 flex-wrap justify-center">
             <div className="basis-full flex justify-center">
               <Button
                 type="primary"

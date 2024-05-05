@@ -12,7 +12,8 @@ export default function Button({
   type = "secondary",
 }: Button) {
   const defaultClasses = clsx({
-    "px-10 py-2.5 font-primary font-regular border border-black": true,
+    "px-10 py-2.5 font-primary font-regular border border-black shadow-md shadow-black":
+      true,
     "hover:bg-black hover:text-white": type === "secondary",
     "bg-black text-white hover:bg-transparent hover:text-black":
       type === "primary",
