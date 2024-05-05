@@ -127,15 +127,17 @@ export default function Admin() {
               <ul>
                 {selectedTeam?.users.map((user: User) => {
                   return (
-                    <li
-                      onClick={() => {
-                        dispatch("room:leave", {
-                          team: selectedTeam?.id,
-                          user: user.id,
-                        });
-                      }}
-                    >
+                    <li>
                       {user.name}
+                      <Button
+                        label="leave"
+                        handleClick={() => {
+                          dispatch("room:leave", {
+                            team: selectedTeam?.id,
+                            user: user.id,
+                          });
+                        }}
+                      ></Button>
                     </li>
                   );
                 })}
