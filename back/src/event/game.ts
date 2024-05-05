@@ -27,7 +27,11 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   }
 
   io.to(room.id).except(room.admin).emit("game:answer", { room, team });
-  io.to(room.admin).emit("game:answer", { room, team, answer: payload.answer });
+  io.to(room.admin).emit("game:answer", {
+    room,
+    team,
+    answer: payload?.answer,
+  });
 
   setTimeout(() => {
     team.hasBuzzed = false;
