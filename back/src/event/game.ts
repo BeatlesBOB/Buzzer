@@ -30,6 +30,7 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   io.to(room.admin).emit("game:answer", {
     room,
     team,
+    user,
     answer: payload?.answer,
   });
 
