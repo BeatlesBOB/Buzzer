@@ -89,9 +89,7 @@ export default function Admin() {
           <div className="flex gap-2 flex-wrap justify-center">
             <div className="basis-full flex justify-center">
               <Button
-                classes={
-                  "bg-black px-10 text-white py-2.5 border border-black hover:bg-transparent hover:text-black"
-                }
+                type="primary"
                 label={room?.hasStarted ? "Pause" : "Start"}
                 handleClick={room?.hasStarted ? pauseGame : startGame}
               />
@@ -174,7 +172,7 @@ export default function Admin() {
               required
             />
             <input type="radio" value="text" required name="type" />
-            <Button label="change" />
+            <Button label="change" type="primary" />
           </form>
         </div>
       </Modal>

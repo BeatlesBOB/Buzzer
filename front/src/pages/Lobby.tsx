@@ -90,9 +90,7 @@ export default function Lobby() {
         />
         <div className="mt-auto py-5">
           <Button
-            classes={
-              "bg-black px-10 text-white py-2.5 border border-black hover:bg-transparent hover:text-black"
-            }
+            type="primary"
             handleClick={() => setIsOpen(true)}
             label="Create A team"
           />
@@ -117,12 +115,7 @@ export default function Lobby() {
             placeholder="User Name"
             required
           />
-          <Button
-            classes={
-              "bg-black px-10 text-white py-2.5 border border-black hover:bg-transparent hover:text-black"
-            }
-            label="Create"
-          />
+          <Button type="primary" label="Create" />
         </form>
       </Modal>
     </div>
