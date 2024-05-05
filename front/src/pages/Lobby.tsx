@@ -121,11 +121,12 @@ export default function Lobby() {
               ? {
                   value: selectedTeam.id,
                   name: "teamId",
+                  readOnly: true,
+                  hidden: true,
                 }
               : {
                   name: "teamName",
                 })}
-            hidden={selectedTeam !== undefined}
             required
           />
           <input
