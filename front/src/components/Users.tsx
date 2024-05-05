@@ -48,11 +48,11 @@ export default function Users({
                 />
               )}
 
-              {!isAdmin && joinTeam && user?.team !== team.id && (
+              {!isAdmin && joinTeam && !user?.team && (
                 <Button label="Join team" handleClick={() => joinTeam(team)} />
               )}
 
-              {user?.team === team.id && leaveTeam && (
+              {(user?.team === team.id || isAdmin) && leaveTeam && (
                 <Button label="Leave" handleClick={() => leaveTeam(team)} />
               )}
             </div>
