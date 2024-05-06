@@ -31,13 +31,19 @@ export const removeTeamById = (room: Room, id: string) => {
     return team.id === currentTeam?.id;
   });
 
+  console.log("currentTeam");
+  console.log(currentTeam);
+
+  console.log("teams");
+  console.log(room.teams);
+
   if (index !== -1) {
     room.teams.splice(index, 1);
   }
 };
 
-export const deleteRoom = (room: Room) => {
-  Rooms.delete(room.id);
+export const deleteRoom = (room: Room): boolean => {
+  return Rooms.delete(room.id);
 };
 
 export const initRoom = (id: string, admin: string) => {

@@ -10,6 +10,7 @@ import {
   removeUserFromTeam,
   deleteRoom,
 } from "../utils/utils";
+import { Room } from "../utils/interface";
 
 export const createRoom = (socket: Socket) => {
   const id = uuidv4();
@@ -29,40 +30,60 @@ export const leaveRoom = (
     return handleError(socket, "No Room provided");
   }
 
-  const room = Rooms.get(roomId)!;
-  const team = getTeamById(room, teamId);
-  if (!team) {
-    return handleError(socket, "No Valid Team Id Provided");
-  }
+  let room = Rooms.get(roomId)!;
 
-  if (team) {
+  if (!isAdmin) {
+    const team = getTeamById(room, teamId);
+
+    if (!team) {
+      return handleError(socket, "No Team provided");
+    }
+
     removeUserFromTeam(team, socket.id);
+
+    if (team!.users.length === 0) {
+      removeTeamById(room, teamId);
+    }
+
+    socket.data.team = undefined;
+    socket.data.name = undefined;
+    socket.data.room = undefined;
+
+    if (room.teams.length === 0) {
+      room = deleteRoom(room) ? ({} as Room) : room;
+    }
+
+    io.to(roomId).emit("room:leave", {
+      room,
+    });
+
+    io.to(socket.id).emit("room:user", {
+      user: { id: socket.id, ...socket.data },
+    });
+
+    socket.leave(room.id);
   } else if (isAdmin) {
-    if (payload.team) {
-      removeTeamById(room, payload.team);
+    const { team: teamId, user } = payload;
+    const team = getTeamById(room, teamId);
+
+    if (!team) {
+      return handleError(socket, "No Team provided");
     }
 
-    if (payload.user) {
-      removeUserFromTeam(team, payload.user);
+    if (teamId && user === undefined) {
+      removeTeamById(room, teamId);
+    } else if (team && user) {
+      removeUserFromTeam(team, user);
     }
+
+    if (team!.users.length === 0) {
+      removeTeamById(room, team.id);
+    }
+
+    io.to(roomId).emit("room:leave", {
+      room,
+    });
   }
-
-  if (team.users.length === 0) {
-    removeTeamById(room, teamId);
-  }
-
-  if (room.teams.length === 0) {
-    deleteRoom(room);
-  }
-
-  io.to(room.id).emit("room:leave", {
-    room,
-  });
-  io.to(socket.id).emit("room:user", {
-    user: { id: socket.id, ...socket.data },
-  });
-
-  socket.leave(room.id);
 };
 
 export const joinRoom = (
