@@ -83,13 +83,13 @@ export default function Lobby() {
     dispatch("room:leave");
     navigate("../");
   };
-  
-  const homePath = () =>{ 
-    let path = `/`; 
-    if (confirm('Tu veux vraiment revenir en arrière ?')) {
+
+  const homePath = () => {
+    let path = `/`;
+    if (confirm("Tu veux vraiment revenir en arrière ?")) {
       navigate(path);
-    } 
-  }
+    }
+  };
 
   const handleTeamJoin = (team: Team) => {
     setSelectedTeam(team);
@@ -106,18 +106,13 @@ export default function Lobby() {
             joinTeam={handleTeamJoin}
             leaveTeam={handeTeamLeave}
           />
-          <div className="mt-auto py-5">
+          <div className="mt-auto py-5 flex gap-5">
             <Button
               type="primary"
               handleClick={() => setIsOpen(true)}
               label="Crée ton équipe"
             />
-             <span>&nbsp;</span>
-            <Button
-                  type="primary"
-                  label= "Retour"
-                  handleClick={homePath}
-                />
+            <Button type="primary" label="Retour" handleClick={homePath} />
           </div>
         </div>
       </div>

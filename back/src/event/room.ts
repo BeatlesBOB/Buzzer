@@ -58,7 +58,12 @@ export const leaveRoom = (
     });
 
     io.to(socket.id).emit("room:user", {
-      user: { id: socket.id, ...socket.data },
+      user: {
+        id: socket.data.id,
+        name: socket.data.name,
+        team: socket.data.team,
+        room: socket.data.room,
+      },
     });
 
     socket.leave(room.id);
@@ -127,7 +132,12 @@ export const joinRoom = (
   });
 
   io.to(socket.id).emit("room:user", {
-    user: { id: socket.id, ...socket.data },
+    user: {
+      id: socket.data.id,
+      name: socket.data.name,
+      team: socket.data.team,
+      room: socket.data.room,
+    },
   });
 };
 

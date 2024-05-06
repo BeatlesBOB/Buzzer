@@ -16,4 +16,5 @@ export interface User {
   id: string;
   name: string;
   team: string;
+  room: string;
 }

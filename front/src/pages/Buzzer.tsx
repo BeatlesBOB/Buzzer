@@ -52,6 +52,8 @@ export default function Buzzer() {
       className="h-dvh w-dvw disabled:bg-gray-300 user-name"
       onClick={handleAnswer}
       disabled={isDisabled}
-    >{user.name}</button>
+    >
+      {user!.name}
+    </button>
   );
 }
