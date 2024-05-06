@@ -23,8 +23,7 @@ export default function Admin() {
     | undefined
   >(undefined);
   const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
-  const navigate  = useNavigate();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleTeamsUpdate = (payload: { room: Room }) => {
@@ -84,15 +83,15 @@ export default function Admin() {
 
   const copyRoomId = () => {
     const roomId = room?.id || "L'a pétée la Room...";
-    navigator.clipboard.writeText(roomId)
-  }
+    navigator.clipboard.writeText(roomId);
+  };
 
-  const homePath = () =>{ 
-    let path = `/`; 
-    if (confirm('Tu veux vraiment revenir en arrière et flinguer la game ?')) {
+  const homePath = () => {
+    let path = `/`;
+    if (confirm("Tu veux vraiment revenir en arrière et flinguer la game ?")) {
       navigate(path);
-    } 
-  }
+    }
+  };
 
   return (
     <>
@@ -110,10 +109,10 @@ export default function Admin() {
         <div className="flex flex-col items-center justify-center gap-6 h-full">
           <Title />
           <Button
-                type="primary"
-                label={room?.id || "L'a pétée la Room..."}
-                handleClick={copyRoomId}
-              />
+            type="primary"
+            label={room?.id || "L'a pétée la Room..."}
+            handleClick={copyRoomId}
+          />
           <QRCode value={room?.id || ""} />
           <div className="flex gap-5 flex-wrap justify-center">
             <div className="basis-full flex justify-center">
@@ -138,11 +137,7 @@ export default function Admin() {
               handleClick={() => setIsBuzzerTypeModalOpen(true)}
             />
             <div className="basis-full flex justify-center">
-              <Button
-                type="primary"
-                label= "Retour"
-                handleClick={homePath}
-              />
+              <Button type="primary" label="Retour" handleClick={homePath} />
             </div>
           </div>
         </div>
@@ -172,7 +167,7 @@ export default function Admin() {
               <Button
                 label="Delete team"
                 handleClick={() => {
-                  dispatch("room:leave", { teamId: selectedTeam?.id });
+                  dispatch("room:leave", { team: selectedTeam?.id });
                 }}
               />
             </>

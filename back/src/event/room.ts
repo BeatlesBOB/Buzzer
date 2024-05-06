@@ -65,10 +65,14 @@ export const leaveRoom = (
   } else if (isAdmin) {
     const { team: teamId, user } = payload;
     const team = getTeamById(room, teamId);
+    console.log(user);
+    console.log(team);
 
     if (!team) {
       return handleError(socket, "No Team provided");
     }
+
+    console.log(user);
 
     if (teamId && user === undefined) {
       removeTeamById(room, teamId);
