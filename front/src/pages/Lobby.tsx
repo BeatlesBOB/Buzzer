@@ -83,6 +83,13 @@ export default function Lobby() {
     dispatch("room:leave");
     navigate("../");
   };
+  
+  const homePath = () =>{ 
+    let path = `/`; 
+    if (confirm('Tu veux vraiment revenir en arrière ?')) {
+      navigate(path);
+    } 
+  }
 
   const handleTeamJoin = (team: Team) => {
     setSelectedTeam(team);
@@ -103,8 +110,14 @@ export default function Lobby() {
             <Button
               type="primary"
               handleClick={() => setIsOpen(true)}
-              label="Create A team"
+              label="Crée ton équipe"
             />
+             <span>&nbsp;</span>
+            <Button
+                  type="primary"
+                  label= "Retour"
+                  handleClick={homePath}
+                />
           </div>
         </div>
       </div>
@@ -116,7 +129,7 @@ export default function Lobby() {
           <input
             type="text"
             className="border-b-2"
-            placeholder="Team Name"
+            placeholder="Nom d'équipe"
             {...(selectedTeam !== undefined
               ? {
                   value: selectedTeam.id,
@@ -133,10 +146,10 @@ export default function Lobby() {
             type="text"
             name="user"
             className="border-b-2"
-            placeholder="User Name"
+            placeholder="Ton pti nom"
             required
           />
-          <Button type="primary" label="Create" />
+          <Button type="primary" label="Lezzzz Go" />
         </form>
       </Modal>
     </>

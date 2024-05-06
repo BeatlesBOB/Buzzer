@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
@@ -22,6 +23,8 @@ export default function Admin() {
     | undefined
   >(undefined);
   const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
+  const navigate  = useNavigate();
+
 
   useEffect(() => {
     const handleTeamsUpdate = (payload: { room: Room }) => {
@@ -79,6 +82,18 @@ export default function Admin() {
     dispatch("game:point:reset");
   };
 
+  const copyRoomId = () => {
+    const roomId = room?.id || "L'a pétée la Room...";
+    navigator.clipboard.writeText(roomId)
+  }
+
+  const homePath = () =>{ 
+    let path = `/`; 
+    if (confirm('Tu veux vraiment revenir en arrière et flinguer la game ?')) {
+      navigate(path);
+    } 
+  }
+
   return (
     <>
       <div className="grid lg:grid-cols-2 h-dvh p-5">
@@ -94,6 +109,11 @@ export default function Admin() {
         />
         <div className="flex flex-col items-center justify-center gap-6 h-full">
           <Title />
+          <Button
+                type="primary"
+                label={room?.id || "L'a pétée la Room..."}
+                handleClick={copyRoomId}
+              />
           <QRCode value={room?.id || ""} />
           <div className="flex gap-5 flex-wrap justify-center">
             <div className="basis-full flex justify-center">
@@ -117,6 +137,13 @@ export default function Admin() {
               label="Change buzzer type"
               handleClick={() => setIsBuzzerTypeModalOpen(true)}
             />
+            <div className="basis-full flex justify-center">
+              <Button
+                type="primary"
+                label= "Retour"
+                handleClick={homePath}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -130,7 +157,7 @@ export default function Admin() {
                     <li className="p-5 flex items-center justify-between border border-black">
                       <p>{user.name}</p>
                       <Button
-                        label="leave"
+                        label="Jme barre"
                         handleClick={() => {
                           dispatch("room:leave", {
                             team: selectedTeam?.id,
