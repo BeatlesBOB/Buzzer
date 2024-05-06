@@ -151,11 +151,11 @@ export default function Admin() {
         <div className="p-5">
           {selectedTeam && (
             <>
-              <ul>
+              <ul className="flex flex-col gap-5 mb-5">
                 {selectedTeam?.users.map((user: User) => {
                   return (
-                    <li>
-                      {user.name}
+                    <li className="p-5 flex items-center justify-between border border-black">
+                      <p>{user.name}</p>
                       <Button
                         label="Jme barre"
                         handleClick={() => {
@@ -206,9 +206,7 @@ export default function Admin() {
             <input
               type="number"
               name="number"
-              value="-1"
-              className="hidden group-has-[input[value='choice']:checked]:block"
-              required
+              className="group-has-[input[value='choice']:checked]:block"
             />
             <input type="radio" value="text" required name="type" />
             <Button label="change" type="primary" />
