@@ -70,8 +70,6 @@ export const leaveRoom = (
       return handleError(socket, "No Team provided");
     }
 
-    console.log(user);
-
     if (teamId && user === undefined) {
       removeTeamById(room, teamId);
     } else if (team && user) {
