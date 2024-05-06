@@ -12,6 +12,8 @@ export default function Lobby() {
   const { isAdmin, room, setisGameStarted, setUser, setRoom } =
     useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
+
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -22,7 +24,10 @@ export default function Lobby() {
     const formData = new FormData(e.currentTarget);
 
     joinOrCreateATeam(
-      { name: formData.get("team")?.toString() },
+      {
+        name: formData.get("teamName")?.toString(),
+        id: formData.get("teamId")?.toString(),
+      },
       formData.get("user")?.toString()
     );
     setIsOpen(false);
@@ -86,27 +91,34 @@ export default function Lobby() {
     } 
   }
 
+  const handleTeamJoin = (team: Team) => {
+    setSelectedTeam(team);
+    setIsOpen(true);
+  };
+
   return (
-    <div className="h-dvh p-5">
-      <div className="flex flex-col h-full">
-        <Users
-          teams={room?.teams}
-          isAdmin={isAdmin}
-          joinTeam={joinOrCreateATeam}
-          leaveTeam={handeTeamLeave}
-        />
-        <div className="mt-auto py-5">
-          <Button
-            type="primary"
-            handleClick={() => setIsOpen(true)}
-            label="Create A team"
+    <>
+      <div className="h-dvh p-5">
+        <div className="flex flex-col h-full">
+          <Users
+            teams={room?.teams}
+            isAdmin={isAdmin}
+            joinTeam={handleTeamJoin}
+            leaveTeam={handeTeamLeave}
           />
-          <span>&nbsp;</span>
-          <Button
-                type="primary"
-                label= "Retour"
-                handleClick={homePath}
-              />
+          <div className="mt-auto py-5">
+            <Button
+              type="primary"
+              handleClick={() => setIsOpen(true)}
+              label="Crée ton équipe"
+            />
+             <span>&nbsp;</span>
+            <Button
+                  type="primary"
+                  label= "Retour"
+                  handleClick={homePath}
+                />
+          </div>
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -116,21 +128,30 @@ export default function Lobby() {
         >
           <input
             type="text"
-            name="team"
             className="border-b-2"
-            placeholder="Team Name"
+            placeholder="Nom d'équipe"
+            {...(selectedTeam !== undefined
+              ? {
+                  value: selectedTeam.id,
+                  name: "teamId",
+                  readOnly: true,
+                  hidden: true,
+                }
+              : {
+                  name: "teamName",
+                })}
             required
           />
           <input
             type="text"
             name="user"
             className="border-b-2"
-            placeholder="User Name"
+            placeholder="Ton pti nom"
             required
           />
-          <Button type="primary" label="Create" />
+          <Button type="primary" label="Lezzzz Go" />
         </form>
       </Modal>
-    </div>
+    </>
   );
 }

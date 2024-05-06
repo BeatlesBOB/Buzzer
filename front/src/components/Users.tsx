@@ -9,7 +9,7 @@ export interface IUsers {
   leaveTeam: (team: Team) => void;
   updateTeamPoint?: (team: Team, point: number) => void;
   resetTeamBuzzer?: (team: Team) => void;
-  joinTeam?: (team: Partial<Team>) => void;
+  joinTeam?: (team: Team) => void;
 }
 
 export default function Users({
@@ -29,11 +29,14 @@ export default function Users({
         teamUsers.forEach((user) => teamUserName = teamUserName + ', ' + user.name)
 
         return (
-          <li className="p-5 shadow-lg flex font-primary" key={team.id}>
+          <li
+            className="p-5 shadow-lg flex flex-wrap font-primary"
+            key={team.id}
+          >
             <p className="capitalize text-lg">{team.name}</p>
-            <p className="text-lg">({teamUserName.substring(2)})</p>
+            <p className="mx-2">({teamUserName.substring(2)})</p>
 
-            <div className="flex ml-auto gap-5">
+            <div className="flex flex-wrap ml-auto gap-5">
               {isAdmin && updateTeamPoint && (
                 <input
                   min={0}
@@ -52,12 +55,12 @@ export default function Users({
                 />
               )}
 
-              {!isAdmin && joinTeam && user?.team !== team.id && (
+              {!isAdmin && joinTeam && !user?.team && (
                 <Button label="Join team" handleClick={() => joinTeam(team)} />
               )}
 
-              {user?.team === team.id && leaveTeam && (
-                <Button label="Leave" handleClick={() => leaveTeam(team)} />
+              {(user?.team === team.id || isAdmin) && leaveTeam && (
+                <Button label="Jme barre" handleClick={() => leaveTeam(team)} />
               )}
             </div>
           </li>

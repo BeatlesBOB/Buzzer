@@ -30,12 +30,12 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   io.to(room.admin).emit("game:answer", {
     room,
     team,
+    user,
     answer: payload?.answer,
   });
 
   setTimeout(() => {
     team.hasBuzzed = false;
-    user.hasBuzzed = false;
     io.to(room.id).emit("game:status", { room, team });
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "4000"));
 };

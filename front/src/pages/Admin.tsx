@@ -15,7 +15,13 @@ export default function Admin() {
   const [isAnswerModalOpen, setAnswerModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
   const { dispatch, subscribe, unSubscribe } = useSocket();
-  const [teamAnswer, setTeamAnswer] = useState<Team | undefined>(undefined);
+  const [answer, setAnswer] = useState<
+    | {
+        user: User;
+        team: Team;
+      }
+    | undefined
+  >(undefined);
   const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
   const navigate  = useNavigate();
 
@@ -26,9 +32,12 @@ export default function Admin() {
       setRoom(room);
     };
 
-    const handleAnswer = (payload: { team: Team }) => {
-      const { team } = payload;
-      setTeamAnswer(team);
+    const handleAnswer = (payload: { team: Team; user: User }) => {
+      const { team, user } = payload;
+      setAnswer({
+        team,
+        user,
+      });
       setAnswerModalOpen(true);
     };
 
@@ -145,15 +154,17 @@ export default function Admin() {
               <ul>
                 {selectedTeam?.users.map((user: User) => {
                   return (
-                    <li
-                      onClick={() => {
-                        dispatch("room:leave", {
-                          team: selectedTeam?.id,
-                          user: user.id,
-                        });
-                      }}
-                    >
+                    <li>
                       {user.name}
+                      <Button
+                        label="Jme barre"
+                        handleClick={() => {
+                          dispatch("room:leave", {
+                            team: selectedTeam?.id,
+                            user: user.id,
+                          });
+                        }}
+                      ></Button>
                     </li>
                   );
                 })}
@@ -170,10 +181,11 @@ export default function Admin() {
       </Modal>
       <Modal isOpen={isAnswerModalOpen} setIsOpen={setAnswerModalOpen}>
         <div className="p-5">
-          {teamAnswer && (
+          {answer && (
             <div className="flex flex-col gap-5">
-              <h1 className="font-semibold text-lg">{teamAnswer.name}</h1>
-              <h2 className="font-medium text-md">{teamAnswer.point}</h2>
+              <h1 className="font-semibold text-2xl">{answer.team.name}</h1>
+              <h2 className="font-medium text-xl">{answer.team.point}</h2>
+              <h3 className="font-medium text-lg">{answer.user.name}</h3>
             </div>
           )}
         </div>
