@@ -8,7 +8,7 @@ import {
   leaveRoom,
   startGame,
   gamePause,
-  getRoomInfo,
+  getInfo,
 } from "./event/room";
 import {
   handleAnswer,
@@ -61,7 +61,6 @@ const onConnection = (socket: Socket) => {
   socket.on("room:lobby", (payload) => handleLobbyStatus(socket, payload));
   socket.on("room:start", () => startGame(socket));
   socket.on("room:pause", () => gamePause(socket));
-  socket.on("room:info", () => getRoomInfo(socket));
 
   socket.on("game:answer", (payload) => handleAnswer(socket, payload));
   socket.on("game:answer:type", (payload) => handleBuzzerType(socket, payload));
@@ -71,6 +70,8 @@ const onConnection = (socket: Socket) => {
   );
   socket.on("game:point:reset", () => resetAllPoint(socket));
   socket.on("game:point", (payload) => setPoint(socket, payload));
+
+  socket.on("user:info", (payload) => getInfo(socket, payload));
 };
 
 io.on("connection", onConnection);

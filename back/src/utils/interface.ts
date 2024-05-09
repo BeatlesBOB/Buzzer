@@ -17,6 +17,7 @@ export interface User {
   id: string;
   name: string;
   hasBuzzed: boolean;
+  isAdmin: boolean;
 }
 
 export type BuzzerType = "speed" | "choice" | "text";

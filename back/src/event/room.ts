@@ -122,6 +122,7 @@ export const joinRoom = (
     id: socket.id,
     name: name,
     hasBuzzed: false,
+    isAdmin: false,
   });
 
   socket.data.team = team.id;
@@ -184,7 +185,10 @@ export const gamePause = (socket: Socket) => {
   io.to(room.id).emit("room:pause", { room });
 };
 
-export const getRoomInfo = (socket: Socket) => {
+export const getInfo = (
+  socket: Socket,
+  payload: { user: string; room: string }
+) => {
   const { room: roomId } = socket.data;
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
