@@ -183,3 +183,12 @@ export const gamePause = (socket: Socket) => {
   room.hasStarted = false;
   io.to(room.id).emit("room:pause", { room });
 };
+
+export const getRoomInfo = (socket: Socket) => {
+  const { isAdmin, room: roomId } = socket.data;
+  if (!Rooms.has(roomId)) {
+    return handleError(socket, "No Room provided");
+  }
+  const room = Rooms.get(roomId);
+  io.to(socket.id).emit("room:info", { room });
+};

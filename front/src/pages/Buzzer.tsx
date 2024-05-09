@@ -18,6 +18,20 @@ export default function Buzzer() {
   }, [room]);
 
   useEffect(() => {
+    dispatch("room:info");
+
+    const handleRoomInfo = (payload: { room: Room }) => {
+      const { room } = payload;
+      setRoom(room);
+    };
+    subscribe("room:info", handleRoomInfo);
+
+    return () => {
+      unSubscribe("room:info", handleRoomInfo);
+    };
+  }, []);
+
+  useEffect(() => {
     const handleTeamAnswer = (payload: { room: Room }) => {
       const { room } = payload;
       setRoom(room);

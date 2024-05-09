@@ -57,6 +57,20 @@ export default function Admin() {
     };
   }, []);
 
+  useEffect(() => {
+    dispatch("room:info");
+
+    const handleRoomInfo = (payload: { room: Room }) => {
+      const { room } = payload;
+      setRoom(room);
+    };
+    subscribe("room:info", handleRoomInfo);
+
+    return () => {
+      unSubscribe("room:info", handleRoomInfo);
+    };
+  }, []);
+
   const resetTeamBuzzer = (team: Team) => {
     dispatch("game:buzzer:reset:team", { team: team.id });
   };

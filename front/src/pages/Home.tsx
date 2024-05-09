@@ -29,6 +29,8 @@ export default function Home() {
     [navigate]
   );
 
+
+
   useEffect(() => {
     const handleRoomCreation = (payload: { room: Room; isAdmin: boolean }) => {
       const { room, isAdmin } = payload;
