@@ -8,6 +8,7 @@ import Modal from "../components/Modal";
 import { Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 import Title from "../components/Title";
+import BuzzerSound from "../assets/sound/Buzzer.mp3";
 
 export default function Admin() {
   const { room, isAdmin, setRoom } = useContext(GameContext);
@@ -33,6 +34,8 @@ export default function Admin() {
 
     const handleAnswer = (payload: { team: Team; user: User }) => {
       const { team, user } = payload;
+      new Audio(BuzzerSound).play();
+
       setAnswer({
         team,
         user,
