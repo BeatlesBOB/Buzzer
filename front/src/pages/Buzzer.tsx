@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo } from "react";
 import useSocket from "../hook/useSocket";
 import { GameContext } from "../contexts/GameContextProvider";
 import useToasts from "../hook/useToasts";
-import { Room, User } from "../types/interfaces";
+import { Room } from "../types/interfaces";
 
 export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
