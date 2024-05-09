@@ -31,14 +31,7 @@ export default function Users({
             key={team.id}
           >
             <p className="capitalize text-lg">{team.name}</p>
-            <p className="mx-2">
-              (
-              {team.users.map((user) => {
-                return user.name.concat(", ");
-              })}
-              )
-            </p>
-
+            <p className="mx-2">({team.users.join(", ")})</p>
             <div className="flex flex-wrap ml-auto gap-5">
               {isAdmin && updateTeamPoint && (
                 <input
