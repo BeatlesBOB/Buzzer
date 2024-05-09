@@ -185,7 +185,7 @@ export const gamePause = (socket: Socket) => {
 };
 
 export const getRoomInfo = (socket: Socket) => {
-  const { isAdmin, room: roomId } = socket.data;
+  const { room: roomId } = socket.data;
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No Room provided");
   }
