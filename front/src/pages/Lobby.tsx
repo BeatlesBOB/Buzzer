@@ -6,54 +6,44 @@ import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
 import { useNavigate, useParams } from "react-router-dom";
 import { Room, Team, User } from "../types/interfaces";
+import useStorage from "../hook/useStorage";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
-  const { isAdmin, room, setisGameStarted, setUser, setRoom } =
-    useContext(GameContext);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
-
   const navigate = useNavigate();
   const { id } = useParams();
-
+  const { room, setUser, setRoom, user } = useContext(GameContext);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
+  const { setData } = useStorage();
   const { subscribe, unSubscribe } = useSocket();
 
-  const handleTeamCreation = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  useEffect(() => {
+    const handleRetreiveData = (payload: { room: Room; user: User }) => {
+      const { user, room } = payload;
+      if (!room) {
+        return navigate("..");
+      }
+      setData("user", user);
+      setData("room", room);
+    };
 
-    joinOrCreateATeam(
-      {
-        name: formData.get("teamName")?.toString(),
-        id: formData.get("teamId")?.toString(),
-      },
-      formData.get("user")?.toString()
-    );
-    setIsOpen(false);
-  };
+    subscribe("room:info", handleRetreiveData);
 
-  const joinOrCreateATeam = (
-    team: Partial<Team>,
-    userName: string | null = null
-  ) => {
-    dispatch("room:join", {
-      roomId: id,
-      userName,
-      teamName: team.name,
-      teamId: team.id,
-    });
-  };
+    return () => {
+      unSubscribe("room:info", handleRetreiveData);
+    };
+  }, []);
 
   useEffect(() => {
-    const handleStart = (payload: { room: Room }) => {
+    const handleGameStart = (payload: { room: Room }) => {
       const { room } = payload;
-      setisGameStarted(room.hasStarted);
       navigate(`../buzzer/${room.id}`);
     };
 
-    const handleTeamsUpdate = (payload: { room: Room }) => {
+    const handleRoomUpdate = (payload: { room: Room }) => {
       const { room } = payload;
+      setData("room", room.id);
       setRoom(room);
     };
 
@@ -62,38 +52,54 @@ export default function Lobby() {
       setUser(user);
     };
 
-    subscribe("room:start", handleStart);
-    subscribe("room:leave", handleTeamsUpdate);
-    subscribe("room:join", handleTeamsUpdate);
-    subscribe("room:user", handleUserUpdate);
+    dispatch("room:join", { room: id });
+
+    subscribe("room:join", handleRoomUpdate);
+    subscribe("room:leave", handleRoomUpdate);
+
+    subscribe("game:start", handleUserUpdate);
+
+    subscribe("user:info", handleUserUpdate);
 
     return () => {
-      unSubscribe("room:start", handleStart);
-      unSubscribe("room:leave", handleTeamsUpdate);
-      unSubscribe("room:join", handleUserUpdate);
-      unSubscribe("room:user", handleUserUpdate);
+      unSubscribe("room:join", handleRoomUpdate);
+      unSubscribe("game:start", handleGameStart);
+      // unSubscribe("room:leave", handleTeamsUpdate);
+      // unSubscribe("room:join", handleUserUpdate);
+      // unSubscribe("room:user", handleUserUpdate);
     };
   }, []);
 
-  useEffect(() => {
-    dispatch("room:lobby", { lobby: id });
-  }, []);
+  const handleTeamCreation = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    dispatch("team:create", {
+      userName: formData.get("userName")?.toString(),
+      teamName: formData.get("teamName")?.toString(),
+    });
+    setIsOpen(false);
+  };
+
+  const handleTeamJoin = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    dispatch("team:join", {
+      userName: formData.get("userName")?.toString(),
+      teamId: formData.get("teamId")?.toString(),
+    });
+    setIsOpen(false);
+  };
 
   const handeTeamLeave = () => {
     dispatch("room:leave");
     navigate("../");
   };
 
-  const homePath = () => {
+  const handleBackHome = () => {
     let path = `/`;
     if (confirm("Tu veux vraiment revenir en arrière ?")) {
       navigate(path);
     }
-  };
-
-  const handleTeamJoin = (team: Team) => {
-    setSelectedTeam(team);
-    setIsOpen(true);
   };
 
   return (
@@ -102,8 +108,11 @@ export default function Lobby() {
         <div className="flex flex-col h-full">
           <Users
             teams={room?.teams}
-            isAdmin={isAdmin}
-            joinTeam={handleTeamJoin}
+            isAdmin={user?.isAdmin}
+            joinTeam={(team) => {
+              setSelectedTeam(team);
+              setIsOpen(true);
+            }}
             leaveTeam={handeTeamLeave}
           />
           <div className="mt-auto py-5 flex gap-5">
@@ -112,13 +121,17 @@ export default function Lobby() {
               handleClick={() => setIsOpen(true)}
               label="Crée ton équipe"
             />
-            <Button type="primary" label="Retour" handleClick={homePath} />
+            <Button
+              type="primary"
+              label="Retour"
+              handleClick={handleBackHome}
+            />
           </div>
         </div>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
         <form
-          onSubmit={handleTeamCreation}
+          onSubmit={selectedTeam ? handleTeamJoin : handleTeamCreation}
           className="flex flex-col gap-y-5 p-5"
         >
           <input
@@ -139,7 +152,7 @@ export default function Lobby() {
           />
           <input
             type="text"
-            name="user"
+            name="userName"
             className="border-b-2"
             placeholder="Ton pti nom"
             required

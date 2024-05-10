@@ -15,6 +15,8 @@ export interface Team {
 export interface User {
   id: string;
   name: string;
-  team: string;
   room: string;
+  hasBuzzed: boolean;
+  team: string;
+  isAdmin: boolean;
 }

@@ -1,8 +1,9 @@
 import { Socket } from "socket.io";
-import { Rooms, io } from "..";
-import { getTeamById, handleError } from "../utils/utils";
+import { Rooms, io } from "../..";
+import { handleError } from "../../utils/error";
+import { getTeamById } from "../../utils/team";
 
-export const setPoint = (
+export const handlePointUpdate = (
   socket: Socket,
   payload: { point: number; team: string }
 ) => {
@@ -25,7 +26,7 @@ export const setPoint = (
   io.emit("game:status", { room: room });
 };
 
-export const resetAllPoint = (socket: Socket) => {
+export const handlePointResetAll = (socket: Socket) => {
   const { isAdmin, room: roomId } = socket.data;
   if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(

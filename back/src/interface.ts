@@ -2,7 +2,7 @@ export interface Room {
   id: string;
   teams: Array<Team>;
   hasStarted: boolean;
-  admin: string;
+  admin: Admin;
 }
 
 export interface Team {
@@ -16,7 +16,14 @@ export interface Team {
 export interface User {
   id: string;
   name: string;
+  room: string;
   hasBuzzed: boolean;
+  team: string;
+}
+
+export interface Admin {
+  id: string;
+  room: string;
   isAdmin: boolean;
 }
 

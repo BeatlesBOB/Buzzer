@@ -5,9 +5,10 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 import { GameContext } from "../contexts/GameContextProvider";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
-import { Room } from "../types/interfaces";
+import { Admin, Room } from "../types/interfaces";
 import Title from "../components/Title";
 import useToasts from "../hook/useToasts";
+import useStorage from "../hook/useStorage";
 
 export default function Home() {
   const { setRoom, setIsAdmin } = useContext(GameContext);
@@ -15,9 +16,7 @@ export default function Home() {
   const { subscribe, dispatch, unSubscribe } = useSocket();
   const navigate = useNavigate();
   const { pushToast } = useToasts();
-
-  console.log(useContext(GameContext))
-
+  const { setData } = useStorage();
   const createGame = () => {
     dispatch("room:create");
   };
@@ -29,19 +28,14 @@ export default function Home() {
     [navigate]
   );
 
-
-
   useEffect(() => {
-    const handleRoomCreation = (payload: { room: Room; isAdmin: boolean }) => {
-      const { room, isAdmin } = payload;
+    const handleRoomCreation = (payload: { room: Room; admin: Admin }) => {
+      const { room, admin } = payload;
       setRoom(room);
-      setIsAdmin(isAdmin);
-      if (isAdmin) {
-        navigate(`admin/${room.id}`);
-      } else {
-        dispatch("room:lobby", { lobby: room.id });
-        navigate(`lobby/${room.id}`);
-      }
+      setIsAdmin(true);
+      setData("room", room.id);
+      setData("user", admin);
+      navigate(`admin/${room.id}`);
     };
 
     subscribe("room:create", handleRoomCreation);

@@ -1,23 +1,10 @@
 import dotenv from "dotenv";
 import { Socket } from "socket.io";
-import { Room } from "./utils/interface";
-import {
-  createRoom,
-  handleLobbyStatus,
-  joinRoom,
-  leaveRoom,
-  startGame,
-  gamePause,
-  getInfo,
-} from "./event/room";
-import {
-  handleAnswer,
-  resetAllAnswer,
-  resetTeamAnswer,
-  handleBuzzerType,
-} from "./event/game";
-import { resetAllPoint, setPoint } from "./event/point";
+import { Room } from "./interface";
 import { instrument } from "@socket.io/admin-ui";
+import { handeRoomJoin, handleRoomCreate, handleRoomInfo } from "./events/room";
+import { handleGameStart } from "./events/game";
+import { handleTeamCreate } from "./events/team";
 dotenv.config();
 
 const express = require("express");
@@ -30,6 +17,7 @@ app.listen(process.env.ADMIN_PORT);
 
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
+  connectionStateRecovery: {},
   cors: {
     origin: [
       "http://localhost:3030",
@@ -55,23 +43,31 @@ instrument(io, {
 export const Rooms = new Map<string, Room>();
 
 const onConnection = (socket: Socket) => {
-  socket.on("room:create", () => createRoom(socket));
-  socket.on("room:join", (payload) => joinRoom(socket, payload));
-  socket.on("room:leave", (payload) => leaveRoom(socket, payload));
-  socket.on("room:lobby", (payload) => handleLobbyStatus(socket, payload));
-  socket.on("room:start", () => startGame(socket));
-  socket.on("room:pause", () => gamePause(socket));
+  // ROOM
+  socket.on("room:create", () => handleRoomCreate(socket));
+  socket.on("room:info", (payload) => handleRoomInfo(socket, payload));
+  socket.on("room:join", (payload) => handeRoomJoin(socket, payload));
 
-  socket.on("game:answer", (payload) => handleAnswer(socket, payload));
-  socket.on("game:answer:type", (payload) => handleBuzzerType(socket, payload));
-  socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
-  socket.on("game:buzzer:reset:team", (payload) =>
-    resetTeamAnswer(socket, payload)
-  );
-  socket.on("game:point:reset", () => resetAllPoint(socket));
-  socket.on("game:point", (payload) => setPoint(socket, payload));
+  // GAME
+  socket.on("game:start", () => handleGameStart(socket));
 
-  socket.on("user:info", (payload) => getInfo(socket, payload));
+  // TEAM
+  socket.on("team:create", (payload) => handleTeamCreate(socket, payload));
+
+  // socket.on("room:leave", (payload) => leaveRoom(socket, payload));
+  //
+  // socket.on("room:pause", () => gamePause(socket));
+
+  // socket.on("game:answer", (payload) => handleAnswer(socket, payload));
+  // socket.on("game:answer:type", (payload) => handleBuzzerType(socket, payload));
+  // socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
+  // socket.on("game:buzzer:reset:team", (payload) =>
+  //   resetTeamAnswer(socket, payload)
+  // );
+  // socket.on("game:point:reset", () => resetAllPoint(socket));
+  // socket.on("game:point", (payload) => setPoint(socket, payload));
+
+  //
 };
 
 io.on("connection", onConnection);

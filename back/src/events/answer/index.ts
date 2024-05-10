@@ -1,10 +1,12 @@
 import { Socket } from "socket.io";
-import { Rooms, io } from "..";
-import { getTeamById, getUserById, handleError } from "../utils/utils";
-import { BuzzerType } from "../utils/interface";
+import { Rooms, io } from "../..";
+import { BuzzerType } from "../../interface";
+import { getTeamById } from "../../utils/team";
+import { handleError } from "../../utils/error";
+import { getUserById } from "../../utils/user";
 
 export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
-  const { team: teamId, room: roomId } = socket.data;
+  const { team: teamId, room: roomId } = socket.data.user;
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No room provided");
   }
@@ -26,8 +28,8 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
     return handleError(socket, "User not found");
   }
 
-  io.to(room.id).except(room.admin).emit("game:answer", { room, team });
-  io.to(room.admin).emit("game:answer", {
+  io.to(room.id).except(room.admin.id).emit("game:answer", { room, team });
+  io.to(room.admin.id).emit("game:answer", {
     room,
     team,
     user,
@@ -40,8 +42,8 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   }, parseInt(process.env.TIMEOUT_ANSWER ?? "30000"));
 };
 
-export const resetAllAnswer = (socket: Socket) => {
-  const { isAdmin, room: roomId } = socket.data;
+export const hansleAnswerResetAll = (socket: Socket) => {
+  const { isAdmin, room: roomId } = socket.data.user;
 
   if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
@@ -58,9 +60,12 @@ export const resetAllAnswer = (socket: Socket) => {
   io.to(room.id).emit("game:status", { room });
 };
 
-export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
+export const handleAnswerResetTeam = (
+  socket: Socket,
+  payload: { team: string }
+) => {
   const { team: teamId } = payload;
-  const { isAdmin, room: roomId } = socket.data;
+  const { isAdmin, room: roomId } = socket.data.user;
 
   if (!Rooms.has(roomId)) {
     return handleError(socket, "No room provided");
@@ -76,11 +81,11 @@ export const resetTeamAnswer = (socket: Socket, payload: { team: string }) => {
   io.to(room.id).emit("game:status", { room });
 };
 
-export const handleBuzzerType = (
+export const handleAnswerType = (
   socket: Socket,
   payload: { type: BuzzerType; multiple: number }
 ) => {
-  const { isAdmin, room: roomId } = socket.data;
+  const { isAdmin, room: roomId } = socket.data.user;
   if (!isAdmin) {
     return handleError(socket, "No Admin of this room");
   }

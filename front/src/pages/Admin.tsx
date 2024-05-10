@@ -9,11 +9,12 @@ import { Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 import Title from "../components/Title";
 import BuzzerSound from "../assets/sound/Buzzer.mp3";
+import useStorage from "../hook/useStorage";
 
 const audio = new Audio(BuzzerSound);
 
 export default function Admin() {
-  const { room, isAdmin, setRoom } = useContext(GameContext);
+  const { room, setRoom, setUser, user } = useContext(GameContext);
   const [isSelectedModalOpen, setIsSelectedModalOpen] = useState(false);
   const [isAnswerModalOpen, setAnswerModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
@@ -27,17 +28,41 @@ export default function Admin() {
   >(undefined);
   const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { getData, setData } = useStorage();
 
   useEffect(() => {
-    const handleTeamsUpdate = (payload: { room: Room }) => {
+    dispatch("room:info", {
+      room: getData("room"),
+      user: getData("user"),
+    });
+
+    const handleRoomInfo = (payload: { room: Room; user: User }) => {
+      const { room, user } = payload;
+
+      if (!room || !user || !user.isAdmin) {
+        return navigate("..");
+      }
+
+      setRoom(room);
+      setUser(user);
+      setData("room", room.id);
+      setData("user", user.id);
+    };
+    subscribe("room:info", handleRoomInfo);
+
+    return () => {
+      unSubscribe("room:info", handleRoomInfo);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleRoomUpdate = (payload: { room: Room }) => {
       const { room } = payload;
       setRoom(room);
     };
-
     const handleAnswer = (payload: { team: Team; user: User }) => {
       const { team, user } = payload;
       audio.play();
-
       setAnswer({
         team,
         user,
@@ -45,34 +70,16 @@ export default function Admin() {
       setAnswerModalOpen(true);
     };
 
-    subscribe("room:join", handleTeamsUpdate);
-    subscribe("room:start", handleTeamsUpdate);
-    subscribe("game:status", handleTeamsUpdate);
-    subscribe("room:leave", handleTeamsUpdate);
-    subscribe("game:answer", handleAnswer);
-    subscribe("room:pause", handleTeamsUpdate);
+    subscribe("game:start", handleRoomUpdate);
+    subscribe("room:leave", handleRoomUpdate);
+    // subscribe("game:status", handleTeamsUpdate);
+    //
+    // subscribe("game:answer", handleAnswer);
+    // subscribe("room:pause", handleTeamsUpdate);
 
     return () => {
-      unSubscribe("room:join", handleTeamsUpdate);
-      unSubscribe("game:status", handleTeamsUpdate);
-      unSubscribe("room:leave", handleTeamsUpdate);
-      unSubscribe("room:start", handleTeamsUpdate);
-      unSubscribe("room:pause", handleTeamsUpdate);
-      unSubscribe("game:answer", handleAnswer);
-    };
-  }, []);
-
-  useEffect(() => {
-    dispatch("room:info");
-
-    const handleRoomInfo = (payload: { room: Room }) => {
-      const { room } = payload;
-      setRoom(room);
-    };
-    subscribe("room:info", handleRoomInfo);
-
-    return () => {
-      unSubscribe("room:info", handleRoomInfo);
+      unSubscribe("game:start", handleRoomUpdate);
+      unSubscribe("room:leave", handleRoomUpdate);
     };
   }, []);
 
@@ -121,7 +128,7 @@ export default function Admin() {
             setSelectedTeam(team);
             setIsSelectedModalOpen(true);
           }}
-          isAdmin={isAdmin}
+          isAdmin={user?.isAdmin}
           teams={room?.teams}
           updateTeamPoint={updateTeamPoint}
         />

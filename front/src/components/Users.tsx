@@ -5,7 +5,7 @@ import { GameContext } from "../contexts/GameContextProvider";
 
 export interface IUsers {
   teams?: Array<Team>;
-  isAdmin: boolean;
+  isAdmin?: boolean;
   leaveTeam: (team: Team) => void;
   updateTeamPoint?: (team: Team, point: number) => void;
   resetTeamBuzzer?: (team: Team) => void;
@@ -13,8 +13,8 @@ export interface IUsers {
 }
 
 export default function Users({
-  isAdmin,
-  teams,
+  isAdmin = false,
+  teams = [],
   leaveTeam,
   updateTeamPoint,
   resetTeamBuzzer,
@@ -24,7 +24,7 @@ export default function Users({
 
   return (
     <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
-      {teams?.map((team: Team) => {
+      {teams.map((team: Team) => {
         return (
           <li
             className="p-5 shadow-lg flex flex-wrap font-primary"

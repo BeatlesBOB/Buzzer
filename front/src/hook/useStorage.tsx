@@ -1,5 +1,6 @@
 export default function useStorage() {
-  const setData = (key: string, data: any) => {
+  
+    const setData = (key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify(data));
   };
 
