@@ -16,7 +16,8 @@ export default function Lobby() {
   const { room, setUser, setRoom, user } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
-  const { setLocalStorageData, getLocalStorageData } = useStorage();
+  const { setLocalStorageData, getLocalStorageData, clearLocalStorageData } =
+    useStorage();
   const { subscribe, unSubscribe } = useSocket();
   const { pushToast } = useToasts();
 
@@ -30,6 +31,7 @@ export default function Lobby() {
       const { room, user } = payload;
 
       if (!room || !user || !user.isAdmin) {
+        clearLocalStorageData();
         return navigate("..");
       }
 
@@ -53,7 +55,12 @@ export default function Lobby() {
 
     const handleRoomUpdate = (payload: { room: Room }) => {
       const { room } = payload;
+      if (!room) {
+        clearLocalStorageData();
+        navigate("..");
+      }
       setLocalStorageData("room", room.id);
+
       setRoom(room);
     };
 

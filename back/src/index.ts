@@ -8,8 +8,12 @@ import {
   handleRoomInfo,
   handleRoomLeave,
 } from "./events/room";
-import { handleGameStart } from "./events/game";
-import { handleTeamCreate } from "./events/team";
+import { handleGamePause, handleGameStart } from "./events/game";
+import {
+  handleTeamCreate,
+  handleTeamJoin,
+  handleTeamLeave,
+} from "./events/team";
 dotenv.config();
 
 const express = require("express");
@@ -53,15 +57,19 @@ const onConnection = (socket: Socket) => {
   socket.on("room:info", (payload) => handleRoomInfo(socket, payload));
   socket.on("room:join", (payload) => handeRoomJoin(socket, payload));
   socket.on("room:leave", (payload) => handleRoomLeave(socket, payload));
+
   // GAME
   socket.on("game:start", () => handleGameStart(socket));
+  socket.on("game:pause", () => handleGamePause(socket));
 
   // TEAM
   socket.on("team:create", (payload) => handleTeamCreate(socket, payload));
+  socket.on("team:join", (payload) => handleTeamJoin(socket, payload));
+  socket.on("team:leave", () => handleTeamLeave(socket));
 
   //
   //
-  // socket.on("room:pause", () => gamePause(socket));
+  //
 
   // socket.on("game:answer", (payload) => handleAnswer(socket, payload));
   // socket.on("game:answer:type", (payload) => handleBuzzerType(socket, payload));

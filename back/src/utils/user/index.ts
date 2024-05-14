@@ -6,7 +6,7 @@ export const getUserById = (team: Team = {} as Team, userId: string) => {
     return user.id === userId;
   });
 
-  if (!index || index === -1) {
+  if (index === undefined || index === -1) {
     return false;
   }
 
@@ -14,11 +14,11 @@ export const getUserById = (team: Team = {} as Team, userId: string) => {
 };
 
 export const removeUserByTeamId = (team: Team, userId: string) => {
-  const index = team.users.findIndex((user) => {
+  const index = team?.users?.findIndex((user) => {
     return user.id === userId;
   });
 
-  if (!index || index === -1) {
+  if (index === undefined || index === -1) {
     return false;
   }
 

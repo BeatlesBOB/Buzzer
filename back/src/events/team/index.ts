@@ -4,7 +4,8 @@ import { Rooms, io } from "../..";
 import { createTeam, getTeamById, removeTeamById } from "../../utils/team";
 import { handleError } from "../../utils/error";
 import { removeUserByTeamId, setUserData } from "../../utils/user";
-import { Team, User } from "../../interface";
+import { Room, Team, User } from "../../interface";
+import { deleteRoom } from "../../utils/room";
 
 export const handleTeamCreate = (
   socket: Socket,
@@ -43,8 +44,6 @@ export const handleTeamCreate = (
 
   team.users.push(user);
   setUserData(socket, user);
-
-  console.log(room);
 
   io.to(room.id).emit("team:create", { room });
 
@@ -100,20 +99,31 @@ export const handleTeamLeave = (socket: Socket) => {
     return handleError(socket, "Pas de room Bolosse");
   }
 
-  const room = Rooms.get(roomId)!;
-  if (room.hasStarted) {
-    return handleError(socket, "Trop tard, ça a déjà commencé");
+  let room = Rooms.get(roomId)!;
+  let team = getTeamById(room, teamId);
+
+  if (!team) {
+    return handleError(socket, "Pas de room Bolosse");
   }
 
-  let team = getTeamById(room, teamId);
-  const isRemoved = removeUserByTeamId(team || ({} as Team), socket.id);
+  const isRemoved = removeUserByTeamId(team, socket.id);
   if (!isRemoved) {
     return handleError(socket, "Y'a couille dans le potage");
+  }
+
+  if (team!.users.length === 0) {
+    removeTeamById(room, teamId);
+  }
+
+  if (room.teams.length === 0) {
+    room = deleteRoom(room) ? ({} as Room) : room;
   }
 
   const user: Partial<User> = {
     team: undefined,
   };
+
+  setUserData(socket, user);
 
   io.to(room.id).emit("team:leave", { room });
 
