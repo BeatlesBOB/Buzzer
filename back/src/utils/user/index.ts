@@ -6,7 +6,7 @@ export const getUserById = (team: Team = {} as Team, userId: string) => {
     return user.id === userId;
   });
 
-  if (index === -1) {
+  if (!index || index === -1) {
     return false;
   }
 
@@ -18,7 +18,7 @@ export const removeUserByTeamId = (team: Team, userId: string) => {
     return user.id === userId;
   });
 
-  if (index === -1) {
+  if (!index || index === -1) {
     return false;
   }
 

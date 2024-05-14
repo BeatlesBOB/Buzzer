@@ -52,23 +52,25 @@ export default function Buzzer() {
       setRoom(room);
     };
 
-    const handleError = (payload: string) => {
+    const handleError = (payload: { msg: string }) => {
       pushToast({
         title: "Whooops, nan mais on savait que ça pouvait pas être parfait",
-        desc: payload,
+        desc: payload.msg,
       });
     };
 
+    subscribe("room:pause", handleTeamAnswer);
+    subscribe("buzzer:notification", handleError);
+
     subscribe("game:answer", handleTeamAnswer);
     subscribe("game:status", handleTeamAnswer);
-    subscribe("buzzer:notification", handleError);
-    subscribe("room:pause", handleTeamAnswer);
 
     return () => {
       subscribe("room:pause", handleTeamAnswer);
+      unSubscribe("buzzer:notification", handleError);
+
       unSubscribe("game:answer", handleTeamAnswer);
       unSubscribe("game:status", handleTeamAnswer);
-      unSubscribe("buzzer:notification", handleError);
     };
   }, []);
 

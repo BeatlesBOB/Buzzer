@@ -13,7 +13,7 @@ export const handleTeamCreate = (
     teamName: string;
   }
 ) => {
-  const { room: roomId } = socket.data;
+  const { room: roomId } = socket.data.user;
   const { userName, teamName } = payload;
 
   if (!Rooms.has(roomId)) {
@@ -21,6 +21,7 @@ export const handleTeamCreate = (
   }
 
   const room = Rooms.get(roomId)!;
+
   if (room.hasStarted) {
     return handleError(socket, "Trop tard, ça a déjà commencé");
   }
@@ -43,6 +44,8 @@ export const handleTeamCreate = (
   team.users.push(user);
   setUserData(socket, user);
 
+  console.log(room);
+
   io.to(room.id).emit("team:create", { room });
 
   io.to(socket.id).emit("user:info", {
@@ -54,7 +57,7 @@ export const handleTeamJoin = (
   socket: Socket,
   payload: { userName: string; teamId: string }
 ) => {
-  const { room: roomId } = socket.data;
+  const { room: roomId } = socket.data.user;
   const { userName, teamId } = payload;
 
   if (!Rooms.has(roomId)) {
@@ -91,7 +94,7 @@ export const handleTeamJoin = (
 };
 
 export const handleTeamLeave = (socket: Socket) => {
-  const { room: roomId, team: teamId } = socket.data;
+  const { room: roomId, team: teamId } = socket.data.user;
 
   if (!Rooms.has(roomId)) {
     return handleError(socket, "Pas de room Bolosse");

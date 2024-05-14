@@ -7,6 +7,7 @@ import useSocket from "../hook/useSocket";
 import { useNavigate, useParams } from "react-router-dom";
 import { Room, Team, User } from "../types/interfaces";
 import useStorage from "../hook/useStorage";
+import useToasts from "../hook/useToasts";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
@@ -17,6 +18,7 @@ export default function Lobby() {
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
   const { setLocalStorageData, getLocalStorageData } = useStorage();
   const { subscribe, unSubscribe } = useSocket();
+  const { pushToast } = useToasts();
 
   useEffect(() => {
     dispatch("room:info", {
@@ -59,19 +61,32 @@ export default function Lobby() {
       const { user } = payload;
       setUser(user);
     };
+    const handleError = (payload: { msg: string }) => {
+      pushToast({
+        title: "Whooops, nan mais on savait que ça pouvait pas être parfait",
+        desc: payload.msg,
+      });
+    };
 
     dispatch("room:join", { room: id });
+    subscribe("game:start", handleUserUpdate);
+    subscribe("buzzer:notification", handleError);
 
     subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);
-    subscribe("game:start", handleUserUpdate);
+
+    subscribe("team:create", handleRoomUpdate);
     subscribe("team:join", handleRoomUpdate);
     subscribe("team:leave", handleRoomUpdate);
+
     subscribe("user:info", handleUserUpdate);
     return () => {
+      unSubscribe("game:start", handleGameStart);
+
       unSubscribe("room:join", handleRoomUpdate);
       unSubscribe("room:leave", handleRoomUpdate);
-      unSubscribe("game:start", handleGameStart);
+
+      unSubscribe("team:create", handleRoomUpdate);
       unSubscribe("team:join", handleRoomUpdate);
       unSubscribe("team:leave", handleRoomUpdate);
       unSubscribe("user:info", handleUserUpdate);

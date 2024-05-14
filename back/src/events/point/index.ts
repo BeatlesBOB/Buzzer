@@ -8,7 +8,7 @@ export const handlePointUpdate = (
   payload: { point: number; team: string }
 ) => {
   const { point, team: teamId } = payload;
-  const { room: roomId, isAdmin } = socket.data;
+  const { room: roomId, isAdmin } = socket.data.user;
 
   if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
@@ -27,7 +27,7 @@ export const handlePointUpdate = (
 };
 
 export const handlePointResetAll = (socket: Socket) => {
-  const { isAdmin, room: roomId } = socket.data;
+  const { isAdmin, room: roomId } = socket.data.user;
   if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
       socket,

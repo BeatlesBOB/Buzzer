@@ -15,7 +15,7 @@ export const getTeamById = (room: Room, id?: string): Team | undefined => {
     return team.id === id;
   });
 
-  if (index === -1) {
+  if (!index || index === -1) {
     return undefined;
   }
 
@@ -28,9 +28,10 @@ export const removeTeamById = (room: Room, id: string) => {
     return team.id === currentTeam?.id;
   });
 
-  if (index === -1) {
+  if (!index || index === -1) {
     return false;
   }
+
   room.teams.splice(index, 1);
   return true;
 };

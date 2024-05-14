@@ -67,26 +67,34 @@ export default function Admin() {
       setAnswerModalOpen(true);
     };
 
-    const handleError = (payload: string) => {
+    const handleError = (payload: { msg: string }) => {
       pushToast({
         title: "Whooops, nan mais on savait que ça pouvait pas être parfait",
-        desc: payload,
+        desc: payload.msg,
       });
     };
 
     subscribe("game:start", handleRoomUpdate);
+    subscribe("buzzer:notification", handleError);
+
     subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);
+
+    subscribe("team:create", handleRoomUpdate);
     subscribe("team:join", handleRoomUpdate);
     subscribe("team:leave", handleRoomUpdate);
+
     subscribe("game:answer", handleAnswer);
     subscribe("room:pause", handleRoomUpdate);
-    subscribe("buzzer:notification", handleError);
 
     return () => {
       unSubscribe("game:start", handleRoomUpdate);
+      unSubscribe("buzzer:notification", handleError);
+
       unSubscribe("room:join", handleRoomUpdate);
       unSubscribe("room:leave", handleRoomUpdate);
+
+      unSubscribe("team:create", handleRoomUpdate);
       unSubscribe("team:join", handleRoomUpdate);
       unSubscribe("team:leave", handleRoomUpdate);
       unSubscribe("game:answer", handleAnswer);

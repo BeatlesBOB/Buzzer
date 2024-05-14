@@ -18,7 +18,7 @@ export const handleGameStart = (socket: Socket) => {
 };
 
 export const handleGamePause = (socket: Socket) => {
-  const { isAdmin, room: roomId } = socket.data;
+  const { isAdmin, room: roomId } = socket.data.user;
 
   if (!Rooms.has(roomId) || !isAdmin) {
     return handleError(
