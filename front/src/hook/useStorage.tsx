@@ -1,10 +1,9 @@
 export default function useStorage() {
-  
-    const setData = (key: string, data: any) => {
+  const setLocalStorageData = (key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify(data));
   };
 
-  const getData = (key: string) => {
+  const getLocalStorageData = (key: string) => {
     const data = localStorage.getItem(key);
     return JSON.parse(data ?? "{}");
   };
@@ -13,14 +12,14 @@ export default function useStorage() {
     localStorage.removeItem(key);
   };
 
-  const clearData = () => {
+  const clearLocalStorageData = () => {
     localStorage.clear();
   };
 
   return {
-    setData,
-    getData,
+    setLocalStorageData,
+    getLocalStorageData,
     removeData,
-    clearData,
+    clearLocalStorageData,
   };
 }

@@ -2,7 +2,12 @@ import dotenv from "dotenv";
 import { Socket } from "socket.io";
 import { Room } from "./interface";
 import { instrument } from "@socket.io/admin-ui";
-import { handeRoomJoin, handleRoomCreate, handleRoomInfo } from "./events/room";
+import {
+  handeRoomJoin,
+  handleRoomCreate,
+  handleRoomInfo,
+  handleRoomLeave,
+} from "./events/room";
 import { handleGameStart } from "./events/game";
 import { handleTeamCreate } from "./events/team";
 dotenv.config();
@@ -47,14 +52,14 @@ const onConnection = (socket: Socket) => {
   socket.on("room:create", () => handleRoomCreate(socket));
   socket.on("room:info", (payload) => handleRoomInfo(socket, payload));
   socket.on("room:join", (payload) => handeRoomJoin(socket, payload));
-
+  socket.on("room:leave", (payload) => handleRoomLeave(socket, payload));
   // GAME
   socket.on("game:start", () => handleGameStart(socket));
 
   // TEAM
   socket.on("team:create", (payload) => handleTeamCreate(socket, payload));
 
-  // socket.on("room:leave", (payload) => leaveRoom(socket, payload));
+  //
   //
   // socket.on("room:pause", () => gamePause(socket));
 

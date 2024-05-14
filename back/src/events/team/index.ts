@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import { Rooms, io } from "../..";
-import { createTeam, getTeamById } from "../../utils/team";
+import { createTeam, getTeamById, removeTeamById } from "../../utils/team";
 import { handleError } from "../../utils/error";
-import { setUserData } from "../../utils/user";
-import { User } from "../../interface";
+import { removeUserByTeamId, setUserData } from "../../utils/user";
+import { Team, User } from "../../interface";
 
 export const handleTeamCreate = (
   socket: Socket,
@@ -90,14 +90,9 @@ export const handleTeamJoin = (
   });
 };
 
-export const handleTeamDelete = (
-  socket: Socket,
-  {
-    userName,
-    teamId,
-  }: { userName?: string; teamName?: string; teamId?: string }
-) => {
-  const { room: roomId } = socket.data;
+export const handleTeamLeave = (socket: Socket) => {
+  const { room: roomId, team: teamId } = socket.data;
+
   if (!Rooms.has(roomId)) {
     return handleError(socket, "Pas de room Bolosse");
   }
@@ -108,25 +103,18 @@ export const handleTeamDelete = (
   }
 
   let team = getTeamById(room, teamId);
-
-  if (!team || !userName) {
-    return handleError(socket, "Pas de team ou nom d'utilisateur Bolosse");
+  const isRemoved = removeUserByTeamId(team || ({} as Team), socket.id);
+  if (!isRemoved) {
+    return handleError(socket, "Y'a couille dans le potage");
   }
 
-  const user: User = {
-    id: socket.id,
-    name: userName,
-    hasBuzzed: false,
-    team: team.id,
-    room: room.id,
+  const user: Partial<User> = {
+    team: undefined,
   };
 
-  team.users.push(user);
-  setUserData(socket, user);
+  io.to(room.id).emit("team:leave", { room });
 
-  io.to(room.id).emit("team:create", { room });
-
-  io.to(socket.id).emit("room:user", {
+  io.to(socket.id).emit("user:info", {
     user,
   });
 };

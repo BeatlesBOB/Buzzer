@@ -15,23 +15,31 @@ export default function Lobby() {
   const { room, setUser, setRoom, user } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
-  const { setData } = useStorage();
+  const { setLocalStorageData, getLocalStorageData } = useStorage();
   const { subscribe, unSubscribe } = useSocket();
 
   useEffect(() => {
-    const handleRetreiveData = (payload: { room: Room; user: User }) => {
-      const { user, room } = payload;
-      if (!room) {
+    dispatch("room:info", {
+      room: getLocalStorageData("room"),
+      user: getLocalStorageData("user"),
+    });
+
+    const handleRoomInfo = (payload: { room: Room; user: User }) => {
+      const { room, user } = payload;
+
+      if (!room || !user || !user.isAdmin) {
         return navigate("..");
       }
-      setData("user", user);
-      setData("room", room);
-    };
 
-    subscribe("room:info", handleRetreiveData);
+      setRoom(room);
+      setUser(user);
+      setLocalStorageData("room", room.id);
+      setLocalStorageData("user", user.id);
+    };
+    subscribe("room:info", handleRoomInfo);
 
     return () => {
-      unSubscribe("room:info", handleRetreiveData);
+      unSubscribe("room:info", handleRoomInfo);
     };
   }, []);
 
@@ -43,7 +51,7 @@ export default function Lobby() {
 
     const handleRoomUpdate = (payload: { room: Room }) => {
       const { room } = payload;
-      setData("room", room.id);
+      setLocalStorageData("room", room.id);
       setRoom(room);
     };
 
@@ -56,17 +64,17 @@ export default function Lobby() {
 
     subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);
-
     subscribe("game:start", handleUserUpdate);
-
+    subscribe("team:join", handleRoomUpdate);
+    subscribe("team:leave", handleRoomUpdate);
     subscribe("user:info", handleUserUpdate);
-
     return () => {
       unSubscribe("room:join", handleRoomUpdate);
+      unSubscribe("room:leave", handleRoomUpdate);
       unSubscribe("game:start", handleGameStart);
-      // unSubscribe("room:leave", handleTeamsUpdate);
-      // unSubscribe("room:join", handleUserUpdate);
-      // unSubscribe("room:user", handleUserUpdate);
+      unSubscribe("team:join", handleRoomUpdate);
+      unSubscribe("team:leave", handleRoomUpdate);
+      unSubscribe("user:info", handleUserUpdate);
     };
   }, []);
 
@@ -91,14 +99,12 @@ export default function Lobby() {
   };
 
   const handeTeamLeave = () => {
-    dispatch("room:leave");
-    navigate("../");
+    dispatch("team:leave");
   };
 
   const handleBackHome = () => {
-    let path = `/`;
     if (confirm("Tu veux vraiment revenir en arrière ?")) {
-      navigate(path);
+      navigate("/");
     }
   };
 

@@ -2,12 +2,16 @@ import { useContext, useEffect, useMemo } from "react";
 import useSocket from "../hook/useSocket";
 import { GameContext } from "../contexts/GameContextProvider";
 import useToasts from "../hook/useToasts";
-import { Room } from "../types/interfaces";
+import { Room, User } from "../types/interfaces";
+import useStorage from "../hook/useStorage";
+import { useNavigate } from "react-router-dom";
 
 export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
-  const { room, user, setRoom } = useContext(GameContext);
+  const { room, user, setRoom, setUser } = useContext(GameContext);
   const { pushToast } = useToasts();
+  const { getLocalStorageData, setLocalStorageData } = useStorage();
+  const navigate = useNavigate();
 
   const isDisabled = useMemo(() => {
     return (
@@ -18,11 +22,22 @@ export default function Buzzer() {
   }, [room]);
 
   useEffect(() => {
-    dispatch("room:info");
+    dispatch("room:info", {
+      room: getLocalStorageData("room"),
+      user: getLocalStorageData("user"),
+    });
 
-    const handleRoomInfo = (payload: { room: Room }) => {
-      const { room } = payload;
+    const handleRoomInfo = (payload: { room: Room; user: User }) => {
+      const { room, user } = payload;
+
+      if (!room || !user || !user.isAdmin) {
+        return navigate("..");
+      }
+
       setRoom(room);
+      setUser(user);
+      setLocalStorageData("room", room.id);
+      setLocalStorageData("user", user.id);
     };
     subscribe("room:info", handleRoomInfo);
 

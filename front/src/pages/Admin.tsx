@@ -5,11 +5,12 @@ import { GameContext } from "../contexts/GameContextProvider";
 import Users from "../components/Users";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import { Room, Team, User } from "../types/interfaces";
+import { Answer, Room, Team, User } from "../types/interfaces";
 import useSocket from "../hook/useSocket";
 import Title from "../components/Title";
 import BuzzerSound from "../assets/sound/Buzzer.mp3";
 import useStorage from "../hook/useStorage";
+import useToasts from "../hook/useToasts";
 
 const audio = new Audio(BuzzerSound);
 
@@ -19,21 +20,16 @@ export default function Admin() {
   const [isAnswerModalOpen, setAnswerModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
   const { dispatch, subscribe, unSubscribe } = useSocket();
-  const [answer, setAnswer] = useState<
-    | {
-        user: User;
-        team: Team;
-      }
-    | undefined
-  >(undefined);
+  const [answer, setAnswer] = useState<Answer | undefined>(undefined);
   const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { getData, setData } = useStorage();
+  const { getLocalStorageData, setLocalStorageData } = useStorage();
+  const { pushToast } = useToasts();
 
   useEffect(() => {
     dispatch("room:info", {
-      room: getData("room"),
-      user: getData("user"),
+      room: getLocalStorageData("room"),
+      user: getLocalStorageData("user"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
@@ -45,8 +41,8 @@ export default function Admin() {
 
       setRoom(room);
       setUser(user);
-      setData("room", room.id);
-      setData("user", user.id);
+      setLocalStorageData("room", room.id);
+      setLocalStorageData("user", user.id);
     };
     subscribe("room:info", handleRoomInfo);
 
@@ -60,6 +56,7 @@ export default function Admin() {
       const { room } = payload;
       setRoom(room);
     };
+
     const handleAnswer = (payload: { team: Team; user: User }) => {
       const { team, user } = payload;
       audio.play();
@@ -70,16 +67,30 @@ export default function Admin() {
       setAnswerModalOpen(true);
     };
 
+    const handleError = (payload: string) => {
+      pushToast({
+        title: "Whooops, nan mais on savait que ça pouvait pas être parfait",
+        desc: payload,
+      });
+    };
+
     subscribe("game:start", handleRoomUpdate);
+    subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);
-    // subscribe("game:status", handleTeamsUpdate);
-    //
-    // subscribe("game:answer", handleAnswer);
-    // subscribe("room:pause", handleTeamsUpdate);
+    subscribe("team:join", handleRoomUpdate);
+    subscribe("team:leave", handleRoomUpdate);
+    subscribe("game:answer", handleAnswer);
+    subscribe("room:pause", handleRoomUpdate);
+    subscribe("buzzer:notification", handleError);
 
     return () => {
       unSubscribe("game:start", handleRoomUpdate);
+      unSubscribe("room:join", handleRoomUpdate);
       unSubscribe("room:leave", handleRoomUpdate);
+      unSubscribe("team:join", handleRoomUpdate);
+      unSubscribe("team:leave", handleRoomUpdate);
+      unSubscribe("game:answer", handleAnswer);
+      unSubscribe("room:pause", handleRoomUpdate);
     };
   }, []);
 

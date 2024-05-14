@@ -20,3 +20,8 @@ export interface User {
   team: string;
   isAdmin: boolean;
 }
+
+export interface Answer {
+  user: User;
+  team: Team;
+}
