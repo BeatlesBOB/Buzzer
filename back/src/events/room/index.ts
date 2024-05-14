@@ -18,7 +18,7 @@ export const handleRoomCreate = (socket: Socket) => {
 
   setUserData(socket, user);
   socket.join(id);
-  socket.emit("room:create", {
+  io.to(socket.id).emit("room:create", {
     room: room,
     user,
   });

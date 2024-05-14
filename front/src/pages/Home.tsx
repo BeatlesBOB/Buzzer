@@ -5,18 +5,18 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 import { GameContext } from "../contexts/GameContextProvider";
 import Button from "../components/Button";
 import useSocket from "../hook/useSocket";
-import { Admin, Room } from "../types/interfaces";
+import { User, Room } from "../types/interfaces";
 import Title from "../components/Title";
 import useToasts from "../hook/useToasts";
 import useStorage from "../hook/useStorage";
 
 export default function Home() {
-  const { setRoom, setIsAdmin } = useContext(GameContext);
+  const { setRoom, setUser } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { subscribe, dispatch, unSubscribe } = useSocket();
   const navigate = useNavigate();
   const { pushToast } = useToasts();
-  const { setData } = useStorage();
+  const { setLocalStorageData } = useStorage();
   const createGame = () => {
     dispatch("room:create");
   };
@@ -29,12 +29,13 @@ export default function Home() {
   );
 
   useEffect(() => {
-    const handleRoomCreation = (payload: { room: Room; admin: Admin }) => {
-      const { room, admin } = payload;
+    const handleRoomCreation = (payload: { room: Room; user: User }) => {
+      const { user, room } = payload;
+      console.log(user);
       setRoom(room);
-      setIsAdmin(true);
-      setData("room", room.id);
-      setData("user", admin);
+      setUser(user);
+      setLocalStorageData("room", room.id);
+      setLocalStorageData("user", user.id);
       navigate(`admin/${room.id}`);
     };
 
