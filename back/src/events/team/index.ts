@@ -115,10 +115,6 @@ export const handleTeamLeave = (socket: Socket) => {
     removeTeamById(room, teamId);
   }
 
-  if (room.teams.length === 0) {
-    room = deleteRoom(room) ? ({} as Room) : room;
-  }
-
   const user: Partial<User> = {
     team: undefined,
   };
