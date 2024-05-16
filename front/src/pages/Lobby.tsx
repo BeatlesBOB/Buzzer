@@ -24,6 +24,7 @@ export default function Lobby() {
     dispatch("room:info", {
       room: getStorageData("room"),
       user: getStorageData("user"),
+      team: getStorageData("team"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
@@ -38,6 +39,7 @@ export default function Lobby() {
       setUser(user);
       setStorageData("room", room.id);
       setStorageData("user", user?.id);
+      setStorageData("team", user?.team);
     };
     subscribe("room:info", handleRoomInfo);
 
@@ -65,18 +67,13 @@ export default function Lobby() {
 
     const handleUserUpdate = (payload: { user: User }) => {
       const { user } = payload;
+      setStorageData("user", user?.id);
+      setStorageData("team", user?.team);
       setUser(user);
-    };
-    const handleError = (payload: { msg: string }) => {
-      pushToast({
-        title: "Whooops, nan mais on savait que ça pouvait pas être parfait",
-        desc: payload.msg,
-      });
     };
 
     dispatch("room:join", { room: id });
     subscribe("game:start", handleUserUpdate);
-    subscribe("buzzer:notification", handleError);
 
     subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);

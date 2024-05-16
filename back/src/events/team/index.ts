@@ -93,7 +93,7 @@ export const handleTeamJoin = (
 };
 
 export const handleTeamLeave = (socket: Socket) => {
-  const { room: roomId, team: teamId } = socket.data.user;
+  const { room: roomId, team: teamId, id } = socket.data.user;
 
   if (!Rooms.has(roomId)) {
     return handleError(socket, ERROR_MSG.ROOM);
@@ -106,7 +106,7 @@ export const handleTeamLeave = (socket: Socket) => {
     return handleError(socket, ERROR_MSG.TEAM);
   }
 
-  const isRemoved = removeUserByTeamId(team, socket.id);
+  const isRemoved = removeUserByTeamId(team, id);
   if (!isRemoved) {
     return handleError(socket, ERROR_MSG.DEFAULT);
   }

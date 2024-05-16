@@ -96,7 +96,7 @@ export const handleRoomLeave = (
 export const handeRoomJoin = (socket: Socket, payload: { room: string }) => {
   const { room: roomId } = payload;
   if (!Rooms.has(roomId)) {
-    return handleError(socket, ERROR_MSG.ALREADY_STARTED);
+    return handleError(socket, ERROR_MSG.ROOM);
   }
 
   const room = Rooms.get(roomId)!;
@@ -120,9 +120,15 @@ export const handleRoomInfo = (
   }
   const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);
+
   const user =
-    getUserById(team, userId) ||
-    (room.admin.id === userId ? room.admin : undefined);
+    getUserById(team, userId) || (room.admin.id === userId && room.admin);
+
+  if (!user) {
+    return handleError(socket, ERROR_MSG.USER);
+  }
+
+  setUserData(socket, user);
 
   io.to(socket.id).emit("room:info", {
     user,
