@@ -54,7 +54,6 @@ export default function Lobby() {
 
     const handleRoomUpdate = (payload: { room: Room }) => {
       const { room } = payload;
-      console.log(room);
       if (!room) {
         clearStorageData();
         navigate("..");

@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { Rooms, io } from "../..";
 import { BuzzerType } from "../../interface";
 import { getTeamById } from "../../utils/team";
-import { handleError } from "../../utils/error";
+import { ERROR_MSG, handleError } from "../../utils/error";
 import { getUserById } from "../../utils/user";
 
 export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
@@ -19,13 +19,13 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   const team = getTeamById(room, teamId);
 
   if (!team || team?.hasBuzzed) {
-    return handleError(socket, "Team already buzzed");
+    return handleError(socket, ERROR_MSG.BUZZER);
   }
 
   team.hasBuzzed = true;
   const user = getUserById(team, socket.id);
   if (!user) {
-    return handleError(socket, "User not found");
+    return handleError(socket, ERROR_MSG.USER);
   }
 
   io.to(room.id).except(room.admin.id).emit("game:answer", { room, team });
@@ -46,10 +46,7 @@ export const hansleAnswerResetAll = (socket: Socket) => {
   const { isAdmin, room: roomId } = socket.data.user;
 
   if (!Rooms.has(roomId) || !isAdmin) {
-    return handleError(
-      socket,
-      "No room or your not the admin of the current room"
-    );
+    return handleError(socket, ERROR_MSG.ROOM_OR_ADMIN);
   }
 
   const room = Rooms.get(roomId)!;
@@ -68,13 +65,13 @@ export const handleAnswerResetTeam = (
   const { isAdmin, room: roomId } = socket.data.user;
 
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "No room provided");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
 
   const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);
   if (!team || !isAdmin) {
-    return handleError(socket, "No Team provided or not admin of this room");
+    return handleError(socket, ERROR_MSG.ROOM_OR_ADMIN);
   }
 
   team.hasBuzzed = false;
@@ -87,7 +84,7 @@ export const handleAnswerType = (
 ) => {
   const { isAdmin, room: roomId } = socket.data.user;
   if (!isAdmin) {
-    return handleError(socket, "No Admin of this room");
+    return handleError(socket, ERROR_MSG.ADMIN);
   }
 
   io.to(roomId, "game:answer:type");

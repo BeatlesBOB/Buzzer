@@ -1,15 +1,15 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "../..";
-import { handleError } from "../../utils/error";
+import { ERROR_MSG, handleError } from "../../utils/error";
 
 export const handleGameStart = (socket: Socket) => {
   const { isAdmin, room: roomId } = socket.data.user;
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "No Room provided");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
   const room = Rooms.get(roomId)!;
   if (!isAdmin) {
-    return handleError(socket, "You are not admin of this room");
+    return handleError(socket, ERROR_MSG.ADMIN);
   }
   room.hasStarted = true;
   io.to(room.id).emit("game:start", {
@@ -21,10 +21,7 @@ export const handleGamePause = (socket: Socket) => {
   const { isAdmin, room: roomId } = socket.data.user;
 
   if (!Rooms.has(roomId) || !isAdmin) {
-    return handleError(
-      socket,
-      "No room or your not the admin of the current room"
-    );
+    return handleError(socket, ERROR_MSG.ROOM_OR_ADMIN);
   }
 
   const room = Rooms.get(roomId)!;

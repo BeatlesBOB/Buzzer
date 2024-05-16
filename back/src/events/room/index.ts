@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { Rooms, io } from "../..";
 import { Room } from "../../interface";
 import { deleteRoom, initRoom } from "../../utils/room";
-import { handleError } from "../../utils/error";
+import { ERROR_MSG, handleError } from "../../utils/error";
 import { getTeamById, removeTeamById } from "../../utils/team";
 import { getUserById, removeUserByTeamId, setUserData } from "../../utils/user";
 
@@ -30,7 +30,7 @@ export const handleRoomLeave = (
 ) => {
   const { team: teamId, isAdmin, room: roomId } = socket.data.user;
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "No Room provided");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
 
   let room = Rooms.get(roomId)!;
@@ -39,7 +39,7 @@ export const handleRoomLeave = (
     const team = getTeamById(room, teamId);
 
     if (!team) {
-      return handleError(socket, "No Team provided");
+      return handleError(socket, ERROR_MSG.TEAM);
     }
 
     removeUserByTeamId(team, socket.id);
@@ -74,7 +74,7 @@ export const handleRoomLeave = (
     const team = getTeamById(room, teamId);
 
     if (!team) {
-      return handleError(socket, "No Team provided");
+      return handleError(socket, ERROR_MSG.TEAM);
     }
 
     if (teamId && user === undefined) {
@@ -96,12 +96,12 @@ export const handleRoomLeave = (
 export const handeRoomJoin = (socket: Socket, payload: { room: string }) => {
   const { room: roomId } = payload;
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "Pas de room Bolosse");
+    return handleError(socket, ERROR_MSG.ALREADY_STARTED);
   }
 
   const room = Rooms.get(roomId)!;
   if (room.hasStarted) {
-    return handleError(socket, "Trop tard, ça a déjà commencé");
+    return handleError(socket, ERROR_MSG.ALREADY_STARTED);
   }
 
   socket.join(room.id);
@@ -116,7 +116,7 @@ export const handleRoomInfo = (
 ) => {
   const { room: roomId, user: userId, team: teamId } = payload;
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "No Room provided");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
   const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);

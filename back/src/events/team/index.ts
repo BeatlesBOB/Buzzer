@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import { Rooms, io } from "../..";
 import { createTeam, getTeamById, removeTeamById } from "../../utils/team";
-import { handleError } from "../../utils/error";
+import { ERROR_MSG, handleError } from "../../utils/error";
 import { removeUserByTeamId, setUserData } from "../../utils/user";
 import { Room, Team, User } from "../../interface";
 import { deleteRoom } from "../../utils/room";
@@ -60,18 +60,18 @@ export const handleTeamJoin = (
   const { userName, teamId } = payload;
 
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "Pas de room Bolosse");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
 
   const room = Rooms.get(roomId)!;
   if (room.hasStarted) {
-    return handleError(socket, "Trop tard, ça a déjà commencé");
+    return handleError(socket, ERROR_MSG.ALREADY_STARTED);
   }
 
   let team = getTeamById(room, teamId);
 
   if (!team || !userName) {
-    return handleError(socket, "Pas de team ou nom d'utilisateur Bolosse");
+    return handleError(socket, ERROR_MSG.TEAM_OR_USERNAME);
   }
 
   const user: User = {
@@ -96,19 +96,19 @@ export const handleTeamLeave = (socket: Socket) => {
   const { room: roomId, team: teamId } = socket.data.user;
 
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "Pas de room Bolosse");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
 
   let room = Rooms.get(roomId)!;
   let team = getTeamById(room, teamId);
 
   if (!team) {
-    return handleError(socket, "Pas de room Bolosse");
+    return handleError(socket, ERROR_MSG.TEAM);
   }
 
   const isRemoved = removeUserByTeamId(team, socket.id);
   if (!isRemoved) {
-    return handleError(socket, "Y'a couille dans le potage");
+    return handleError(socket, ERROR_MSG.DEFAULT);
   }
 
   if (team!.users.length === 0) {

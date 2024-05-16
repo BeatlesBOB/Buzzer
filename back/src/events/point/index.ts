@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Rooms, io } from "../..";
-import { handleError } from "../../utils/error";
+import { ERROR_MSG, handleError } from "../../utils/error";
 import { getTeamById } from "../../utils/team";
 
 export const handlePointUpdate = (
@@ -19,7 +19,7 @@ export const handlePointUpdate = (
   const room = Rooms.get(roomId)!;
   const team = getTeamById(room, teamId);
   if (!team) {
-    return handleError(socket, "No team provided");
+    return handleError(socket, ERROR_MSG.TEAM);
   }
 
   team.point = point || 0;
@@ -29,10 +29,7 @@ export const handlePointUpdate = (
 export const handlePointResetAll = (socket: Socket) => {
   const { isAdmin, room: roomId } = socket.data.user;
   if (!Rooms.has(roomId) || !isAdmin) {
-    return handleError(
-      socket,
-      "No room or your not the Admin of the current Game"
-    );
+    return handleError(socket, ERROR_MSG.ROOM_OR_ADMIN);
   }
 
   const room = Rooms.get(roomId)!;
