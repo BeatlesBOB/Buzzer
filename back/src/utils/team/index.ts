@@ -19,8 +19,6 @@ export const getTeamById = (room: Room, id?: string): Team | undefined => {
     return undefined;
   }
 
-  console.log(room.teams[index]);
-
   return room.teams[index];
 };
 
