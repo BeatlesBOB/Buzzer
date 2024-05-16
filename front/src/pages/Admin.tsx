@@ -23,26 +23,27 @@ export default function Admin() {
   const [answer, setAnswer] = useState<Answer | undefined>(undefined);
   const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { getLocalStorageData, setLocalStorageData } = useStorage();
+  const { getStorageData, setStorageData, clearStorageData } = useStorage();
   const { pushToast } = useToasts();
 
   useEffect(() => {
     dispatch("room:info", {
-      room: getLocalStorageData("room"),
-      user: getLocalStorageData("user"),
+      room: getStorageData("room"),
+      user: getStorageData("user"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
       const { room, user } = payload;
 
       if (!room || !user || !user.isAdmin) {
+        clearStorageData();
         return navigate("..");
       }
 
       setRoom(room);
       setUser(user);
-      setLocalStorageData("room", room.id);
-      setLocalStorageData("user", user.id);
+      setStorageData("room", room.id);
+      setStorageData("user", user.id);
     };
     subscribe("room:info", handleRoomInfo);
 

@@ -10,7 +10,7 @@ export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
   const { room, user, setRoom, setUser } = useContext(GameContext);
   const { pushToast } = useToasts();
-  const { getLocalStorageData, setLocalStorageData } = useStorage();
+  const { getStorageData, setStorageData } = useStorage();
   const navigate = useNavigate();
 
   const isDisabled = useMemo(() => {
@@ -23,8 +23,8 @@ export default function Buzzer() {
 
   useEffect(() => {
     dispatch("room:info", {
-      room: getLocalStorageData("room"),
-      user: getLocalStorageData("user"),
+      room: getStorageData("room"),
+      user: getStorageData("user"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
@@ -36,8 +36,8 @@ export default function Buzzer() {
 
       setRoom(room);
       setUser(user);
-      setLocalStorageData("room", room.id);
-      setLocalStorageData("user", user.id);
+      setStorageData("room", room.id);
+      setStorageData("user", user.id);
     };
     subscribe("room:info", handleRoomInfo);
 

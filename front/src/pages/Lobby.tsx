@@ -16,29 +16,28 @@ export default function Lobby() {
   const { room, setUser, setRoom, user } = useContext(GameContext);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
-  const { setLocalStorageData, getLocalStorageData, clearLocalStorageData } =
-    useStorage();
+  const { setStorageData, getStorageData, clearStorageData } = useStorage();
   const { subscribe, unSubscribe } = useSocket();
   const { pushToast } = useToasts();
 
   useEffect(() => {
     dispatch("room:info", {
-      room: getLocalStorageData("room"),
-      user: getLocalStorageData("user"),
+      room: getStorageData("room"),
+      user: getStorageData("user"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
       const { room, user } = payload;
 
-      if (!room || !user || !user.isAdmin) {
-        clearLocalStorageData();
+      if (!room || !user) {
+        clearStorageData();
         return navigate("..");
       }
 
       setRoom(room);
       setUser(user);
-      setLocalStorageData("room", room.id);
-      setLocalStorageData("user", user.id);
+      setStorageData("room", room.id);
+      setStorageData("user", user.id);
     };
     subscribe("room:info", handleRoomInfo);
 
@@ -57,10 +56,10 @@ export default function Lobby() {
       const { room } = payload;
       console.log(room);
       if (!room) {
-        clearLocalStorageData();
+        clearStorageData();
         navigate("..");
       }
-      setLocalStorageData("room", room.id);
+      setStorageData("room", room.id);
 
       setRoom(room);
     };

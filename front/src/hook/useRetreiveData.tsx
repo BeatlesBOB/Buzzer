@@ -8,12 +8,12 @@ import { GameContext } from "../contexts/GameContextProvider";
 export default function useRetreiveData() {
   const { setUser, setRoom } = useContext(GameContext);
   const navigate = useNavigate();
-  const { getLocalStorageData, setLocalStorageData } = useStorage();
+  const { getStorageData, setStorageData } = useStorage();
   const { dispatch, subscribe, unSubscribe } = useSocket();
   useEffect(() => {
     dispatch("room:info", {
-      room: getLocalStorageData("room"),
-      user: getLocalStorageData("user"),
+      room: getStorageData("room"),
+      user: getStorageData("user"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
@@ -25,8 +25,8 @@ export default function useRetreiveData() {
 
       setRoom(room);
       setUser(user);
-      setLocalStorageData("room", room.id);
-      setLocalStorageData("user", user.id);
+      setStorageData("room", room.id);
+      setStorageData("user", user.id);
     };
     subscribe("room:info", handleRoomInfo);
 

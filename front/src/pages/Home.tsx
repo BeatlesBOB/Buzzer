@@ -16,7 +16,7 @@ export default function Home() {
   const { subscribe, dispatch, unSubscribe } = useSocket();
   const navigate = useNavigate();
   const { pushToast } = useToasts();
-  const { setLocalStorageData } = useStorage();
+  const { setStorageData } = useStorage();
   const createGame = () => {
     dispatch("room:create");
   };
@@ -34,8 +34,8 @@ export default function Home() {
       console.log(user);
       setRoom(room);
       setUser(user);
-      setLocalStorageData("room", room.id);
-      setLocalStorageData("user", user.id);
+      setStorageData("room", room.id);
+      setStorageData("user", user.id);
       navigate(`admin/${room.id}`);
     };
 

@@ -1,25 +1,25 @@
 export default function useStorage() {
-  const setLocalStorageData = (key: string, data: any) => {
-    localStorage.setItem(key, JSON.stringify(data));
+  const setStorageData = (key: string, data: any) => {
+    sessionStorage.setItem(key, JSON.stringify(data));
   };
 
-  const getLocalStorageData = (key: string) => {
-    const data = localStorage.getItem(key);
+  const getStorageData = (key: string) => {
+    const data = sessionStorage.getItem(key);
     return JSON.parse(data ?? "{}");
   };
 
-  const removeData = (key: string) => {
-    localStorage.removeItem(key);
+  const removeStorageData = (key: string) => {
+    sessionStorage.removeItem(key);
   };
 
-  const clearLocalStorageData = () => {
-    localStorage.clear();
+  const clearStorageData = () => {
+    sessionStorage.clear();
   };
 
   return {
-    setLocalStorageData,
-    getLocalStorageData,
-    removeData,
-    clearLocalStorageData,
+    setStorageData,
+    getStorageData,
+    removeStorageData,
+    clearStorageData,
   };
 }
