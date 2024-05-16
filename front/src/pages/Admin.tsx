@@ -42,9 +42,12 @@ export default function Admin() {
 
       setRoom(room);
       setUser(user);
+      dispatch("room:join", { room: room.id });
+
       setStorageData("room", room.id);
       setStorageData("user", user.id);
     };
+
     subscribe("room:info", handleRoomInfo);
 
     return () => {

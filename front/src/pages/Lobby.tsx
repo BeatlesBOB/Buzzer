@@ -7,7 +7,6 @@ import useSocket from "../hook/useSocket";
 import { useNavigate, useParams } from "react-router-dom";
 import { Room, Team, User } from "../types/interfaces";
 import useStorage from "../hook/useStorage";
-import useToasts from "../hook/useToasts";
 
 export default function Lobby() {
   const { dispatch } = useSocket();
@@ -18,7 +17,6 @@ export default function Lobby() {
   const [selectedTeam, setSelectedTeam] = useState<Team | undefined>();
   const { setStorageData, getStorageData, clearStorageData } = useStorage();
   const { subscribe, unSubscribe } = useSocket();
-  const { pushToast } = useToasts();
 
   useEffect(() => {
     dispatch("room:info", {
