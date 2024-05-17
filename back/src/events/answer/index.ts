@@ -12,7 +12,7 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   }
 
   const room = Rooms.get(roomId)!;
-  if (!room?.hasStarted) {
+  if (!room?.isStarted) {
     return handleError(socket, "No room or the game isn't started yet");
   }
 

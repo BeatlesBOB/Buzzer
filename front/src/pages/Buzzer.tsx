@@ -17,7 +17,7 @@ export default function Buzzer() {
     return (
       room?.teams?.some((team) => {
         return team.hasBuzzed === true;
-      }) || !room?.hasStarted
+      }) || !room?.isStarted
     );
   }, [room]);
 

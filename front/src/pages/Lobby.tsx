@@ -54,6 +54,7 @@ export default function Lobby() {
 
     const handleRoomUpdate = (payload: { room: Room }) => {
       const { room } = payload;
+      console.log(room);
       if (!room) {
         clearStorageData();
         navigate("..");
@@ -71,7 +72,7 @@ export default function Lobby() {
     };
 
     dispatch("room:join", { room: id });
-    subscribe("game:start", handleUserUpdate);
+    subscribe("game:start", handleRoomUpdate);
 
     subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);

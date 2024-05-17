@@ -4,8 +4,7 @@ import { Rooms, io } from "../..";
 import { createTeam, getTeamById, removeTeamById } from "../../utils/team";
 import { ERROR_MSG, handleError } from "../../utils/error";
 import { removeUserByTeamId, setUserData } from "../../utils/user";
-import { Room, Team, User } from "../../interface";
-import { deleteRoom } from "../../utils/room";
+import { User } from "../../interface";
 
 export const handleTeamCreate = (
   socket: Socket,
@@ -23,7 +22,7 @@ export const handleTeamCreate = (
 
   const room = Rooms.get(roomId)!;
 
-  if (room.hasStarted) {
+  if (room.isStarted) {
     return handleError(socket, "Trop tard, ça a déjà commencé");
   }
 
@@ -64,7 +63,7 @@ export const handleTeamJoin = (
   }
 
   const room = Rooms.get(roomId)!;
-  if (room.hasStarted) {
+  if (room.isStarted) {
     return handleError(socket, ERROR_MSG.ALREADY_STARTED);
   }
 

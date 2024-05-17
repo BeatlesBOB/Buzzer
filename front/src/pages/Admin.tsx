@@ -115,11 +115,11 @@ export default function Admin() {
   };
 
   const startGame = () => {
-    dispatch("room:start");
+    dispatch("game:start");
   };
 
   const pauseGame = () => {
-    dispatch("room:pause");
+    dispatch("game:pause");
   };
 
   const resetAllBuzzer = () => {
@@ -167,8 +167,8 @@ export default function Admin() {
             <div className="basis-full flex justify-center">
               <Button
                 type="primary"
-                label={room?.hasStarted ? "Pause" : "Start"}
-                handleClick={room?.hasStarted ? pauseGame : startGame}
+                label={room?.isStarted ? "Pause" : "Start"}
+                handleClick={room?.isStarted ? pauseGame : startGame}
               />
             </div>
 

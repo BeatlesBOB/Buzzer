@@ -1,7 +1,7 @@
 export interface Room {
   id: string;
   teams: Array<Team>;
-  hasStarted: boolean;
+  isStarted: boolean;
 }
 
 export interface Team {

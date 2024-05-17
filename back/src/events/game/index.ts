@@ -4,6 +4,7 @@ import { ERROR_MSG, handleError } from "../../utils/error";
 
 export const handleGameStart = (socket: Socket) => {
   const { isAdmin, room: roomId } = socket.data.user;
+  console.log(socket.data.user);
   if (!Rooms.has(roomId)) {
     return handleError(socket, ERROR_MSG.ROOM);
   }
@@ -11,7 +12,8 @@ export const handleGameStart = (socket: Socket) => {
   if (!isAdmin) {
     return handleError(socket, ERROR_MSG.ADMIN);
   }
-  room.hasStarted = true;
+
+  room.isStarted = true;
   io.to(room.id).emit("game:start", {
     room,
   });
@@ -25,6 +27,6 @@ export const handleGamePause = (socket: Socket) => {
   }
 
   const room = Rooms.get(roomId)!;
-  room.hasStarted = false;
+  room.isStarted = false;
   io.to(room.id).emit("room:status", { room });
 };

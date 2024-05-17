@@ -100,7 +100,7 @@ export const handeRoomJoin = (socket: Socket, payload: { room: string }) => {
   }
 
   const room = Rooms.get(roomId)!;
-  if (room.hasStarted) {
+  if (room.isStarted) {
     return handleError(socket, ERROR_MSG.ALREADY_STARTED);
   }
 
