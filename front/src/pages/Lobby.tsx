@@ -72,7 +72,7 @@ export default function Lobby() {
     };
 
     dispatch("room:join", { room: id });
-    subscribe("game:start", handleRoomUpdate);
+    subscribe("game:start", handleGameStart);
 
     subscribe("room:join", handleRoomUpdate);
     subscribe("room:leave", handleRoomUpdate);

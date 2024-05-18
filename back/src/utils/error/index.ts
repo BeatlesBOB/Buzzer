@@ -15,5 +15,6 @@ export const ERROR_MSG = {
   ADMIN: "T'es pas le boss de la room !",
   USER: "Utilisateur perdu :eyes:",
   BUZZER: "Déja buzzer",
+  DOESNT_STARTED: "La game n'a pas commencer tu va te calmer direct",
 };
 Object.freeze(ERROR_MSG);

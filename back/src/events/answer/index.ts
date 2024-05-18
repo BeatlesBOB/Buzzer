@@ -8,12 +8,12 @@ import { getUserById } from "../../utils/user";
 export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   const { team: teamId, room: roomId } = socket.data.user;
   if (!Rooms.has(roomId)) {
-    return handleError(socket, "No room provided");
+    return handleError(socket, ERROR_MSG.ROOM);
   }
 
   const room = Rooms.get(roomId)!;
   if (!room?.isStarted) {
-    return handleError(socket, "No room or the game isn't started yet");
+    return handleError(socket, ERROR_MSG.DOESNT_STARTED);
   }
 
   const team = getTeamById(room, teamId);

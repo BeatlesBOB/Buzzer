@@ -25,12 +25,14 @@ export default function Buzzer() {
     dispatch("room:info", {
       room: getStorageData("room"),
       user: getStorageData("user"),
+      team: getStorageData("team"),
     });
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
       const { room, user } = payload;
+      console.log(room);
 
-      if (!room || !user || !user.isAdmin) {
+      if (!room || !user) {
         return navigate("..");
       }
 
@@ -84,7 +86,7 @@ export default function Buzzer() {
       onClick={handleAnswer}
       disabled={isDisabled}
     >
-      {user!.name}
+      {user?.name}
     </button>
   );
 }
