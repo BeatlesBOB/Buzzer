@@ -14,6 +14,7 @@ import {
   handleTeamJoin,
   handleTeamLeave,
 } from "./events/team";
+import { handleAnswer } from "./events/answer";
 dotenv.config();
 
 const express = require("express");
@@ -67,16 +68,15 @@ const onConnection = (socket: Socket) => {
   socket.on("team:join", (payload) => handleTeamJoin(socket, payload));
   socket.on("team:leave", () => handleTeamLeave(socket));
 
-  //
-  //
-  //
+  // ANSWER
+  socket.on("game:answer", (payload) => handleAnswer(socket, payload));
+  socket.on("game:answer:type", (payload) => handleBuzzerType(socket, payload));
+  socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
+  socket.on("game:buzzer:reset:team", (payload) =>
+    resetTeamAnswer(socket, payload)
+  );
 
-  // socket.on("game:answer", (payload) => handleAnswer(socket, payload));
-  // socket.on("game:answer:type", (payload) => handleBuzzerType(socket, payload));
-  // socket.on("game:buzzer:reset", () => resetAllAnswer(socket));
-  // socket.on("game:buzzer:reset:team", (payload) =>
-  //   resetTeamAnswer(socket, payload)
-  // );
+  // POINT
   // socket.on("game:point:reset", () => resetAllPoint(socket));
   // socket.on("game:point", (payload) => setPoint(socket, payload));
 

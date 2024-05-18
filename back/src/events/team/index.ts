@@ -40,7 +40,7 @@ export const handleTeamCreate = (
     team: team.id,
     room: room.id,
   };
-
+  socket.join(team.id);
   team.users.push(user);
   setUserData(socket, user);
 
@@ -81,6 +81,7 @@ export const handleTeamJoin = (
     room: room.id,
   };
 
+  socket.join(team.id);
   team.users.push(user);
   setUserData(socket, user);
 
@@ -118,6 +119,7 @@ export const handleTeamLeave = (socket: Socket) => {
     team: undefined,
   };
 
+  socket.leave(team.id);
   setUserData(socket, user);
 
   io.to(room.id).emit("team:leave", { room });
