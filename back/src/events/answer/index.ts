@@ -28,18 +28,24 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
     return handleError(socket, ERROR_MSG.USER);
   }
 
-  io.to(room.id).except(room.admin.id).emit("game:answer", { room, team });
-  io.to(room.admin.id).emit("game:answer", {
+  const timer = process.env.TIMEOUT_ANSWER ?? "30000";
+
+  user.hasBuzzed = true;
+  io.to(room.id).emit("game:answer", {
     room,
     team,
     user,
+    timer,
     answer: payload?.answer,
   });
 
   setTimeout(() => {
     team.hasBuzzed = false;
-    io.to(room.id).emit("game:status", { room, team });
-  }, parseInt(process.env.TIMEOUT_ANSWER ?? "30000"));
+    user.hasBuzzed = false;
+    io.to(room.id)
+      .except(room.admin.id)
+      .emit("game:answer", { room, team, user });
+  }, parseInt(timer));
 };
 
 export const hansleAnswerResetAll = (socket: Socket) => {
@@ -54,7 +60,7 @@ export const hansleAnswerResetAll = (socket: Socket) => {
     team.hasBuzzed = false;
   });
 
-  io.to(room.id).emit("game:status", { room });
+  io.to(room.id).emit("game:answer:reset", { room });
 };
 
 export const handleAnswerResetTeam = (
@@ -75,7 +81,7 @@ export const handleAnswerResetTeam = (
   }
 
   team.hasBuzzed = false;
-  io.to(room.id).emit("game:status", { room });
+  io.to(room.id).emit("game:answer:reset:all", { room });
 };
 
 export const handleAnswerType = (

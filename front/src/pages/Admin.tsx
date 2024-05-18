@@ -79,6 +79,7 @@ export default function Admin() {
     };
 
     subscribe("game:start", handleRoomUpdate);
+    subscribe("game:pause", handleRoomUpdate);
     subscribe("buzzer:notification", handleError);
 
     subscribe("room:join", handleRoomUpdate);
@@ -89,7 +90,6 @@ export default function Admin() {
     subscribe("team:leave", handleRoomUpdate);
 
     subscribe("game:answer", handleAnswer);
-    subscribe("room:pause", handleRoomUpdate);
 
     return () => {
       unSubscribe("game:start", handleRoomUpdate);

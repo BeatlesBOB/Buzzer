@@ -60,19 +60,25 @@ export default function Buzzer() {
         desc: payload.msg,
       });
     };
+    const handleRoomUpdate = (payload: { room: Room }) => {
+      const { room } = payload;
+      setRoom(room);
+    };
 
     subscribe("room:pause", handleTeamAnswer);
     subscribe("buzzer:notification", handleError);
 
     subscribe("game:answer", handleTeamAnswer);
-    subscribe("game:status", handleTeamAnswer);
+    subscribe("game:answer:reset", handleRoomUpdate);
+    subscribe("game:answer:reset:all", handleRoomUpdate);
 
     return () => {
-      subscribe("room:pause", handleTeamAnswer);
+      unSubscribe("room:pause", handleTeamAnswer);
       unSubscribe("buzzer:notification", handleError);
 
       unSubscribe("game:answer", handleTeamAnswer);
-      unSubscribe("game:status", handleTeamAnswer);
+      unSubscribe("game:answer:reset", handleRoomUpdate);
+      unSubscribe("game:answer:reset:all", handleRoomUpdate);
     };
   }, []);
 
