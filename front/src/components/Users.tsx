@@ -55,8 +55,15 @@ export default function Users({
                 <Button label="Join team" handleClick={() => joinTeam(team)} />
               )}
 
+              {!isAdmin && (
+                <Button label="Bloquer le buzzer" handleClick={() => {}} />
+              )}
+
               {(user?.team === team.id || isAdmin) && leaveTeam && (
-                <Button label="Jme barre" handleClick={() => leaveTeam(team)} />
+                <Button
+                  label={isAdmin ? "Tu sors ou jte sors" : "Jme barre"}
+                  handleClick={() => leaveTeam(team)}
+                />
               )}
             </div>
           </li>

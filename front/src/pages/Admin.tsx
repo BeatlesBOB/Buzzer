@@ -90,9 +90,13 @@ export default function Admin() {
     subscribe("team:leave", handleRoomUpdate);
 
     subscribe("game:answer", handleAnswer);
+    subscribe("game:point", handleRoomUpdate);
+    subscribe("game:point:reset", handleRoomUpdate);
 
     return () => {
       unSubscribe("game:start", handleRoomUpdate);
+      unSubscribe("game:pause", handleRoomUpdate);
+
       unSubscribe("buzzer:notification", handleError);
 
       unSubscribe("room:join", handleRoomUpdate);
@@ -101,13 +105,15 @@ export default function Admin() {
       unSubscribe("team:create", handleRoomUpdate);
       unSubscribe("team:join", handleRoomUpdate);
       unSubscribe("team:leave", handleRoomUpdate);
+
       unSubscribe("game:answer", handleAnswer);
-      unSubscribe("room:pause", handleRoomUpdate);
+      unSubscribe("game:point", handleRoomUpdate);
+      unSubscribe("game:point:reset", handleRoomUpdate);
     };
   }, []);
 
   const resetTeamBuzzer = (team: Team) => {
-    dispatch("game:buzzer:reset:team", { team: team.id });
+    dispatch("game:answer:reset:team", { team: team.id });
   };
 
   const updateTeamPoint = (team: Team, point: number) => {
@@ -123,7 +129,7 @@ export default function Admin() {
   };
 
   const resetAllBuzzer = () => {
-    dispatch("game:buzzer:reset");
+    dispatch("game:answer:reset");
   };
 
   const resetAllPoints = () => {
@@ -227,8 +233,9 @@ export default function Admin() {
         <div className="p-5">
           {answer && (
             <div className="flex flex-col gap-5">
-              <h1 className="font-semibold text-2xl">{answer.team.name}</h1>
-              <h2 className="font-medium text-xl">{answer.team.point}</h2>
+              <h1 className="font-semibold text-4xl">
+                L'équipe : {answer.team.name} a buzzer
+              </h1>
               <h3 className="font-medium text-lg">{answer.user.name}</h3>
             </div>
           )}

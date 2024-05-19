@@ -23,7 +23,7 @@ export const handlePointUpdate = (
   }
 
   team.point = point || 0;
-  io.emit("game:status", { room: room });
+  io.emit("game:point", { room: room });
 };
 
 export const handlePointResetAll = (socket: Socket) => {
@@ -36,5 +36,5 @@ export const handlePointResetAll = (socket: Socket) => {
   room.teams.forEach((team) => {
     team.point = 0;
   });
-  io.emit("game:status", { room });
+  io.emit("game:point:reset", { room });
 };
