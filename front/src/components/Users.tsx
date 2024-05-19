@@ -55,7 +55,7 @@ export default function Users({
                 <Button label="Join team" handleClick={() => joinTeam(team)} />
               )}
 
-              {!isAdmin && (
+              {isAdmin && (
                 <Button label="Bloquer le buzzer" handleClick={() => {}} />
               )}
 

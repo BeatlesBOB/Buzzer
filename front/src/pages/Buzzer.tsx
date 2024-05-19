@@ -30,7 +30,6 @@ export default function Buzzer() {
 
     const handleRoomInfo = (payload: { room: Room; user: User }) => {
       const { room, user } = payload;
-      console.log(room);
 
       if (!room || !user) {
         return navigate("..");
@@ -40,6 +39,7 @@ export default function Buzzer() {
       setUser(user);
       setStorageData("room", room.id);
       setStorageData("user", user.id);
+      setStorageData("team", user.team);
     };
     subscribe("room:info", handleRoomInfo);
 
