@@ -31,7 +31,6 @@ export default function Home() {
   useEffect(() => {
     const handleRoomCreation = (payload: { room: Room; user: User }) => {
       const { user, room } = payload;
-      console.log(user);
       setRoom(room);
       setUser(user);
       setStorageData("room", room.id);
