@@ -26,24 +26,29 @@ export default function Users({
     <ul className="flex flex-col gap-4 py-4 overflow-y-auto">
       {teams.map((team: Team) => {
         return (
-          <li
-            className="p-5 shadow-lg flex flex-wrap font-primary"
-            key={team.id}
-          >
-            <p className="capitalize text-lg">{team.name}</p>
-            <p className="mx-2">({team.users.map((u) => u.name).join(", ")})</p>
-            <div className="flex flex-wrap ml-auto gap-5">
+          <li className="p-5 shadow-lg grid font-primary gap-y-5" key={team.id}>
+            <div className="flex flex-col col-start-1">
+              <p className="capitalize text-2xl">{team.name}</p>
+              <p className="text-gray-500">
+                ({team.users.map((u) => u.name).join(", ")})
+              </p>
               {isAdmin && updateTeamPoint && (
-                <input
-                  min={0}
-                  type="number"
-                  value={team.point}
-                  onChange={(e) => {
-                    updateTeamPoint(team, parseInt(e.target.value));
-                  }}
-                />
+                <div className="flex mt-5">
+                  <p className="text-md text-primary">Les pountos :</p>
+                  {
+                    <input
+                      min={0}
+                      type="number"
+                      value={team.point}
+                      onChange={(e) => {
+                        updateTeamPoint(team, parseInt(e.target.value));
+                      }}
+                    />
+                  }
+                </div>
               )}
-
+            </div>
+            <div className="flex flex-wrap gap-5 row-start-2 col-start-1">
               {isAdmin && resetTeamBuzzer && (
                 <Button
                   label="Reset buzzer"
