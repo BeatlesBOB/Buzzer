@@ -36,7 +36,7 @@ export default function App() {
         wakeLock = await navigator.wakeLock.request("screen");
       } catch (err: any) {
         pushToast({
-          title: "Whooops nan mon on savais que ça pouvais pas etre parfait",
+          title: "Whooops nan mais on savais que ça pouvais pas etre parfait",
           desc: `${err.name}, ${err.message}`,
         });
       }
