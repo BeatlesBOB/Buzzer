@@ -6,7 +6,7 @@ import { ERROR_MSG, handleError } from "../../utils/error";
 import { getUserById } from "../../utils/user";
 
 export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
-  const { team: teamId, room: roomId } = socket.data.user;
+  const { team: teamId, room: roomId, id: userId } = socket.data.user;
   if (!Rooms.has(roomId)) {
     return handleError(socket, ERROR_MSG.ROOM);
   }
@@ -23,7 +23,7 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   }
 
   team.hasBuzzed = true;
-  const user = getUserById(team, socket.id);
+  const user = getUserById(team, userId);
   if (!user) {
     return handleError(socket, ERROR_MSG.USER);
   }
@@ -42,9 +42,7 @@ export const handleAnswer = (socket: Socket, payload: { answer?: string }) => {
   setTimeout(() => {
     team.hasBuzzed = false;
     user.hasBuzzed = false;
-    io.to(room.id)
-      .except(room.admin.id)
-      .emit("game:answer", { room, team, user });
+    io.to(room.id).emit("game:answer:reset", { room, team, user });
   }, parseInt(timer));
 };
 

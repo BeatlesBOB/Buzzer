@@ -37,6 +37,9 @@ export default function Buzzer() {
 
       setRoom(room);
       setUser(user);
+
+      dispatch("room:join", { room: room.id });
+
       setStorageData("room", room.id);
       setStorageData("user", user.id);
       setStorageData("team", user.team);
