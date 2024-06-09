@@ -44,8 +44,8 @@ export const io = new Server(httpServer, {
   },
 });
 
-app.use("/", (req: Request, res: Response) => {
-  res.send("Server is running");
+app.get("/", (_req: Request, res: Response) => {
+  return res.send("Express Typescript on Vercel");
 });
 
 instrument(io, {
