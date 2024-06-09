@@ -1,12 +1,10 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import useSocket from "../hook/useSocket";
 import { GameContext } from "../contexts/GameContextProvider";
 import useToasts from "../hook/useToasts";
 import { Room, User } from "../types/interfaces";
 import useStorage from "../hook/useStorage";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import CountdownCircle from "../components/CountDown";
 
 export default function Buzzer() {
   const { dispatch, subscribe, unSubscribe } = useSocket();
@@ -14,8 +12,6 @@ export default function Buzzer() {
   const { pushToast } = useToasts();
   const { getStorageData, setStorageData } = useStorage();
   const navigate = useNavigate();
-  const [isAnswer, setIsAnswer] = useState<boolean>(true);
-  const [timer, setTimer] = useState<number>(5000);
 
   const isDisabled = useMemo(() => {
     return (
@@ -57,9 +53,7 @@ export default function Buzzer() {
 
   useEffect(() => {
     const handleTeamAnswer = (payload: { room: Room; timer: string }) => {
-      const { room, timer } = payload;
-      setIsAnswer(true);
-      setTimer(parseInt(timer));
+      const { room } = payload;
       setRoom(room);
     };
 
@@ -103,8 +97,6 @@ export default function Buzzer() {
       onClick={handleAnswer}
       disabled={isDisabled}
     >
-      {/* {isAnswer && <CountdownCircle duration={timer} />} */}
-
       {user?.name}
     </button>
   );
