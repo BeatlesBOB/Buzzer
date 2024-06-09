@@ -92,6 +92,8 @@ const onConnection = (socket: Socket) => {
 
 io.on("connection", onConnection);
 
-httpServer.listen(process.env.APP_PORT, () =>
-  console.log(`http://localhost:${process.env.APP_PORT}`)
+const port = process.env.PORT || 8080;
+
+httpServer.listen(process.env.PORT, () =>
+  console.log(`http://localhost:port${port}`)
 );
