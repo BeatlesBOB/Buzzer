@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Socket } from "socket.io";
+import { Socket, Server } from "socket.io";
 import { Room } from "./interface";
 import { instrument } from "@socket.io/admin-ui";
 import {
@@ -24,8 +24,7 @@ import { handlePointResetAll, handlePointUpdate } from "./events/point";
 dotenv.config();
 
 import express, { Request, Response } from "express";
-const { createServer } = require("http");
-const { Server } = require("socket.io");
+import { createServer } from "http";
 
 const app = express();
 app.use(express.static("./node_modules/@socket.io/admin-ui/ui/dist"));
@@ -37,7 +36,7 @@ export const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:3030",
-      process.env.FRONTEND_URL,
+      process.env.FRONTEND_URL?.toString() || "",
       "http://127.0.0.1:5500",
     ],
     credentials: true,
