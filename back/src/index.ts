@@ -23,7 +23,7 @@ import {
 import { handlePointResetAll, handlePointUpdate } from "./events/point";
 dotenv.config();
 
-const express = require("express");
+import express, { Request, Response } from "express";
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
@@ -42,6 +42,10 @@ export const io = new Server(httpServer, {
     ],
     credentials: true,
   },
+});
+
+app.use("/", (req: Request, res: Response) => {
+  res.send("Server is running");
 });
 
 instrument(io, {
