@@ -27,5 +27,5 @@ export const handleGamePause = (socket: Socket) => {
 
   const room = Rooms.get(roomId)!;
   room.isStarted = false;
-  io.to(room.id).emit("room:status", { room });
+  io.to(room.id).emit("game:pause", { room });
 };
