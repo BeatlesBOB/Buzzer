@@ -72,6 +72,6 @@ const handleAnswerType = (socket, payload) => {
     if (!isAdmin) {
         return (0, error_1.handleError)(socket, error_1.ERROR_MSG.ADMIN);
     }
-    __1.io.to(roomId, "game:answer:type");
+    __1.io.to(roomId).emit("game:answer:type", {});
 };
 exports.handleAnswerType = handleAnswerType;

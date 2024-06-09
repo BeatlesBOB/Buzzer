@@ -2,9 +2,11 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rooms = exports.io = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
+const socket_io_1 = require("socket.io");
 const admin_ui_1 = require("@socket.io/admin-ui");
 const room_1 = require("./events/room");
 const game_1 = require("./events/game");
@@ -13,18 +15,17 @@ const answer_1 = require("./events/answer");
 const point_1 = require("./events/point");
 dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
-const { createServer } = require("http");
-const { Server } = require("socket.io");
+const http_1 = require("http");
 const app = (0, express_1.default)();
 app.use(express_1.default.static("./node_modules/@socket.io/admin-ui/ui/dist"));
 app.listen(process.env.ADMIN_PORT);
-const httpServer = createServer(app);
-exports.io = new Server(httpServer, {
+const httpServer = (0, http_1.createServer)(app);
+exports.io = new socket_io_1.Server(httpServer, {
     connectionStateRecovery: {},
     cors: {
         origin: [
             "http://localhost:3030",
-            process.env.FRONTEND_URL,
+            ((_a = process.env.FRONTEND_URL) === null || _a === void 0 ? void 0 : _a.toString()) || "",
             "http://127.0.0.1:5500",
         ],
         credentials: true,
@@ -67,4 +68,6 @@ const onConnection = (socket) => {
     socket.on("game:point", (payload) => (0, point_1.handlePointUpdate)(socket, payload));
 };
 exports.io.on("connection", onConnection);
-httpServer.listen(process.env.APP_PORT, () => console.log(`http://localhost:${process.env.APP_PORT}`));
+const port = process.env.PORT || 8080;
+httpServer.listen(process.env.PORT, () => console.log(`http://localhost:port${port}`));
+module.exports = app;

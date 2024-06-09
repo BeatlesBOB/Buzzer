@@ -91,5 +91,5 @@ export const handleAnswerType = (
     return handleError(socket, ERROR_MSG.ADMIN);
   }
 
-  io.to(roomId, "game:answer:type");
+  io.to(roomId).emit("game:answer:type", {});
 };

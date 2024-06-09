@@ -97,3 +97,5 @@ const port = process.env.PORT || 8080;
 httpServer.listen(process.env.PORT, () =>
   console.log(`http://localhost:port${port}`)
 );
+
+module.exports = app;
