@@ -13,7 +13,7 @@
       "dest": "dist/index.js",
       "methods": ["GET", "POST"],
       "headers": {
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "https://buzzer-rose.vercel.app"
       }
     },
     {
@@ -21,7 +21,7 @@
       "dest": "dist/index.js",
       "methods": ["GET", "POST"],
       "headers": {
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "https://buzzer-rose.vercel.app"
       }
     }
   ]
