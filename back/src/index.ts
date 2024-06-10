@@ -33,6 +33,7 @@ app.listen(process.env.ADMIN_PORT);
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
   connectionStateRecovery: {},
+  addTrailingSlash: false,
   cors: {
     origin: [
       "http://localhost:3030",

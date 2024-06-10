@@ -2,7 +2,6 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rooms = exports.io = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -22,10 +21,11 @@ app.listen(process.env.ADMIN_PORT);
 const httpServer = (0, http_1.createServer)(app);
 exports.io = new socket_io_1.Server(httpServer, {
     connectionStateRecovery: {},
+    addTrailingSlash: false,
     cors: {
         origin: [
             "http://localhost:3030",
-            ((_a = process.env.FRONTEND_URL) === null || _a === void 0 ? void 0 : _a.toString()) || "",
+            process.env.FRONTEND_URL || "",
             "http://127.0.0.1:5500",
         ],
         credentials: true,
@@ -69,5 +69,5 @@ const onConnection = (socket) => {
 };
 exports.io.on("connection", onConnection);
 const port = process.env.PORT || 8080;
-httpServer.listen(process.env.PORT, () => console.log(`http://localhost:port${port}`));
+httpServer.listen(process.env.PORT, () => console.log(`http://localhost:${port}`));
 module.exports = app;
