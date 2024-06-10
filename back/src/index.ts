@@ -35,6 +35,7 @@ export const io = new Server(httpServer, {
   connectionStateRecovery: {},
   addTrailingSlash: false,
   cors: {
+    methods: ["GET", "PUT", "POST"],
     origin: [
       "http://localhost:3030",
       process.env.FRONTEND_URL || "",
