@@ -36,7 +36,7 @@ export const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:3030",
-      process.env.FRONTEND_URL?.toString() || "",
+      process.env.FRONTEND_URL || "",
       "http://127.0.0.1:5500",
     ],
     credentials: true,
@@ -95,7 +95,7 @@ io.on("connection", onConnection);
 const port = process.env.PORT || 8080;
 
 httpServer.listen(process.env.PORT, () =>
-  console.log(`http://localhost:port${port}`)
+  console.log(`http://localhost:${port}`)
 );
 
 module.exports = app;
