@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Lobby from "./pages/Lobby";
 import Admin from "./pages/Admin";
 import Buzzer from "./pages/Buzzer";
+import ConnectionBanner from "./components/ConnectionBanner";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -35,5 +36,10 @@ function useWakeLock() {
 
 export default function App() {
   useWakeLock();
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <ConnectionBanner />
+      <RouterProvider router={router} />
+    </>
+  );
 }
