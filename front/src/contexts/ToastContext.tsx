@@ -1,4 +1,4 @@
-import { createContext, type MutableRefObject, useRef, memo } from "react";
+import { createContext, type MutableRefObject, type ReactNode, useRef, memo } from "react";
 import ToastsContainer from "../components/ToastsContainer";
 import { IToast } from "../components/Toast";
 
@@ -6,13 +6,12 @@ export interface IToastContext {
   pushToastRef: MutableRefObject<(payload: IToast) => void>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 export const ToastContext = createContext<IToastContext>(null!);
 
 const ToastProvider = memo(function ToastProvider({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) {
   const pushToastRef = useRef(() => {});
 

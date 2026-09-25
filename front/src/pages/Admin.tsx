@@ -1,268 +1,123 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { GameContext } from "../contexts/GameContextProvider";
-import Users from "../components/Users";
+import type { Phase } from "../../../shared/protocol";
 import Button from "../components/Button";
+import Countdown from "../components/Countdown";
 import Modal from "../components/Modal";
-import { Answer, Room, Team, User } from "../types/interfaces";
-import useSocket from "../hook/useSocket";
+import TeamList from "../components/TeamList";
 import Title from "../components/Title";
 import BuzzerSound from "../assets/sound/Buzzer.mp3";
-import useStorage from "../hook/useStorage";
-import useToasts from "../hook/useToasts";
+import useGame from "../hook/useGame";
+import useAction from "../hook/useAction";
+import useSocketEvent from "../hook/useSocketEvent";
+import { lobbyUrl } from "../lib/roomLink";
+import { request } from "../lib/socket";
 
 const audio = new Audio(BuzzerSound);
 
+const PHASE_LABEL: Record<Phase, string> = {
+  lobby: "Les équipes se forment",
+  open: "Buzzer ouvert",
+  locked: "Quelqu'un a buzzé",
+  paused: "Buzzer fermé",
+};
+
 export default function Admin() {
-  const { room, setRoom, setUser, user } = useContext(GameContext);
-  const [isSelectedModalOpen, setIsSelectedModalOpen] = useState(false);
-  const [isAnswerModalOpen, setAnswerModalOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<Team | undefined>(undefined);
-  const { dispatch, subscribe, unSubscribe } = useSocket();
-  const [answer, setAnswer] = useState<Answer | undefined>(undefined);
-  const [isBuzzerTypeModalOpen, setIsBuzzerTypeModalOpen] = useState(false);
+  const { id = "" } = useParams();
   const navigate = useNavigate();
-  const { getStorageData, setStorageData, clearStorageData } = useStorage();
-  const { pushToast } = useToasts();
+  const { room, session, readyRoomId, clockOffset, leave } = useGame();
+  const act = useAction();
+  const [dismissedRound, setDismissedRound] = useState<number | null>(null);
+
+  const isMine = session?.role === "admin" && session.roomId === id;
 
   useEffect(() => {
-    dispatch("room:info", {
-      room: getStorageData("room"),
-      user: getStorageData("user"),
-    });
+    if (!isMine || (readyRoomId === id && !room)) navigate("/", { replace: true });
+  }, [isMine, readyRoomId, room, id, navigate]);
 
-    const handleRoomInfo = (payload: { room: Room; user: User }) => {
-      const { room, user } = payload;
+  useSocketEvent("buzzer:buzzed", () => {
+    audio.currentTime = 0;
+    audio.play().catch(() => {}); // lecture auto bloquée tant que l'admin n'a rien cliqué
+  });
 
-      if (!room || !user || !user.isAdmin) {
-        clearStorageData();
-        return navigate("..");
-      }
+  if (!room) return <p className="p-5 font-primary">Connexion…</p>;
 
-      setRoom(room);
-      setUser(user);
-      dispatch("room:join", { room: room.id });
+  const buzz = room.phase === "locked" ? room.buzz : null;
+  const buzzTeam = buzz && room.teams.find((t) => t.id === buzz.teamId);
+  const buzzPlayer = buzzTeam?.players.find((p) => p.id === buzz?.playerId);
 
-      setStorageData("room", room.id);
-      setStorageData("user", user.id);
-    };
+  const mainAction =
+    room.phase === "lobby"
+      ? { label: "Lancer la partie", event: "game:open" as const }
+      : room.phase === "paused"
+        ? { label: "Ouvrir le buzzer", event: "game:open" as const }
+        : { label: "Fermer le buzzer", event: "game:pause" as const };
 
-    subscribe("room:info", handleRoomInfo);
-
-    return () => {
-      unSubscribe("room:info", handleRoomInfo);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleRoomUpdate = (payload: { room: Room }) => {
-      const { room } = payload;
-      setRoom(room);
-    };
-
-    const handleAnswer = (payload: { team: Team; user: User }) => {
-      const { team, user } = payload;
-      audio.play();
-      setAnswer({
-        team,
-        user,
-      });
-      setAnswerModalOpen(true);
-    };
-
-    const handleError = (payload: { msg: string }) => {
-      pushToast({
-        title: "Whooops, nan mais on savait que ça pouvait pas être parfait",
-        desc: payload.msg,
-      });
-    };
-
-    subscribe("game:start", handleRoomUpdate);
-    subscribe("game:pause", handleRoomUpdate);
-    subscribe("buzzer:notification", handleError);
-
-    subscribe("room:join", handleRoomUpdate);
-    subscribe("room:leave", handleRoomUpdate);
-
-    subscribe("team:create", handleRoomUpdate);
-    subscribe("team:join", handleRoomUpdate);
-    subscribe("team:leave", handleRoomUpdate);
-
-    subscribe("game:answer", handleAnswer);
-    subscribe("game:point", handleRoomUpdate);
-    subscribe("game:point:reset", handleRoomUpdate);
-
-    return () => {
-      unSubscribe("game:start", handleRoomUpdate);
-      unSubscribe("game:pause", handleRoomUpdate);
-
-      unSubscribe("buzzer:notification", handleError);
-
-      unSubscribe("room:join", handleRoomUpdate);
-      unSubscribe("room:leave", handleRoomUpdate);
-
-      unSubscribe("team:create", handleRoomUpdate);
-      unSubscribe("team:join", handleRoomUpdate);
-      unSubscribe("team:leave", handleRoomUpdate);
-
-      unSubscribe("game:answer", handleAnswer);
-      unSubscribe("game:point", handleRoomUpdate);
-      unSubscribe("game:point:reset", handleRoomUpdate);
-    };
-  }, []);
-
-  const resetTeamBuzzer = (team: Team) => {
-    dispatch("game:answer:reset:team", { team: team.id });
-  };
-
-  const updateTeamPoint = (team: Team, point: number) => {
-    dispatch("game:point", { team: team.id, point });
-  };
-
-  const startGame = () => {
-    dispatch("game:start");
-  };
-
-  const pauseGame = () => {
-    dispatch("game:pause");
-  };
-
-  const resetAllBuzzer = () => {
-    dispatch("game:answer:reset");
-  };
-
-  const resetAllPoints = () => {
-    dispatch("game:point:reset");
-  };
-
-  const copyRoomId = () => {
-    const roomId = room?.id || "L'a pétée la Room...";
-    navigator.clipboard.writeText(roomId);
-  };
-
-  const homePath = () => {
-    let path = `/`;
-    if (confirm("Tu veux vraiment revenir en arrière et flinguer la game ?")) {
-      navigate(path);
+  const closeRoom = async () => {
+    if (!confirm("Tu veux vraiment flinguer la game ?")) return;
+    const res = await act(request("room:close"));
+    if (res.ok) {
+      leave();
+      navigate("/");
     }
   };
 
   return (
     <>
       <div className="grid lg:grid-cols-2 h-dvh p-5">
-        <Users
-          resetTeamBuzzer={resetTeamBuzzer}
-          leaveTeam={(team) => {
-            setSelectedTeam(team);
-            setIsSelectedModalOpen(true);
+        <TeamList
+          teams={room.teams}
+          buzzingTeamId={buzz?.teamId}
+          admin={{
+            setScore: (team, point) => act(request("score:set", { teamId: team.id, point })),
+            setLocked: (team, locked) => act(request("team:lock", { teamId: team.id, locked })),
+            kickTeam: (team) => confirm(`Virer ${team.name} ?`) && act(request("team:kick", { teamId: team.id })),
+            kickPlayer: (player) =>
+              confirm(`Virer ${player.name} ?`) && act(request("player:kick", { playerId: player.id })),
           }}
-          isAdmin={user?.isAdmin}
-          teams={room?.teams}
-          updateTeamPoint={updateTeamPoint}
         />
         <div className="flex flex-col items-center justify-center gap-6 h-full">
           <Title />
-          <Button
-            type="primary"
-            label={room?.id || "L'a pétée la Room..."}
-            handleClick={copyRoomId}
-          />
-          <QRCode value={room?.id || ""} />
+          <Button variant="primary" label="Copier le lien" handleClick={() => navigator.clipboard.writeText(lobbyUrl(room.id))} />
+          <QRCode value={lobbyUrl(room.id)} />
+          <p className="font-primary text-xl">{PHASE_LABEL[room.phase]}</p>
           <div className="flex gap-5 flex-wrap justify-center">
             <div className="basis-full flex justify-center">
-              <Button
-                type="primary"
-                label={room?.isStarted ? "Pause" : "Start"}
-                handleClick={room?.isStarted ? pauseGame : startGame}
-              />
+              <Button variant="primary" label={mainAction.label} handleClick={() => act(request(mainAction.event))} />
             </div>
-
-            <Button
-              label="Reset tous les buzzer"
-              handleClick={resetAllBuzzer}
-            />
+            <Button label="Débloquer tous les buzzers" handleClick={() => act(request("buzzer:reset"))} />
             <Button
               label="Reset tous les points"
-              handleClick={resetAllPoints}
-            />
-
-            <Button
-              label="Change buzzer type"
-              handleClick={() => setIsBuzzerTypeModalOpen(true)}
+              handleClick={() => confirm("Remettre tous les scores à 0 ?") && act(request("score:reset"))}
             />
             <div className="basis-full flex justify-center">
-              <Button type="primary" label="Retour" handleClick={homePath} />
+              <Button variant="primary" label="Fermer la partie" handleClick={closeRoom} />
             </div>
           </div>
         </div>
       </div>
-      <Modal isOpen={isSelectedModalOpen} setIsOpen={setIsSelectedModalOpen}>
-        <div className="p-5">
-          {selectedTeam && (
-            <>
-              <ul className="flex flex-col gap-5 mb-5">
-                {selectedTeam?.users.map((user: User) => {
-                  return (
-                    <li className="p-5 flex items-center justify-between border border-black">
-                      <p>{user.name}</p>
-                      <Button
-                        label="Jme barre"
-                        handleClick={() => {
-                          dispatch("room:leave", {
-                            team: selectedTeam?.id,
-                            user: user.id,
-                          });
-                        }}
-                      ></Button>
-                    </li>
-                  );
-                })}
-              </ul>
-              <Button
-                label="Delete team"
-                handleClick={() => {
-                  dispatch("room:leave", { team: selectedTeam?.id });
-                }}
-              />
-            </>
-          )}
-        </div>
-      </Modal>
-      <Modal isOpen={isAnswerModalOpen} setIsOpen={setAnswerModalOpen}>
-        <div className="p-5">
-          {answer && (
-            <div className="flex flex-col gap-5">
-              <h1 className="font-semibold text-4xl">
-                L'équipe : {answer.team.name} a buzzer
-              </h1>
-              <h3 className="font-medium text-lg">{answer.user.name}</h3>
+
+      <Modal isOpen={!!buzz && dismissedRound !== buzz.round} setIsOpen={() => buzz && setDismissedRound(buzz.round)}>
+        {buzz && (
+          <div className="p-5 flex flex-col gap-5">
+            <h1 className="font-semibold text-4xl">L'équipe : {buzzTeam?.name} a buzzé</h1>
+            <h3 className="font-medium text-lg">
+              {buzzPlayer?.name}
+              {buzz.expiresAt && (
+                <>
+                  {" "}
+                  — <Countdown expiresAt={buzz.expiresAt} clockOffset={clockOffset} />
+                </>
+              )}
+            </h3>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="primary" label="Bonne réponse (+1)" handleClick={() => act(request("buzzer:judge", { correct: true }))} />
+              <Button label="Mauvaise réponse" handleClick={() => act(request("buzzer:judge", { correct: false }))} />
+              <Button label="Rouvrir sans juger" handleClick={() => act(request("buzzer:release"))} />
             </div>
-          )}
-        </div>
-      </Modal>
-      <Modal
-        isOpen={isBuzzerTypeModalOpen}
-        setIsOpen={setIsBuzzerTypeModalOpen}
-      >
-        <div className="p-5">
-          <form
-            className="group flex flex-col gap-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <input type="radio" value="speed" required name="type" />
-            <input type="radio" value="choice" required name="type" />
-            <input
-              type="number"
-              name="number"
-              className="group-has-[input[value='choice']:checked]:block"
-            />
-            <input type="radio" value="text" required name="type" />
-            <Button label="change" type="primary" />
-          </form>
-        </div>
+          </div>
+        )}
       </Modal>
     </>
   );
