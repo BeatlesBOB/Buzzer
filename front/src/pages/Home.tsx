@@ -1,49 +1,34 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "../components/Modal";
 import { QrScanner } from "@yudiel/react-qr-scanner";
-import { GameContext } from "../contexts/GameContextProvider";
+import Modal from "../components/Modal";
 import Button from "../components/Button";
-import useSocket from "../hook/useSocket";
-import { User, Room } from "../types/interfaces";
 import Title from "../components/Title";
+import useGame from "../hook/useGame";
+import useAction from "../hook/useAction";
 import useToasts from "../hook/useToasts";
-import useStorage from "../hook/useStorage";
+import { ERROR_TITLE } from "../lib/errors";
+import { parseRoomId } from "../lib/roomLink";
+import { request } from "../lib/socket";
 
 export default function Home() {
-  const { setRoom, setUser } = useContext(GameContext);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { subscribe, dispatch, unSubscribe } = useSocket();
+  const { startSession } = useGame();
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const navigate = useNavigate();
   const { pushToast } = useToasts();
-  const { setStorageData } = useStorage();
-  const createGame = () => {
-    dispatch("room:create");
+  const act = useAction();
+
+  const createGame = async () => {
+    const res = await act(request("room:create"));
+    if (!res.ok) return;
+    startSession(res.data.session, res.data.room);
+    navigate(`/admin/${res.data.room.id}`);
   };
 
-  const joinGame = useCallback(
-    (gameId: string) => {
-      navigate(`lobby/${gameId}`);
-    },
-    [navigate]
-  );
-
-  useEffect(() => {
-    const handleRoomCreation = (payload: { room: Room; user: User }) => {
-      const { user, room } = payload;
-      setRoom(room);
-      setUser(user);
-      setStorageData("room", room.id);
-      setStorageData("user", user.id);
-      navigate(`admin/${room.id}`);
-    };
-
-    subscribe("room:create", handleRoomCreation);
-
-    return () => {
-      unSubscribe("room:create", handleRoomCreation);
-    };
-  }, []);
+  const joinGame = (value: string) => {
+    const roomId = parseRoomId(value);
+    if (roomId) navigate(`/lobby/${roomId}`);
+  };
 
   return (
     <div className="grid grid-cols-container h-dvh items-center">
@@ -51,41 +36,29 @@ export default function Home() {
         <Title />
         <div className="flex flex-wrap mt-1.5 gap-10 justify-center">
           <Button handleClick={createGame} label="Créer une partie" />
-          <Button
-            handleClick={() => setIsOpen(true)}
-            label="Rejoindre une partie"
-          />
+          <Button handleClick={() => setIsScannerOpen(true)} label="Rejoindre une partie" />
         </div>
-        {import.meta.env.DEV && (
-          <form
-            className="flex flex-col basis-full border-2 border-black p-5 max-w-md w-full gap-5 self-center"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              joinGame(formData.get("room")?.toString()!);
-            }}
-          >
-            <input
-              required
-              placeholder="ROOM ID"
-              type="text"
-              className="border border-black border-1 p-2 w-full"
-              name="room"
-            />
-            <button>Connect</button>
-          </form>
-        )}
+        <form
+          className="flex flex-col basis-full border-2 border-black p-5 max-w-md w-full gap-5 self-center"
+          onSubmit={(e) => {
+            e.preventDefault();
+            joinGame(new FormData(e.currentTarget).get("room")?.toString() ?? "");
+          }}
+        >
+          <input
+            required
+            placeholder="Code ou lien de la room"
+            type="text"
+            className="border border-black border-1 p-2 w-full"
+            name="room"
+          />
+          <Button type="submit" label="Connect" />
+        </form>
       </div>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Modal isOpen={isScannerOpen} setIsOpen={setIsScannerOpen}>
         <QrScanner
           onDecode={joinGame}
-          onError={(error) => {
-            pushToast({
-              title:
-                "Whooops, nan mais on savait que ça pouvait pas être parfait",
-              desc: error.message,
-            });
-          }}
+          onError={(error) => pushToast({ title: ERROR_TITLE, desc: error.message })}
         />
       </Modal>
     </div>

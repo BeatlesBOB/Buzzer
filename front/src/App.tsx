@@ -1,57 +1,45 @@
+import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Lobby from "./pages/Lobby";
 import Admin from "./pages/Admin";
 import Buzzer from "./pages/Buzzer";
-import { useEffect } from "react";
-import useToasts from "./hook/useToasts";
+import ConnectionBanner from "./components/ConnectionBanner";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "lobby/:id",
-    element: <Lobby />,
-  },
-  {
-    path: "admin/:id",
-    element: <Admin />,
-  },
-  {
-    path: "buzzer/:id",
-    element: <Buzzer />,
-  },
+  { path: "/", element: <Home /> },
+  { path: "lobby/:id", element: <Lobby /> },
+  { path: "admin/:id", element: <Admin /> },
+  { path: "buzzer/:id", element: <Buzzer /> },
 ]);
 
-export default function App() {
-  const { pushToast } = useToasts();
-
+/** Empêche l'écran de s'éteindre en pleine partie. Le navigateur relâche le verrou quand l'onglet est masqué. */
+function useWakeLock() {
   useEffect(() => {
-    let wakeLock: WakeLockSentinel | null = null;
-
-    async function makeDeviceWakeLocked() {
-      try {
-        wakeLock = await navigator.wakeLock.request("screen");
-      } catch (err: any) {
-        pushToast({
-          title: "Whooops nan mais on savais que ça pouvais pas etre parfait",
-          desc: `${err.name}, ${err.message}`,
-        });
-      }
-    }
-
-    makeDeviceWakeLocked();
-
+    if (!("wakeLock" in navigator)) return;
+    let sentinel: WakeLockSentinel | null = null;
+    const request = () => {
+      if (document.visibilityState !== "visible") return;
+      navigator.wakeLock
+        .request("screen")
+        .then((s) => (sentinel = s))
+        .catch(() => {}); // refusé (batterie faible…) : pas bloquant
+    };
+    request();
+    document.addEventListener("visibilitychange", request);
     return () => {
-      if (wakeLock) {
-        wakeLock.release().then(() => {
-          wakeLock = null;
-        });
-      }
+      document.removeEventListener("visibilitychange", request);
+      sentinel?.release();
     };
   }, []);
+}
 
-  return <RouterProvider router={router} />;
+export default function App() {
+  useWakeLock();
+  return (
+    <>
+      <ConnectionBanner />
+      <RouterProvider router={router} />
+    </>
+  );
 }

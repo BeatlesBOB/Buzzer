@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import GameContextProvider from "./contexts/GameContextProvider.tsx";
+import GameProvider from "./contexts/GameContext.tsx";
+import ToastProvider from "./contexts/ToastContext.tsx";
 import App from "./App.tsx";
 import "./index.css";
-import ToastProvider from "./contexts/ToastContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ToastProvider>
-      <GameContextProvider>
+      <GameProvider>
         <App />
-      </GameContextProvider>
+      </GameProvider>
     </ToastProvider>
   </React.StrictMode>
 );

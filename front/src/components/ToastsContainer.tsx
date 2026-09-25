@@ -18,13 +18,10 @@ export default memo(function ToastsContainer() {
     setToasts((v) => [...v, toast]);
   };
 
-  const onRemove = useCallback(
-    (toast: IToast) => {
-      clearTimeout(toast.timer);
-      setToasts(toasts.filter((t) => t !== toast));
-    },
-    [toasts]
-  );
+  const onRemove = useCallback((toast: IToast) => {
+    clearTimeout(toast.timer);
+    setToasts((v) => v.filter((t) => t.id !== toast.id));
+  }, []);
 
   return (
     <div className="fixed z-50 flex flex-col gap-4 bottom-12 right-12 items-end justify-end overflow-hidden">
